@@ -2,12 +2,13 @@ package structures
 
 import "fmt"
 
-type Tnumber int
+type Tnumber uint8
 type Tgoban [][]Tnumber
 
 type SContext struct {
-	Goban Tgoban
-	NSize uint8
+	Goban         Tgoban
+	NSize         uint8
+	CurrentPlayer uint8
 }
 
 func (goban Tgoban) String() string {
