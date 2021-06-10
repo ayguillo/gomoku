@@ -9,6 +9,8 @@ type SContext struct {
 	Goban         Tgoban
 	NSize         uint8
 	CurrentPlayer uint8
+	NbVictoryP1   int
+	NbVictoryP2   int
 }
 
 func (goban Tgoban) String() string {

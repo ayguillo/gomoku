@@ -6,13 +6,16 @@ import (
 )
 
 type SVisu struct {
-	Renderer        *sdl.Renderer
-	FontMsg         *ttf.Font
-	FontPlayer      *ttf.Font
-	TexturePlayer   *sdl.Texture
-	TextureMessage1 *sdl.Texture
-	TextureMessage2 *sdl.Texture
-	Window          *sdl.Window
+	Renderer         *sdl.Renderer
+	FontMsg          *ttf.Font
+	FontPlayer       *ttf.Font
+	FontCounter      *ttf.Font
+	TexturePlayer    *sdl.Texture
+	TextureMessage1  *sdl.Texture
+	TextureMessage2  *sdl.Texture
+	TextureVictoryP1 *sdl.Texture
+	TextureVictoryP2 *sdl.Texture
+	Window           *sdl.Window
 }
 
 func (visu *SVisu) FillDefaults() {
