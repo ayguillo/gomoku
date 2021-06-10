@@ -29,7 +29,7 @@ func main() {
 	ctx.NSize = 19
 	ctx.Goban = make([][]s.Tnumber, ctx.NSize)
 	ctx.CurrentPlayer = uint8((rand.Intn(3-1) + 1))
-	ctx.NbVictoryP1, ctx.NbVictoryP2 = 0, 0
+	ctx.NbVictoryP1, ctx.NbVictoryP2, ctx.NbCaptureP1, ctx.NbCaptureP2 = 0, 0, 0, 0
 	index := 0
 	for index < int(ctx.NSize) {
 		ctx.Goban[index] = make([]s.Tnumber, ctx.NSize)
@@ -44,7 +44,9 @@ func main() {
 	defer visu.TextureVictoryP1.Destroy()
 	defer visu.TextureVictoryP2.Destroy()
 	size_case := (display.H - (int32(ctx.NSize * 3))) / (int32(ctx.NSize + 1))
-	size := int32((int32(ctx.NSize + 1)) * size_case)
+	ctx.SizeCase = size_case
+	size := int32((int32(ctx.NSize + 1)) * ctx.SizeCase)
+	ctx.Size = size
 	visu.Window, err = sdl.CreateWindow("Gomoku", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
 		size+(size/4), size, sdl.WINDOW_SHOWN)
 	defer visu.Window.Destroy()
@@ -81,9 +83,9 @@ func main() {
 	defer visu.Renderer.Destroy()
 	// 0xe2c473
 	// Initialize window with color and lines
-	d.TraceGoban(&visu, ctx, size, int(size_case))
-	d.DisplayPlayer(&ctx, &visu, int(size_case), true)
-	d.DisplayCounter(ctx, &visu, int(size_case))
+	d.TraceGoban(&visu, ctx)
+	d.DisplayPlayer(&ctx, &visu, true)
+	d.DisplayCounter(ctx, &visu)
 	running := true
 	endgame := false
 	// Loop de jeu
@@ -106,21 +108,22 @@ func main() {
 					// Trouver intersection la plus proche
 					h_mouse := float64(t.Y - 5)
 					k_mouse := float64(t.X - 5)
-					case_x := math.Round(k_mouse / float64(size_case))
-					case_y := math.Round(h_mouse / float64(size_case))
+					case_x := math.Round(k_mouse / float64(ctx.SizeCase))
+					case_y := math.Round(h_mouse / float64(ctx.SizeCase))
 					if (case_x > 0 && uint8(case_x) <= ctx.NSize) && (case_y > 0 && uint8(case_y) <= ctx.NSize) {
 						if g.Placement(&ctx, int(case_x), int(case_y)) == true {
-							// fmt.Println(ctx)
 							d.DisplayMessage(&visu, size, "", "")
-							d.TraceStone(case_x, case_y, int(size_case), &ctx, &visu)
-							if g.VictoryConditionAlign(&ctx, int(case_x), int(case_y)) == true {
-								d.DisplayVictory(&visu, ctx, int(size_case))
+							d.TraceStone(case_x, case_y, &ctx, &visu, false)
+							g.Capture(&ctx, &visu, int(case_x), int(case_y), true)
+							fmt.Println(ctx)
+							if g.VictoryConditionAlign(&ctx, int(case_x), int(case_y)) == true || g.VictoryCapture(ctx) {
+								d.DisplayVictory(&visu, ctx)
 								sdl.Log("VICTORY")
 								d.DisplayMessage(&visu, size, "Cliquez pour", "relancer")
 								endgame = true
 								continue
 							} else {
-								d.DisplayPlayer(&ctx, &visu, int(size_case), false)
+								d.DisplayPlayer(&ctx, &visu, false)
 							}
 						} else {
 							d.DisplayMessage(&visu, size, "Il y a déjà", "une pierre")
@@ -146,9 +149,9 @@ func main() {
 						ctx.Goban[index] = make([]s.Tnumber, ctx.NSize)
 						index++
 					}
-					d.TraceGoban(&visu, ctx, size, int(size_case))
-					d.DisplayPlayer(&ctx, &visu, int(size_case), false)
-					d.DisplayCounter(ctx, &visu, int(size_case))
+					d.TraceGoban(&visu, ctx)
+					d.DisplayPlayer(&ctx, &visu, false)
+					d.DisplayCounter(ctx, &visu)
 					endgame = false
 				}
 			}

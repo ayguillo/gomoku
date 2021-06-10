@@ -130,3 +130,12 @@ func VictoryConditionAlign(ctx *s.SContext, case_x int, case_y int) bool {
 	}
 	return ret_value
 }
+
+func VictoryCapture(ctx s.SContext) bool {
+	if ctx.NbCaptureP1 >= 5 {
+		return true
+	} else if ctx.NbCaptureP2 >= 5 {
+		return true
+	}
+	return false
+}

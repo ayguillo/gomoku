@@ -42,10 +42,10 @@ func DisplayMessage(visu *s.SVisu, size int32, line1 string, line2 string) {
 	}
 }
 
-func DisplayPlayer(ctx *s.SContext, visu *s.SVisu, size_case int, current bool) {
+func DisplayPlayer(ctx *s.SContext, visu *s.SVisu, current bool) {
 	var text string
 	var color sdl.Color
-	size := int32(int((ctx.NSize + 1)) * int(size_case))
+	size := ctx.Size
 	if ctx.CurrentPlayer == 1 && current == false {
 		ctx.CurrentPlayer = 2
 		color = sdl.Color{R: 35, G: 33, B: 33, A: 255}
@@ -83,9 +83,9 @@ func DisplayPlayer(ctx *s.SContext, visu *s.SVisu, size_case int, current bool) 
 	visu.Renderer.Present()
 }
 
-func DisplayVictory(visu *s.SVisu, ctx s.SContext, size_case int) {
+func DisplayVictory(visu *s.SVisu, ctx s.SContext) {
 	var color sdl.Color
-	size := int32(int((ctx.NSize + 1)) * size_case)
+	size := ctx.Size
 	if ctx.CurrentPlayer == 1 {
 		color = sdl.Color{R: 240, G: 228, B: 229, A: 255}
 	} else {
@@ -109,8 +109,8 @@ func DisplayVictory(visu *s.SVisu, ctx s.SContext, size_case int) {
 	visu.Renderer.Present()
 }
 
-func DisplayCounter(ctx s.SContext, visu *s.SVisu, size_case int) {
-	size := int32(int((ctx.NSize + 1)) * size_case)
+func DisplayCounter(ctx s.SContext, visu *s.SVisu) {
+	size := ctx.Size
 	visu.Renderer.SetDrawColor(226, 196, 115, 255)
 	visu.Renderer.DrawRect(&sdl.Rect{X: size + 4, Y: size / 2, W: (size / 4) - 10, H: 100})
 	visu.Renderer.FillRect(&sdl.Rect{X: size + 4, Y: size / 2, W: (size / 4) - 10, H: 100})
