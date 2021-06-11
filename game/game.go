@@ -102,7 +102,7 @@ func diagRightCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, ca
 			}
 			ctx.Goban[current_case_y+1][current_case_x-1] = 0
 			ctx.Goban[current_case_y+2][current_case_x-2] = 0
-			return ret_value
+			ret_value = true
 		}
 	}
 	count_stone = 0
@@ -130,7 +130,7 @@ func diagRightCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, ca
 			}
 			ctx.Goban[current_case_y-1][current_case_x+1] = 0
 			ctx.Goban[current_case_y-2][current_case_x+2] = 0
-			return ret_value
+			ret_value = true
 		}
 	}
 	return ret_value
@@ -171,7 +171,7 @@ func horizontalCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, c
 			}
 			ctx.Goban[case_y-1][current_case-1] = 0
 			ctx.Goban[case_y-1][current_case-2] = 0
-			return ret_value
+			ret_value = true
 		}
 	}
 	count_stone = 0
@@ -196,7 +196,7 @@ func horizontalCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, c
 			}
 			ctx.Goban[case_y-1][current_case+1] = 0
 			ctx.Goban[case_y-1][current_case+2] = 0
-			return ret_value
+			ret_value = true
 		}
 	}
 	return ret_value
@@ -226,7 +226,7 @@ func verticalCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, cap
 			}
 			ctx.Goban[current_case-1][case_x-1] = 0
 			ctx.Goban[current_case-2][case_x-1] = 0
-			return ret_value
+			ret_value = true
 		}
 	}
 	count_stone = 0
@@ -251,7 +251,7 @@ func verticalCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, cap
 			}
 			ctx.Goban[current_case+1][case_x-1] = 0
 			ctx.Goban[current_case+2][case_x-1] = 0
-			return ret_value
+			ret_value = true
 		}
 	}
 	return ret_value

@@ -1,6 +1,7 @@
 package display
 
 import (
+	"fmt"
 	s "gomoku/structures"
 	"math"
 
@@ -40,7 +41,26 @@ func TraceStone(case_x float64, case_y float64, ctx *s.SContext, visu *s.SVisu, 
 	visu.Renderer.Present()
 }
 
-func TraceGoban(visu *s.SVisu, ctx s.SContext) {
+func TraceGoban(visu *s.SVisu, ctx *s.SContext) {
+	// init context
+	if ctx.Goban != nil {
+		index := 0
+		for index < int(ctx.NSize) {
+			ctx.Goban[index] = nil
+			index++
+		}
+		ctx.Goban = nil
+		ctx.NbCaptureP1, ctx.NbCaptureP2 = 0, 0
+	} else {
+		ctx.NbVictoryP1, ctx.NbVictoryP2 = 0, 0
+	}
+	ctx.Goban = make([][]s.Tnumber, ctx.NSize)
+	index := 0
+	for index < int(ctx.NSize) {
+		ctx.Goban[index] = make([]s.Tnumber, ctx.NSize)
+		index++
+	}
+	fmt.Println(ctx)
 	visu.Renderer.SetDrawColor(226, 196, 115, 255)
 	visu.Renderer.DrawRect(&sdl.Rect{X: 0, Y: 0, W: ctx.Size + (ctx.Size / 4), H: ctx.Size})
 	visu.Renderer.FillRect(&sdl.Rect{X: 0, Y: 0, W: ctx.Size + (ctx.Size / 4), H: ctx.Size})
