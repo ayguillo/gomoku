@@ -19,12 +19,12 @@ func DisplayMessage(visu *s.SVisu, size int32, line1 string, line2 string) {
 	visu.Renderer.DrawRect(&sdl.Rect{X: size + 4, Y: size - 100, W: (size / 4) - 10, H: 100})
 	visu.Renderer.FillRect(&sdl.Rect{X: size + 4, Y: size - 100, W: (size / 4) - 10, H: 100})
 	visu.Renderer.Present()
-	if line1 != "" {
+	if line1 != "" && line2 != "" {
 		color := sdl.Color{R: 212, G: 66, B: 62, A: 255}
 		bmp, err := visu.FontMsg.RenderUTF8Solid(line1, color)
 		bmp2, err2 := visu.FontMsg.RenderUTF8Solid(line2, color)
 		if err != nil || err2 != nil {
-			fmt.Fprintf(os.Stderr, "Failed to renderer font: %s\n", err)
+			fmt.Fprintf(os.Stderr, "Failed to renderer font: %s\n", err, err2)
 			panic(err)
 		}
 		visu.TextureMessage1, err = visu.Renderer.CreateTextureFromSurface(bmp)
@@ -32,12 +32,28 @@ func DisplayMessage(visu *s.SVisu, size int32, line1 string, line2 string) {
 		bmp.Free()
 		bmp2.Free()
 		if err != nil || err2 != nil {
-			fmt.Fprintf(os.Stderr, "Failed to create texture font: %s\n", err)
+			fmt.Fprintf(os.Stderr, "Failed to create texture font: %s\n", err, err2)
 			panic(err)
 		}
 		visu.Renderer.Present()
 		visu.Renderer.Copy(visu.TextureMessage1, nil, &sdl.Rect{X: size + 4, Y: size - 100, W: (size / 4) - 10, H: 50})
 		visu.Renderer.Copy(visu.TextureMessage2, nil, &sdl.Rect{X: size + 4, Y: size - 50, W: (size / 4) - 10, H: 50})
+		visu.Renderer.Present()
+	} else if line1 != "" && line2 == "" {
+		color := sdl.Color{R: 212, G: 66, B: 62, A: 255}
+		bmp, err := visu.FontMsg.RenderUTF8Solid(line1, color)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to renderer font: %s\n", err)
+			panic(err)
+		}
+		visu.TextureMessage1, err = visu.Renderer.CreateTextureFromSurface(bmp)
+		bmp.Free()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to create texture font: %s\n", err)
+			panic(err)
+		}
+		visu.Renderer.Present()
+		visu.Renderer.Copy(visu.TextureMessage1, nil, &sdl.Rect{X: size + 4, Y: size - 100, W: (size / 4) - 10, H: 50})
 		visu.Renderer.Present()
 	}
 }

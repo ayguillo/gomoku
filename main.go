@@ -27,7 +27,14 @@ func main() {
 	// Déclaration de la stricture context
 	ctx := s.SContext{}
 	ctx.NSize = 19
-	ctx.CurrentPlayer = uint8((rand.Intn(3-1) + 1))
+	ctx.Goban = make([][]s.Tnumber, ctx.NSize)
+	ctx.CurrentPlayer = uint8((rand.Intn(3-1) + 1))z
+	ctx.NbVictoryP1, ctx.NbVictoryP2, ctx.NbCaptureP1, ctx.NbCaptureP2 = 0, 0, 0, 0
+	index := 0
+	for index < int(ctx.NSize) {
+		ctx.Goban[index] = make([]s.Tnumber, ctx.NSize)
+		index++
+	}
 	// Création du plateau + Déclaration de la structure visu
 	visu := s.SVisu{}
 	visu.FillDefaults()
@@ -36,10 +43,12 @@ func main() {
 	defer visu.TextureMessage2.Destroy()
 	defer visu.TextureVictoryP1.Destroy()
 	defer visu.TextureVictoryP2.Destroy()
-	ctx.SizeCase = (display.H - (int32(ctx.NSize * 3))) / (int32(ctx.NSize + 1))
-	ctx.Size = int32((int32(ctx.NSize + 1)) * ctx.SizeCase)
+	size_case := (display.H - (int32(ctx.NSize * 3))) / (int32(ctx.NSize + 1))
+	ctx.SizeCase = size_case
+	size := int32((int32(ctx.NSize + 1)) * ctx.SizeCase)
+	ctx.Size = size
 	visu.Window, err = sdl.CreateWindow("Gomoku", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
-		ctx.Size+(ctx.Size/4), ctx.Size, sdl.WINDOW_SHOWN)
+		size+(size/4), size, sdl.WINDOW_SHOWN)
 	defer visu.Window.Destroy()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to initialize window: %s\n", err)
@@ -51,17 +60,17 @@ func main() {
 		panic(err)
 	}
 	defer ttf.Quit()
-	if visu.FontPlayer, err = ttf.OpenFont("fonts/Quicksand-VariableFont_wght.ttf", int(ctx.Size)/4); err != nil {
+	if visu.FontPlayer, err = ttf.OpenFont("fonts/Quicksand-VariableFont_wght.ttf", int(size)/4); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to open font: %s\n", err)
 		panic(err)
 	}
 	defer visu.FontPlayer.Close()
-	if visu.FontMsg, err = ttf.OpenFont("fonts/Rubik-Regular.ttf", int(ctx.Size)/4); err != nil {
+	if visu.FontMsg, err = ttf.OpenFont("fonts/Rubik-Regular.ttf", int(size)/4); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to open font: %s\n", err)
 		panic(err)
 	}
 	defer visu.FontMsg.Close()
-	if visu.FontCounter, err = ttf.OpenFont("fonts/Rubik-Regular.ttf", int(ctx.Size)/4); err != nil {
+	if visu.FontCounter, err = ttf.OpenFont("fonts/Rubik-Regular.ttf", int(size)/4); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to open font: %s\n", err)
 		panic(err)
 	}
@@ -74,7 +83,7 @@ func main() {
 	defer visu.Renderer.Destroy()
 	// 0xe2c473
 	// Initialize window with color and lines
-	d.TraceGoban(&visu, &ctx)
+	d.TraceGoban(&visu, ctx)
 	d.DisplayPlayer(&ctx, &visu, true)
 	d.DisplayCounter(ctx, &visu)
 	running := true
@@ -99,38 +108,53 @@ func main() {
 					// Trouver intersection la plus proche
 					h_mouse := float64(t.Y - 5)
 					k_mouse := float64(t.X - 5)
-					case_x := math.Round(k_mouse / float64(ctx.SizeCase))
-					case_y := math.Round(h_mouse / float64(ctx.SizeCase))
-					if (case_x > 0 && uint8(case_x) <= ctx.NSize) && (case_y > 0 && uint8(case_y) <= ctx.NSize) {
+					// Traduit la coordonnee sur le tableau
+					case_x := math.Round(k_mouse/float64(ctx.SizeCase)) - 1
+					case_y := math.Round(h_mouse/float64(ctx.SizeCase)) - 1
+					if (case_x >= 0 && uint8(case_x) < ctx.NSize) && (case_y >= 0 && uint8(case_y) < ctx.NSize) {
 						if g.Placement(&ctx, int(case_x), int(case_y)) == true {
-							d.DisplayMessage(&visu, ctx.Size, "", "")
+							d.DisplayMessage(&visu, size, "", "")
 							d.TraceStone(case_x, case_y, &ctx, &visu, false)
 							g.Capture(&ctx, &visu, int(case_x), int(case_y), true)
 							fmt.Println(ctx)
-							if g.VictoryConditionAlign(&ctx, int(case_x), int(case_y)) == true || g.VictoryCapture(ctx) {
+							if g.VictoryConditionAlign(&ctx, int(case_x), int(case_y), &visu) == true || g.VictoryCapture(ctx) {
 								d.DisplayVictory(&visu, ctx)
 								sdl.Log("VICTORY")
-								d.DisplayMessage(&visu, ctx.Size, "Cliquez pour", "relancer")
+								d.DisplayMessage(&visu, size, "Cliquez pour", "relancer")
 								endgame = true
 								continue
 							} else {
 								d.DisplayPlayer(&ctx, &visu, false)
 							}
 						} else {
-							d.DisplayMessage(&visu, ctx.Size, "Il y a déjà", "une pierre")
+							d.DisplayMessage(&visu, size, "Il y a déjà", "une pierre")
 							sdl.Log("Il y a déjà une pierre")
 						}
 					} else {
-						d.DisplayMessage(&visu, ctx.Size, "En dehors", "du terrain")
+						d.DisplayMessage(&visu, size, "En dehors", "du terrain")
 						sdl.Log("En dehors du terrain")
 					}
 				}
 				if t.State == sdl.PRESSED && endgame == true {
 					visu.Renderer.Clear()
 					visu.Renderer.Present()
-					d.TraceGoban(&visu, &ctx)
+					index := 0
+					for index < int(ctx.NSize) {
+						ctx.Goban[index] = nil
+						index++
+					}
+					ctx.Goban = nil
+					ctx.Goban = make([][]s.Tnumber, ctx.NSize)
+					index = 0
+					for index < int(ctx.NSize) {
+						ctx.Goban[index] = make([]s.Tnumber, ctx.NSize)
+						index++
+					}
+					d.TraceGoban(&visu, ctx)
 					d.DisplayPlayer(&ctx, &visu, false)
 					d.DisplayCounter(ctx, &visu)
+					ctx.NbCaptureP1 = 0
+					ctx.NbCaptureP2 = 0
 					endgame = false
 				}
 			}
