@@ -28,7 +28,7 @@ func main() {
 	ctx := s.SContext{}
 	ctx.NSize = 19
 	ctx.Goban = make([][]s.Tnumber, ctx.NSize)
-	ctx.CurrentPlayer = uint8((rand.Intn(3-1) + 1))z
+	ctx.CurrentPlayer = uint8((rand.Intn(3-1) + 1))
 	ctx.NbVictoryP1, ctx.NbVictoryP2, ctx.NbCaptureP1, ctx.NbCaptureP2 = 0, 0, 0, 0
 	index := 0
 	for index < int(ctx.NSize) {

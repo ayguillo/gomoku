@@ -36,10 +36,14 @@ func counterVertical(ctx s.SContext, case_x int, case_y int, capturePlayer int) 
 		return true
 	}
 	if case_capture == false && count_stone == 2 {
-		if case_y > 0 && ctx.Goban[case_y-1][case_x] == s.Tnumber(capturePlayer) {
-			return true
-		} else if current_case >= 0 && ctx.Goban[current_case][case_x] == s.Tnumber(capturePlayer) {
-			return true
+		if case_y > 0 {
+			if ctx.Goban[case_y-1][case_x] == s.Tnumber(capturePlayer) {
+				return true
+			}
+		} else if current_case >= 0 {
+			if ctx.Goban[current_case][case_x] == s.Tnumber(capturePlayer) {
+				return true
+			}
 		}
 	}
 	return false
@@ -77,10 +81,14 @@ func counterHorizontal(ctx s.SContext, case_x int, case_y int, capturePlayer int
 		return true
 	}
 	if case_capture == false && count_stone == 2 {
-		if case_x > 0 && ctx.Goban[case_y][case_x-1] == s.Tnumber(capturePlayer) {
-			return true
-		} else if current_case >= 0 && ctx.Goban[case_y][current_case] == s.Tnumber(capturePlayer) {
-			return true
+		if case_x > 0 {
+			if ctx.Goban[case_y][case_x-1] == s.Tnumber(capturePlayer) {
+				return true
+			}
+		} else if current_case >= 0 {
+			if ctx.Goban[case_y][current_case] == s.Tnumber(capturePlayer) {
+				return true
+			}
 		}
 	}
 	return false
@@ -122,10 +130,14 @@ func counterDiagRight(ctx s.SContext, case_x int, case_y int, capturePlayer int)
 		return true
 	}
 	if case_capture == false && count_stone == 2 {
-		if case_x > 0 && case_y > 0 && ctx.Goban[case_y-1][case_x-1] == s.Tnumber(capturePlayer) {
-			return true
-		} else if current_case_x >= 0 && current_case_y >= 0 && ctx.Goban[current_case_y][current_case_x] == s.Tnumber(capturePlayer) {
-			return true
+		if case_x > 0 && case_y > 0 {
+			if ctx.Goban[case_y-1][case_x-1] == s.Tnumber(capturePlayer) {
+				return true
+			}
+		} else if current_case_x >= 0 && current_case_y >= 0 {
+			if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(capturePlayer) {
+				return true
+			}
 		}
 	}
 	return false
@@ -167,10 +179,14 @@ func counterDiagLeft(ctx s.SContext, case_x int, case_y int, capturePlayer int) 
 		return true
 	}
 	if case_capture == false && count_stone == 2 {
-		if case_x > 0 && case_y < int(ctx.NSize)-1 && ctx.Goban[case_y+1][case_x-1] == s.Tnumber(capturePlayer) {
-			return true
-		} else if current_case_x >= 0 && current_case_y >= 0 && ctx.Goban[current_case_y][current_case_x] == s.Tnumber(capturePlayer) {
-			return true
+		if case_x > 0 && case_y < int(ctx.NSize)-1 {
+			if ctx.Goban[case_y+1][case_x-1] == s.Tnumber(capturePlayer) {
+				return true
+			}
+		} else if current_case_x >= 0 && current_case_y >= 0 {
+			if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(capturePlayer) {
+				return true
+			}
 		}
 	}
 	return false

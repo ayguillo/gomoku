@@ -8,10 +8,8 @@ import (
 )
 
 func TraceStone(case_x float64, case_y float64, ctx *s.SContext, visu *s.SVisu, cover bool) {
-	if cover == true {
-		case_x++
-		case_y++
-	}
+	case_x++
+	case_y++
 	k := case_x * float64(ctx.SizeCase)
 	h := case_y * float64(ctx.SizeCase)
 	radius := 10.0
