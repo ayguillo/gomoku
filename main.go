@@ -48,7 +48,7 @@ func main() {
 	size := int32((int32(ctx.NSize + 1)) * ctx.SizeCase)
 	ctx.Size = size
 	visu.Window, err = sdl.CreateWindow("Gomoku", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
-		size+(size/4), size, sdl.WINDOW_SHOWN)
+		size+(size/2), size, sdl.WINDOW_SHOWN)
 	defer visu.Window.Destroy()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to initialize window: %s\n", err)
@@ -88,7 +88,7 @@ func main() {
 	d.DisplayCounter(ctx, &visu)
 	running := true
 	endgame := false
-	// Loop de jeu
+	// // Loop de jeu
 	for running {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch t := event.(type) {
@@ -108,30 +108,32 @@ func main() {
 					// Trouver intersection la plus proche
 					h_mouse := float64(t.Y - 5)
 					k_mouse := float64(t.X - 5)
+					fmt.Println(h_mouse, k_mouse)
 					// Traduit la coordonnee sur le tableau
-					case_x := math.Round(k_mouse/float64(ctx.SizeCase)) - 1
+					case_x := math.Round((k_mouse-float64(ctx.Size/4))/float64(ctx.SizeCase)) - 1
 					case_y := math.Round(h_mouse/float64(ctx.SizeCase)) - 1
+					fmt.Println(case_x, case_y)
 					if (case_x >= 0 && uint8(case_x) < ctx.NSize) && (case_y >= 0 && uint8(case_y) < ctx.NSize) {
 						if g.Placement(&ctx, int(case_x), int(case_y)) == true {
-							d.DisplayMessage(&visu, size, "", "")
+							d.DisplayMessage(&visu, size, "", "", ctx)
 							d.TraceStone(case_x, case_y, &ctx, &visu, false)
 							g.Capture(&ctx, &visu, int(case_x), int(case_y), true)
 							fmt.Println(ctx)
 							if g.VictoryConditionAlign(&ctx, int(case_x), int(case_y), &visu) == true || g.VictoryCapture(ctx) {
 								d.DisplayVictory(&visu, ctx)
 								sdl.Log("VICTORY")
-								d.DisplayMessage(&visu, size, "Cliquez pour", "relancer")
+								d.DisplayMessage(&visu, size, "Cliquez pour", "relancer", ctx)
 								endgame = true
 								continue
 							} else {
 								d.DisplayPlayer(&ctx, &visu, false)
 							}
 						} else {
-							d.DisplayMessage(&visu, size, "Il y a déjà", "une pierre")
+							d.DisplayMessage(&visu, size, "Il y a déjà", "une pierre", ctx)
 							sdl.Log("Il y a déjà une pierre")
 						}
 					} else {
-						d.DisplayMessage(&visu, size, "En dehors", "du terrain")
+						d.DisplayMessage(&visu, size, "En dehors", "du terrain", ctx)
 						sdl.Log("En dehors du terrain")
 					}
 				}

@@ -37,7 +37,7 @@ func horizontalAlign(ctx s.SContext, case_x int, case_y int, capturePlayer int, 
 	if count_stone >= 4 {
 		if message != "" {
 			sdl.Log(message)
-			d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "")
+			d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", ctx)
 			return false
 		}
 		return true
@@ -74,7 +74,7 @@ func verticalAlign(ctx s.SContext, case_x int, case_y int, capturePlayer int, nb
 	if count_stone >= 4 {
 		if message != "" {
 			sdl.Log(message)
-			d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "")
+			d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", ctx)
 			return false
 		}
 		return true
@@ -115,7 +115,7 @@ func diagLeft(ctx s.SContext, case_x int, case_y int, capturePlayer int, nbCaptu
 	if count_stone >= 4 {
 		if message != "" {
 			sdl.Log(message)
-			d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "")
+			d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", ctx)
 			return false
 		}
 		return true
@@ -156,7 +156,7 @@ func diagRight(ctx s.SContext, case_x int, case_y int, capturePlayer int, nbCapt
 	if count_stone >= 4 {
 		if message != "" {
 			sdl.Log(message)
-			d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "")
+			d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", ctx)
 			return false
 		}
 		return true
