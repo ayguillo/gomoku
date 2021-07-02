@@ -28,6 +28,12 @@ func main() {
 	ctx := s.SContext{}
 	ctx.NSize = 19
 	ctx.Goban = make([][]s.Tnumber, ctx.NSize)
+	ctx.MapX = make(map[int]string)
+	c := 'A'
+	for i := 1; i <= int(ctx.NSize); i++ {
+		ctx.MapX[i] = string(c)
+		c++
+	}
 	ctx.CurrentPlayer = uint8((rand.Intn(3-1) + 1))
 	ctx.NbVictoryP1, ctx.NbVictoryP2, ctx.NbCaptureP1, ctx.NbCaptureP2 = 0, 0, 0, 0
 	index := 0
@@ -43,7 +49,7 @@ func main() {
 	defer visu.TextureMessage2.Destroy()
 	defer visu.TextureVictoryP1.Destroy()
 	defer visu.TextureVictoryP2.Destroy()
-	size_case := (display.H - (int32(ctx.NSize * 3))) / (int32(ctx.NSize + 1))
+	size_case := (display.H - (int32(ctx.NSize * 3))) / (int32(ctx.NSize) + 2)
 	ctx.SizeCase = size_case
 	size := int32((int32(ctx.NSize + 1)) * ctx.SizeCase)
 	ctx.Size = size
@@ -108,11 +114,9 @@ func main() {
 					// Trouver intersection la plus proche
 					h_mouse := float64(t.Y - 5)
 					k_mouse := float64(t.X - 5)
-					fmt.Println(h_mouse, k_mouse)
 					// Traduit la coordonnee sur le tableau
 					case_x := math.Round((k_mouse-float64(ctx.Size/4))/float64(ctx.SizeCase)) - 1
 					case_y := math.Round(h_mouse/float64(ctx.SizeCase)) - 1
-					fmt.Println(case_x, case_y)
 					if (case_x >= 0 && uint8(case_x) < ctx.NSize) && (case_y >= 0 && uint8(case_y) < ctx.NSize) {
 						if g.Placement(&ctx, int(case_x), int(case_y)) == true {
 							d.DisplayMessage(&visu, size, "", "", ctx)

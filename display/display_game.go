@@ -1,8 +1,11 @@
 package display
 
 import (
+	"fmt"
 	s "gomoku/structures"
 	"math"
+	"os"
+	"strconv"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -99,28 +102,59 @@ func TraceStone(case_x float64, case_y float64, ctx *s.SContext, visu *s.SVisu, 
 
 func TraceGoban(visu *s.SVisu, ctx s.SContext) {
 	visu.Renderer.SetDrawColor(226, 196, 115, 255)
-	visu.Renderer.DrawRect(&sdl.Rect{X: 0, Y: 0, W: ctx.Size + ctx.Size/2, H: ctx.Size})
-	visu.Renderer.FillRect(&sdl.Rect{X: 0, Y: 0, W: ctx.Size + ctx.Size/2, H: ctx.Size})
+	visu.Renderer.DrawRect(&sdl.Rect{X: 0, Y: 0, W: ctx.Size + ctx.Size/2, H: ctx.Size + ((ctx.SizeCase) / 2)})
+	visu.Renderer.FillRect(&sdl.Rect{X: 0, Y: 0, W: ctx.Size + ctx.Size/2, H: ctx.Size + ((ctx.SizeCase) / 2)})
 	visu.Renderer.SetDrawColor(0, 0, 0, 200)
+	color := sdl.Color{R: 0, G: 0, B: 0, A: 200}
 	for line := 0; uint8(line) < ctx.NSize+2; line++ {
-		visu.Renderer.DrawLine((ctx.Size / 4), int32(line*int(ctx.SizeCase)), ctx.Size+ctx.Size/4, int32(line*int(ctx.SizeCase)))
-		visu.Renderer.DrawLine(int32(line*int(ctx.SizeCase))+ctx.Size/4, 0, int32(line*int(ctx.SizeCase))+ctx.Size/4, ctx.Size)
+		if line > 0 && line <= int(ctx.NSize) {
+			if visu.TextureNotationX != nil {
+				visu.TextureNotationX.Destroy()
+			}
+			if visu.TextureNotationY != nil {
+				visu.TextureNotationY.Destroy()
+			}
+			visu.Renderer.DrawLine((ctx.Size/4 + ctx.SizeCase), int32(line*int(ctx.SizeCase)), ctx.Size+ctx.Size/4-ctx.SizeCase, int32(line*int(ctx.SizeCase)))
+			visu.Renderer.DrawLine(int32(line*int(ctx.SizeCase))+ctx.Size/4, ctx.SizeCase, int32(line*int(ctx.SizeCase))+ctx.Size/4, ctx.Size-ctx.SizeCase)
+			bmpX, errX := visu.FontMsg.RenderUTF8Solid(ctx.MapX[line], color)
+			bmpY, errY := visu.FontMsg.RenderUTF8Solid(strconv.Itoa(int(ctx.NSize)-line+1), color)
+			if errX != nil || errY != nil {
+				fmt.Fprintf(os.Stderr, "Failed to renderer font: %s\n", errX)
+				panic(errX)
+				panic(errY)
+			}
+			visu.TextureNotationX, errX = visu.Renderer.CreateTextureFromSurface(bmpX)
+			visu.TextureNotationY, errY = visu.Renderer.CreateTextureFromSurface(bmpY)
+			if errX != nil || errY != nil {
+				fmt.Fprintf(os.Stderr, "Failed to create texture font: %s\n", errX)
+				panic(errX)
+				panic(errY)
+			}
+			bmpX.Free()
+			bmpY.Free()
+			visu.Renderer.Copy(visu.TextureNotationX, nil, &sdl.Rect{X: int32(line*int(ctx.SizeCase)) + ctx.Size/4 - (ctx.SizeCase / 12), Y: ctx.Size - ctx.SizeCase, W: ctx.SizeCase / 5, H: ctx.SizeCase / 2})
+			visu.Renderer.Copy(visu.TextureNotationX, nil, &sdl.Rect{X: int32(line*int(ctx.SizeCase)) + ctx.Size/4 - (ctx.SizeCase / 12), Y: ctx.SizeCase / 2, W: ctx.SizeCase / 5, H: ctx.SizeCase / 2})
+			visu.Renderer.Copy(visu.TextureNotationY, nil, &sdl.Rect{X: ctx.Size/4 + ctx.SizeCase/2, Y: int32(line*int(ctx.SizeCase)) - ctx.SizeCase/4, W: ctx.SizeCase / 5, H: ctx.SizeCase / 2})
+			visu.Renderer.Copy(visu.TextureNotationY, nil, &sdl.Rect{X: ctx.Size + ctx.Size/4 - ctx.SizeCase/2, Y: int32(line*int(ctx.SizeCase)) - ctx.SizeCase/4, W: ctx.SizeCase / 5, H: ctx.SizeCase / 2})
+		}
 	}
-	x, y := 3.0, 3.0
-	k := x*float64(ctx.SizeCase) + float64(ctx.Size/4)
-	h := y * float64(ctx.SizeCase)
-	createCircle(k, h, visu, 5, 0, 0, 0, 200)
-	x, y = float64(ctx.NSize-3.0), 3.0
-	k = x*float64(ctx.SizeCase) + float64(ctx.Size/4)
-	h = y * float64(ctx.SizeCase)
-	createCircle(k, h, visu, 5, 0, 0, 0, 200)
-	x, y = 3.0, float64(ctx.NSize)-3.0
-	k = x*float64(ctx.SizeCase) + float64(ctx.Size/4)
-	h = y * float64(ctx.SizeCase)
-	createCircle(k, h, visu, 5, 0, 0, 0, 200)
-	x, y = float64(ctx.NSize)-3.0, float64(ctx.NSize)-3.0
-	k = x*float64(ctx.SizeCase) + float64(ctx.Size/4)
-	h = y * float64(ctx.SizeCase)
-	createCircle(k, h, visu, 5, 0, 0, 0, 200)
+	if ctx.NSize == 19 {
+		x, y := 3.0, 3.0
+		k := x*float64(ctx.SizeCase) + float64(ctx.Size/4)
+		h := y * float64(ctx.SizeCase)
+		createCircle(k, h, visu, 5, 0, 0, 0, 200)
+		x, y = float64(ctx.NSize-3.0), 3.0
+		k = x*float64(ctx.SizeCase) + float64(ctx.Size/4)
+		h = y * float64(ctx.SizeCase)
+		createCircle(k, h, visu, 5, 0, 0, 0, 200)
+		x, y = 3.0, float64(ctx.NSize)-3.0
+		k = x*float64(ctx.SizeCase) + float64(ctx.Size/4)
+		h = y * float64(ctx.SizeCase)
+		createCircle(k, h, visu, 5, 0, 0, 0, 200)
+		x, y = float64(ctx.NSize)-3.0, float64(ctx.NSize)-3.0
+		k = x*float64(ctx.SizeCase) + float64(ctx.Size/4)
+		h = y * float64(ctx.SizeCase)
+		createCircle(k, h, visu, 5, 0, 0, 0, 200)
+	}
 	visu.Renderer.Present()
 }

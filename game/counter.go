@@ -43,11 +43,12 @@ func counterVertical(ctx s.SContext, case_x int, case_y int, capturePlayer int) 
 	if case_capture == false && count_stone == 2 {
 		if case_y > 0 {
 			if ctx.Goban[case_y-1][case_x] == s.Tnumber(capturePlayer) {
-				return false
+				return true
 			}
-		} else if current_case >= 3 {
+		}
+		if current_case >= 0 && current_case < int(ctx.NSize) {
 			if ctx.Goban[current_case][case_x] == s.Tnumber(capturePlayer) {
-				return false
+				return true
 			}
 		}
 	}
@@ -95,7 +96,8 @@ func counterHorizontal(ctx s.SContext, case_x int, case_y int, capturePlayer int
 			if ctx.Goban[case_y][case_x-1] == s.Tnumber(capturePlayer) {
 				return true
 			}
-		} else if current_case >= 0 && current_case < int(ctx.NSize) {
+		}
+		if current_case >= 0 && current_case < int(ctx.NSize) {
 			if ctx.Goban[case_y][current_case] == s.Tnumber(capturePlayer) {
 				return true
 			}
@@ -131,7 +133,7 @@ func counterDiagRight(ctx s.SContext, case_x int, case_y int, capturePlayer int)
 	if count_stone < 2 {
 		count_stone = 0
 		current_case_x, current_case_y = case_x, case_y
-		for current_case_x >= 0 && current_case_y >= 0 && current_case_x < int(ctx.NSize) && current_case_y < int(ctx.NSize) {
+		for current_case_x >= 0 && current_case_y >= 0 {
 			if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(ctx.CurrentPlayer) {
 				count_stone++
 			} else {
@@ -149,7 +151,8 @@ func counterDiagRight(ctx s.SContext, case_x int, case_y int, capturePlayer int)
 			if ctx.Goban[case_y-1][case_x-1] == s.Tnumber(capturePlayer) {
 				return true
 			}
-		} else if current_case_x >= 0 && current_case_y >= 0 && current_case_x < int(ctx.NSize) && current_case_y < int(ctx.NSize) {
+		}
+		if (current_case_x >= 0 && current_case_x < int(ctx.NSize)) && (current_case_y >= 0 && current_case_y < int(ctx.NSize)) {
 			if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(capturePlayer) {
 				return true
 			}
@@ -203,7 +206,8 @@ func counterDiagLeft(ctx s.SContext, case_x int, case_y int, capturePlayer int) 
 			if ctx.Goban[case_y+1][case_x-1] == s.Tnumber(capturePlayer) {
 				return true
 			}
-		} else if current_case_x >= 0 && current_case_y >= 0 {
+		}
+		if (current_case_x >= 0 && current_case_x < int(ctx.NSize)) && (current_case_y >= 0 && current_case_y < int(ctx.NSize)) {
 			if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(capturePlayer) {
 				return true
 			}

@@ -15,6 +15,8 @@ type SVisu struct {
 	TextureMessage2  *sdl.Texture
 	TextureVictoryP1 *sdl.Texture
 	TextureVictoryP2 *sdl.Texture
+	TextureNotationX *sdl.Texture
+	TextureNotationY *sdl.Texture
 	Window           *sdl.Window
 }
 

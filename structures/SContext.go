@@ -15,6 +15,7 @@ type SContext struct {
 	NbVictoryP2   int
 	NbCaptureP1   int
 	NbCaptureP2   int
+	MapX          map[int]string
 }
 
 func (goban Tgoban) String() string {
