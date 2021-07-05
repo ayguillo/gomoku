@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	a "gomoku/algorithm"
 	d "gomoku/display"
 	g "gomoku/game"
 	s "gomoku/structures"
@@ -94,6 +95,7 @@ func main() {
 	d.DisplayCounter(ctx, &visu)
 	running := true
 	endgame := false
+	var color [4]uint8
 	// // Loop de jeu
 	for running {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
@@ -119,10 +121,16 @@ func main() {
 					case_y := math.Round(h_mouse/float64(ctx.SizeCase)) - 1
 					if (case_x >= 0 && uint8(case_x) < ctx.NSize) && (case_y >= 0 && uint8(case_y) < ctx.NSize) {
 						if g.Placement(&ctx, int(case_x), int(case_y)) == true {
+							a.FindNeighbors(&ctx, int(case_x), int(case_y), &visu)
 							d.DisplayMessage(&visu, size, "", "", ctx)
-							d.TraceStone(case_x, case_y, &ctx, &visu, false)
+							if ctx.CurrentPlayer == 1 {
+								color = [4]uint8{240, 228, 229, 255}
+							} else {
+								color = [4]uint8{35, 33, 33, 255}
+							}
+							d.TraceStone(case_x, case_y, &ctx, &visu, color, false)
 							g.Capture(&ctx, &visu, int(case_x), int(case_y), true)
-							fmt.Println(ctx)
+							// fmt.Println(ctx)
 							if g.VictoryConditionAlign(&ctx, int(case_x), int(case_y), &visu) == true || g.VictoryCapture(ctx) {
 								d.DisplayVictory(&visu, ctx)
 								sdl.Log("VICTORY")

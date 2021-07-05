@@ -59,24 +59,18 @@ func drawCircle(k float64, h float64, visu *s.SVisu, radius int) {
 }
 
 func createCircle(k float64, h float64, visu *s.SVisu, radius int, r int, g int, b int, a int) {
-	visu.Renderer.SetDrawColor(0, 0, 0, 200)
+	visu.Renderer.SetDrawColor(uint8(r), uint8(g), uint8(b), uint8(a))
 	drawCircle(k, h, visu, radius)
 	fillCircle(k, h, visu, float64(radius))
 }
 
-func TraceStone(case_x float64, case_y float64, ctx *s.SContext, visu *s.SVisu, cover bool) {
+func TraceStone(case_x float64, case_y float64, ctx *s.SContext, visu *s.SVisu, color [4]uint8, cover bool) {
 	case_x++
 	case_y++
 	k := case_x*float64(ctx.SizeCase) + float64(ctx.Size/4)
 	h := case_y * float64(ctx.SizeCase)
 	radius := 10.0
-	if ctx.CurrentPlayer == 1 && cover == false {
-		visu.Renderer.SetDrawColor(240, 228, 229, 255)
-	} else if ctx.CurrentPlayer == 2 && cover == false {
-		visu.Renderer.SetDrawColor(35, 33, 33, 255)
-	} else if cover == true {
-		visu.Renderer.SetDrawColor(226, 196, 115, 255)
-	}
+	visu.Renderer.SetDrawColor(color[0], color[1], color[2], color[3])
 	// Draw circle
 	if cover == false {
 		visu.Renderer.DrawLine(int32(k-radius), int32(h), int32(k+radius+1), int32(h))

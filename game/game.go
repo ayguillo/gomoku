@@ -19,6 +19,7 @@ func diagLeftCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, cap
 	current_case_x := case_x + 1
 	current_case_y := case_y + 1
 	ret_value := false
+	color := [4]uint8{226, 196, 115, 255}
 	for current_case_x < int(ctx.NSize) && current_case_y < int(ctx.NSize) {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(capture) {
 			count_stone++
@@ -31,8 +32,8 @@ func diagLeftCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, cap
 	if count_stone == 2 && current_case_x < int(ctx.NSize) && current_case_y < int(ctx.NSize) {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(ctx.CurrentPlayer) {
 			if viz == true {
-				d.TraceStone(float64(current_case_x-1), float64(current_case_y-1), ctx, visu, true)
-				d.TraceStone(float64(current_case_x-2), float64(current_case_y-2), ctx, visu, true)
+				d.TraceStone(float64(current_case_x-1), float64(current_case_y-1), ctx, visu, color, true)
+				d.TraceStone(float64(current_case_x-2), float64(current_case_y-2), ctx, visu, color, true)
 			}
 			if ctx.CurrentPlayer == 1 {
 				ctx.NbCaptureP1++
@@ -59,8 +60,8 @@ func diagLeftCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, cap
 	if count_stone == 2 && current_case_x >= 0 && current_case_y >= 0 {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(ctx.CurrentPlayer) {
 			if viz == true {
-				d.TraceStone(float64(current_case_x+1), float64(current_case_y+1), ctx, visu, true)
-				d.TraceStone(float64(current_case_x+2), float64(current_case_y+2), ctx, visu, true)
+				d.TraceStone(float64(current_case_x+1), float64(current_case_y+1), ctx, visu, color, true)
+				d.TraceStone(float64(current_case_x+2), float64(current_case_y+2), ctx, visu, color, true)
 			}
 			if ctx.CurrentPlayer == 1 {
 				ctx.NbCaptureP1++
@@ -80,6 +81,7 @@ func diagRightCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, ca
 	current_case_x := case_x + 1
 	current_case_y := case_y - 1
 	ret_value := false
+	color := [4]uint8{226, 196, 115, 255}
 	for current_case_x < int(ctx.NSize) && current_case_y >= 0 {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(capture) {
 			count_stone++
@@ -92,8 +94,8 @@ func diagRightCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, ca
 	if count_stone == 2 && current_case_x < int(ctx.NSize) && current_case_y >= 0 {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(ctx.CurrentPlayer) {
 			if viz == true {
-				d.TraceStone(float64(current_case_x-1), float64(current_case_y+1), ctx, visu, true)
-				d.TraceStone(float64(current_case_x-2), float64(current_case_y+2), ctx, visu, true)
+				d.TraceStone(float64(current_case_x-1), float64(current_case_y+1), ctx, visu, color, true)
+				d.TraceStone(float64(current_case_x-2), float64(current_case_y+2), ctx, visu, color, true)
 			}
 			if ctx.CurrentPlayer == 1 {
 				ctx.NbCaptureP1++
@@ -120,8 +122,8 @@ func diagRightCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, ca
 	if count_stone == 2 && current_case_x < int(ctx.NSize) && current_case_y >= 0 {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(ctx.CurrentPlayer) {
 			if viz == true {
-				d.TraceStone(float64(current_case_x+1), float64(current_case_y-1), ctx, visu, true)
-				d.TraceStone(float64(current_case_x+2), float64(current_case_y-2), ctx, visu, true)
+				d.TraceStone(float64(current_case_x+1), float64(current_case_y-1), ctx, visu, color, true)
+				d.TraceStone(float64(current_case_x+2), float64(current_case_y-2), ctx, visu, color, true)
 			}
 			if ctx.CurrentPlayer == 1 {
 				ctx.NbCaptureP1++
@@ -151,6 +153,7 @@ func horizontalCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, c
 	count_stone := 0
 	current_case := case_x + 1
 	ret_value := false
+	color := [4]uint8{226, 196, 115, 255}
 	for ; current_case < int(ctx.NSize); current_case++ {
 		if ctx.Goban[case_y][current_case] == s.Tnumber(capture) {
 			count_stone++
@@ -161,8 +164,8 @@ func horizontalCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, c
 	if count_stone == 2 && current_case < int(ctx.NSize) {
 		if ctx.Goban[case_y][current_case] == s.Tnumber(ctx.CurrentPlayer) {
 			if viz == true {
-				d.TraceStone(float64(current_case-1), float64(case_y), ctx, visu, true)
-				d.TraceStone(float64(current_case-2), float64(case_y), ctx, visu, true)
+				d.TraceStone(float64(current_case-1), float64(case_y), ctx, visu, color, true)
+				d.TraceStone(float64(current_case-2), float64(case_y), ctx, visu, color, true)
 			}
 			if ctx.CurrentPlayer == 1 {
 				ctx.NbCaptureP1++
@@ -186,8 +189,8 @@ func horizontalCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, c
 	if count_stone == 2 && current_case >= 0 {
 		if ctx.Goban[case_y][current_case] == s.Tnumber(ctx.CurrentPlayer) {
 			if viz == true {
-				d.TraceStone(float64(current_case+1), float64(case_y), ctx, visu, true)
-				d.TraceStone(float64(current_case+2), float64(case_y), ctx, visu, true)
+				d.TraceStone(float64(current_case+1), float64(case_y), ctx, visu, color, true)
+				d.TraceStone(float64(current_case+2), float64(case_y), ctx, visu, color, true)
 			}
 			if ctx.CurrentPlayer == 1 {
 				ctx.NbCaptureP1++
@@ -206,6 +209,7 @@ func verticalCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, cap
 	count_stone := 0
 	current_case := case_y + 1
 	ret_value := false
+	color := [4]uint8{226, 196, 115, 255}
 	for ; current_case < int(ctx.NSize); current_case++ {
 		if ctx.Goban[current_case][case_x] == s.Tnumber(capture) {
 			count_stone++
@@ -216,8 +220,8 @@ func verticalCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, cap
 	if count_stone == 2 && current_case < int(ctx.NSize) {
 		if ctx.Goban[current_case][case_x] == s.Tnumber(ctx.CurrentPlayer) {
 			if viz == true {
-				d.TraceStone(float64(case_x), float64(current_case-1), ctx, visu, true)
-				d.TraceStone(float64(case_x), float64(current_case-2), ctx, visu, true)
+				d.TraceStone(float64(case_x), float64(current_case-1), ctx, visu, color, true)
+				d.TraceStone(float64(case_x), float64(current_case-2), ctx, visu, color, true)
 			}
 			if ctx.CurrentPlayer == 1 {
 				ctx.NbCaptureP1++
@@ -241,8 +245,8 @@ func verticalCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, cap
 	if count_stone == 2 && current_case >= 0 {
 		if ctx.Goban[current_case][case_x] == s.Tnumber(ctx.CurrentPlayer) {
 			if viz == true {
-				d.TraceStone(float64(case_x), float64(current_case+1), ctx, visu, true)
-				d.TraceStone(float64(case_x), float64(current_case+2), ctx, visu, true)
+				d.TraceStone(float64(case_x), float64(current_case+1), ctx, visu, color, true)
+				d.TraceStone(float64(case_x), float64(current_case+2), ctx, visu, color, true)
 			}
 			if ctx.CurrentPlayer == 1 {
 				ctx.NbCaptureP1++
