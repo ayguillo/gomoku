@@ -5,6 +5,21 @@ import (
 	s "gomoku/structures"
 )
 
+func addToNeigbors(ctx *s.SContext, case_x_neigbors int, case_y_neigbors int, current_x int, current_y int, visu *s.SVisu) {
+	vertex := s.SVertex{X: current_x, Y: current_y}
+	new_vertex := s.SVertex{X: case_x_neigbors, Y: case_y_neigbors}
+	array_neigh := ctx.CasesNonNull[vertex]
+	array_neigh = append(array_neigh, new_vertex)
+	ctx.CasesNonNull[vertex] = array_neigh
+	// Loop display
+	// color := [4]uint8{83, 51, 237, 1}
+	// for _, neighbor := range ctx.CasesNonNull[vertex] {
+	// 	if neighbor == new_vertex {
+	// 		d.TraceStone(float64(neighbor.X), float64(neighbor.Y), ctx, visu, color, false)
+	// 	}
+	// }
+}
+
 func Placement(ctx *s.SContext, case_x int, case_y int) bool {
 	if ctx.Goban[int(case_y)][int(case_x)] == 0 {
 		ctx.Goban[int(case_y)][int(case_x)] = s.Tnumber(ctx.CurrentPlayer)
@@ -35,6 +50,8 @@ func diagLeftCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, cap
 				d.TraceStone(float64(current_case_x-1), float64(current_case_y-1), ctx, visu, color, true)
 				d.TraceStone(float64(current_case_x-2), float64(current_case_y-2), ctx, visu, color, true)
 			}
+			addToNeigbors(ctx, current_case_x-1, current_case_y-1, current_case_x, current_case_y, visu)
+			addToNeigbors(ctx, current_case_x-2, current_case_y-2, case_x, case_y, visu)
 			if ctx.CurrentPlayer == 1 {
 				ctx.NbCaptureP1++
 			} else {
@@ -63,6 +80,8 @@ func diagLeftCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, cap
 				d.TraceStone(float64(current_case_x+1), float64(current_case_y+1), ctx, visu, color, true)
 				d.TraceStone(float64(current_case_x+2), float64(current_case_y+2), ctx, visu, color, true)
 			}
+			addToNeigbors(ctx, current_case_x+1, current_case_y+1, current_case_x, current_case_y, visu)
+			addToNeigbors(ctx, current_case_x+2, current_case_y+2, case_x, case_y, visu)
 			if ctx.CurrentPlayer == 1 {
 				ctx.NbCaptureP1++
 			} else {
@@ -97,6 +116,8 @@ func diagRightCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, ca
 				d.TraceStone(float64(current_case_x-1), float64(current_case_y+1), ctx, visu, color, true)
 				d.TraceStone(float64(current_case_x-2), float64(current_case_y+2), ctx, visu, color, true)
 			}
+			addToNeigbors(ctx, current_case_x-1, current_case_y+1, current_case_x, current_case_y, visu)
+			addToNeigbors(ctx, current_case_x-2, current_case_y+2, case_x, case_y, visu)
 			if ctx.CurrentPlayer == 1 {
 				ctx.NbCaptureP1++
 			} else {
@@ -125,6 +146,8 @@ func diagRightCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, ca
 				d.TraceStone(float64(current_case_x+1), float64(current_case_y-1), ctx, visu, color, true)
 				d.TraceStone(float64(current_case_x+2), float64(current_case_y-2), ctx, visu, color, true)
 			}
+			addToNeigbors(ctx, current_case_x+1, current_case_y-1, current_case_x, current_case_y, visu)
+			addToNeigbors(ctx, current_case_x+2, current_case_y-2, case_x, case_y, visu)
 			if ctx.CurrentPlayer == 1 {
 				ctx.NbCaptureP1++
 			} else {
@@ -167,6 +190,8 @@ func horizontalCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, c
 				d.TraceStone(float64(current_case-1), float64(case_y), ctx, visu, color, true)
 				d.TraceStone(float64(current_case-2), float64(case_y), ctx, visu, color, true)
 			}
+			addToNeigbors(ctx, current_case-1, case_y, case_x, case_y, visu)
+			addToNeigbors(ctx, current_case-2, case_y, current_case+1, case_y, visu)
 			if ctx.CurrentPlayer == 1 {
 				ctx.NbCaptureP1++
 			} else {
@@ -192,6 +217,8 @@ func horizontalCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, c
 				d.TraceStone(float64(current_case+1), float64(case_y), ctx, visu, color, true)
 				d.TraceStone(float64(current_case+2), float64(case_y), ctx, visu, color, true)
 			}
+			addToNeigbors(ctx, current_case+1, case_y, current_case, case_y, visu)
+			addToNeigbors(ctx, current_case+2, case_y, case_x, case_y, visu)
 			if ctx.CurrentPlayer == 1 {
 				ctx.NbCaptureP1++
 			} else {
@@ -223,6 +250,8 @@ func verticalCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, cap
 				d.TraceStone(float64(case_x), float64(current_case-1), ctx, visu, color, true)
 				d.TraceStone(float64(case_x), float64(current_case-2), ctx, visu, color, true)
 			}
+			addToNeigbors(ctx, case_x, current_case-1, case_x, case_y, visu)
+			addToNeigbors(ctx, case_x, current_case-2, case_x, current_case+1, visu)
 			if ctx.CurrentPlayer == 1 {
 				ctx.NbCaptureP1++
 			} else {
@@ -248,6 +277,8 @@ func verticalCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, cap
 				d.TraceStone(float64(case_x), float64(current_case+1), ctx, visu, color, true)
 				d.TraceStone(float64(case_x), float64(current_case+2), ctx, visu, color, true)
 			}
+			addToNeigbors(ctx, case_x, current_case+1, case_x, current_case, visu)
+			addToNeigbors(ctx, case_x, current_case+2, case_x, case_y, visu)
 			if ctx.CurrentPlayer == 1 {
 				ctx.NbCaptureP1++
 			} else {
