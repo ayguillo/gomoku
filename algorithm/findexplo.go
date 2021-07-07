@@ -5,10 +5,9 @@ import (
 )
 
 func inNeighbors(ctx *s.SContext, vertex s.SVertex, array_neigbors []s.SVertex) []s.SVertex {
-	if (vertex.Y < 0 || vertex.Y >= 19) || (vertex.X < 0 || vertex.X >= 19) {
+	if (vertex.Y < 0 || vertex.Y >= int(ctx.NSize)) || (vertex.X < 0 || vertex.X >= int(ctx.NSize)) {
 		return array_neigbors
 	}
-	// fmt.Println(ctx.Goban[vertex.Y][vertex.X], vertex.Y, vertex.X)
 	if ctx.Goban[vertex.Y][vertex.X] != 0 {
 		return array_neigbors
 	}

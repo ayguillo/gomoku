@@ -50,6 +50,10 @@ func main() {
 	defer visu.TextureMessage2.Destroy()
 	defer visu.TextureVictoryP1.Destroy()
 	defer visu.TextureVictoryP2.Destroy()
+	defer visu.TextureCaptureP1.Destroy()
+	defer visu.TextureCaptureP2.Destroy()
+	defer visu.TextureNotationX.Destroy()
+	defer visu.TextureNotationY.Destroy()
 	size_case := (display.H - (int32(ctx.NSize * 3))) / (int32(ctx.NSize) + 2)
 	ctx.SizeCase = size_case
 	size := int32((int32(ctx.NSize + 1)) * ctx.SizeCase)
@@ -123,6 +127,8 @@ func main() {
 						if g.Placement(&ctx, int(case_x), int(case_y)) == true {
 							a.FindNeighbors(&ctx, int(case_x), int(case_y), &visu)
 							d.DisplayMessage(&visu, size, "", "", ctx)
+							heuris := a.Heuristic(ctx, int(case_x), int(case_y))
+							fmt.Println("Heuristic = ", heuris)
 							if ctx.CurrentPlayer == 1 {
 								color = [4]uint8{240, 228, 229, 255}
 							} else {
@@ -130,6 +136,7 @@ func main() {
 							}
 							d.TraceStone(case_x, case_y, &ctx, &visu, color, false)
 							g.Capture(&ctx, &visu, int(case_x), int(case_y), true)
+							d.DisplayCapture(ctx, &visu)
 							// fmt.Println(ctx)
 							if g.VictoryConditionAlign(&ctx, int(case_x), int(case_y), &visu) == true || g.VictoryCapture(ctx) {
 								d.DisplayVictory(&visu, ctx)
@@ -169,6 +176,7 @@ func main() {
 					d.DisplayCounter(ctx, &visu)
 					ctx.NbCaptureP1 = 0
 					ctx.NbCaptureP2 = 0
+					ctx.CasesNonNull = nil
 					endgame = false
 				}
 			}

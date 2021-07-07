@@ -4,7 +4,7 @@ import (
 	s "gomoku/structures"
 )
 
-func counterVertical(ctx s.SContext, case_x int, case_y int, capturePlayer int) bool {
+func CounterVertical(ctx s.SContext, case_x int, case_y int, capturePlayer int) bool {
 	current_case := case_y
 	case_capture := false
 	count_stone := 0
@@ -55,7 +55,7 @@ func counterVertical(ctx s.SContext, case_x int, case_y int, capturePlayer int) 
 	return false
 }
 
-func counterHorizontal(ctx s.SContext, case_x int, case_y int, capturePlayer int) bool {
+func CounterHorizontal(ctx s.SContext, case_x int, case_y int, capturePlayer int) bool {
 	current_case := case_x
 	case_capture := false
 	count_stone := 0
@@ -106,7 +106,7 @@ func counterHorizontal(ctx s.SContext, case_x int, case_y int, capturePlayer int
 	return false
 }
 
-func counterDiagRight(ctx s.SContext, case_x int, case_y int, capturePlayer int) bool {
+func CounterDiagRight(ctx s.SContext, case_x int, case_y int, capturePlayer int) bool {
 	current_case_x, current_case_y := case_x, case_y
 	case_capture := false
 	count_stone := 0
@@ -161,7 +161,7 @@ func counterDiagRight(ctx s.SContext, case_x int, case_y int, capturePlayer int)
 	return false
 }
 
-func counterDiagLeft(ctx s.SContext, case_x int, case_y int, capturePlayer int) bool {
+func CounterDiagLeft(ctx s.SContext, case_x int, case_y int, capturePlayer int) bool {
 	current_case_x, current_case_y := case_x, case_y
 	case_capture := false
 	count_stone := 0
@@ -216,11 +216,11 @@ func counterDiagLeft(ctx s.SContext, case_x int, case_y int, capturePlayer int) 
 	return false
 }
 
-func counterDiag(ctx s.SContext, case_x int, case_y int, capturePlayer int) bool {
-	if counterDiagRight(ctx, case_x, case_y, capturePlayer) == true {
+func CounterDiag(ctx s.SContext, case_x int, case_y int, capturePlayer int) bool {
+	if CounterDiagRight(ctx, case_x, case_y, capturePlayer) == true {
 		return true
 	}
-	if counterDiagLeft(ctx, case_x, case_y, capturePlayer) == true {
+	if CounterDiagLeft(ctx, case_x, case_y, capturePlayer) == true {
 		return true
 	}
 	return false

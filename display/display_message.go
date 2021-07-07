@@ -180,13 +180,60 @@ func DisplayCounter(ctx s.SContext, visu *s.SVisu) {
 	}
 	visu.TextureVictoryP1, err = visu.Renderer.CreateTextureFromSurface(bmp_p1)
 	visu.TextureVictoryP2, err2 = visu.Renderer.CreateTextureFromSurface(bmp_p2)
-	if err != nil {
+	if err != nil || err2 != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create texture font: %s\n", err)
 		panic(err)
 	}
 	bmp_p1.Free()
 	bmp_p2.Free()
-	visu.Renderer.Copy(visu.TextureVictoryP1, nil, &sdl.Rect{X: size + 4 + size/4, Y: size / 2, W: (size / 4) - 10, H: 50})
-	visu.Renderer.Copy(visu.TextureVictoryP2, nil, &sdl.Rect{X: 4, Y: size / 2, W: (size / 4) - 10, H: 50})
+
+	visu.Renderer.Copy(visu.TextureVictoryP1, nil, &sdl.Rect{X: 4, Y: size / 2, W: (size / 4) - 10, H: 50})
+	visu.Renderer.Copy(visu.TextureVictoryP2, nil, &sdl.Rect{X: size + 4 + size/4, Y: size / 2, W: (size / 4) - 10, H: 50})
+
 	visu.Renderer.Present()
+}
+
+func DisplayCapture(ctx s.SContext, visu *s.SVisu) {
+	colorP1 := sdl.Color{R: 240, G: 228, B: 229, A: 255}
+	colorP2 := sdl.Color{R: 35, G: 33, B: 33, A: 255}
+	size := ctx.Size
+	if ctx.NbCaptureP1 != 0 {
+		visu.Renderer.SetDrawColor(226, 196, 115, 255)
+		visu.Renderer.DrawRect(&sdl.Rect{X: 4, Y: size / 4, W: (size / 4) - 10, H: 50})
+		visu.Renderer.FillRect(&sdl.Rect{X: 4, Y: size / 4, W: (size / 4) - 10, H: 50})
+		captureP1 := "Nb Capture Player 1 : " + strconv.Itoa(ctx.NbCaptureP1)
+		bmp_p1, err := visu.FontMsg.RenderUTF8Solid(captureP1, colorP1)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to renderer font: %s\n", err)
+			panic(err)
+		}
+		visu.TextureCaptureP1, err = visu.Renderer.CreateTextureFromSurface(bmp_p1)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to create texture font: %s\n", err)
+			panic(err)
+		}
+		bmp_p1.Free()
+		visu.Renderer.Copy(visu.TextureCaptureP1, nil, &sdl.Rect{X: 4, Y: size / 4, W: (size / 4) - 10, H: 50})
+	}
+	if ctx.NbCaptureP2 != 0 {
+		visu.Renderer.SetDrawColor(226, 196, 115, 255)
+		visu.Renderer.DrawRect(&sdl.Rect{X: size + 4 + size/4, Y: size / 4, W: (size / 4) - 10, H: 50})
+		visu.Renderer.FillRect(&sdl.Rect{X: size + 4 + size/4, Y: size / 4, W: (size / 4) - 10, H: 50})
+		captureP2 := "Nb Capture Player 2 : " + strconv.Itoa(ctx.NbCaptureP2)
+		bmp_p2, err2 := visu.FontMsg.RenderUTF8Solid(captureP2, colorP2)
+		if err2 != nil {
+			fmt.Fprintf(os.Stderr, "Failed to renderer font: %s\n", err2)
+			panic(err2)
+		}
+		visu.TextureCaptureP2, err2 = visu.Renderer.CreateTextureFromSurface(bmp_p2)
+		if err2 != nil {
+			fmt.Fprintf(os.Stderr, "Failed to create texture font: %s\n", err2)
+			panic(err2)
+		}
+		bmp_p2.Free()
+		visu.Renderer.Copy(visu.TextureCaptureP2, nil, &sdl.Rect{X: size + 4 + size/4, Y: size / 4, W: (size / 4) - 10, H: 50})
+	}
+	if ctx.NbCaptureP1 != 0 || ctx.NbCaptureP2 != 0 {
+		visu.Renderer.Present()
+	}
 }

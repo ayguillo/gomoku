@@ -15,6 +15,8 @@ type SVisu struct {
 	TextureMessage2  *sdl.Texture
 	TextureVictoryP1 *sdl.Texture
 	TextureVictoryP2 *sdl.Texture
+	TextureCaptureP1 *sdl.Texture
+	TextureCaptureP2 *sdl.Texture
 	TextureNotationX *sdl.Texture
 	TextureNotationY *sdl.Texture
 	Window           *sdl.Window
@@ -24,4 +26,10 @@ func (visu *SVisu) FillDefaults() {
 	visu.TexturePlayer = nil
 	visu.TextureMessage1 = nil
 	visu.TextureMessage2 = nil
+	visu.TextureVictoryP1 = nil
+	visu.TextureVictoryP2 = nil
+	visu.TextureCaptureP1 = nil
+	visu.TextureCaptureP2 = nil
+	visu.TextureNotationX = nil
+	visu.TextureNotationY = nil
 }
