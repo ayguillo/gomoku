@@ -127,7 +127,9 @@ func main() {
 						if g.Placement(&ctx, int(case_x), int(case_y)) == true {
 							a.FindNeighbors(&ctx, int(case_x), int(case_y), &visu)
 							d.DisplayMessage(&visu, size, "", "", ctx)
+							start := time.Now()
 							heuris := a.Heuristic(ctx, int(case_x), int(case_y))
+							fmt.Println(time.Since(start))
 							fmt.Println("Heuristic = ", heuris)
 							if ctx.CurrentPlayer == 1 {
 								color = [4]uint8{240, 228, 229, 255}

@@ -36,8 +36,21 @@ func captureHeuristic(ctx s.SContext, case_x int, case_y int) int {
 	return horizontal + vertical + diagonal
 }
 
+func blockHeuristic(ctx s.SContext, case_x int, case_y int) int {
+	var opponent s.Tnumber
+	if ctx.CurrentPlayer == 1 {
+		opponent = 2
+	} else {
+		opponent = 1
+	}
+	block := block(ctx, case_x, case_y, opponent)
+	return block
+}
+
 func Heuristic(ctx s.SContext, case_x int, case_y int) int {
-	align := conditionAlignHeuristic(ctx, case_x, case_y)
-	capture := captureHeuristic(ctx, case_x, case_y)
-	return align + capture
+	// align := conditionAlignHeuristic(ctx, case_x, case_y)
+	// capture := captureHeuristic(ctx, case_x, case_y)
+	// return align + capture
+	block := blockHeuristic(ctx, case_x, case_y)
+	return block
 }
