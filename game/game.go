@@ -21,7 +21,7 @@ func addToNeigbors(ctx *s.SContext, case_x_neigbors int, case_y_neigbors int, cu
 }
 
 func Placement(ctx *s.SContext, case_x int, case_y int) bool {
-	if ctx.Goban[int(case_y)][int(case_x)] == 0 {
+	if (ctx.Goban[int(case_y)][int(case_x)] == 0) && checkDoubleThree(ctx, case_x, case_y) {
 		ctx.Goban[int(case_y)][int(case_x)] = s.Tnumber(ctx.CurrentPlayer)
 		return true
 	} else {
