@@ -163,11 +163,3 @@ func blockDiagRight(ctx s.SContext, case_x int, case_y int, opponent s.Tnumber) 
 	}
 	return heuristic
 }
-
-func block(ctx s.SContext, case_x int, case_y int, opponent s.Tnumber) int {
-	horizontal := blockHorizontal(ctx, case_x, case_y, opponent)
-	vertical := blockVertical(ctx, case_x, case_y, opponent)
-	diagLeft := blockDiagLeft(ctx, case_x, case_y, opponent)
-	diagRight := blockDiagRight(ctx, case_x, case_y, opponent)
-	return horizontal + vertical + diagLeft + diagRight
-}

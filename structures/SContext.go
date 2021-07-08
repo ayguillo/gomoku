@@ -17,6 +17,7 @@ type SContext struct {
 	NbCaptureP2   int
 	MapX          map[int]string
 	CasesNonNull  map[SVertex][]SVertex
+	Capture       SVertex
 }
 
 func (goban Tgoban) String() string {

@@ -43,14 +43,16 @@ func blockHeuristic(ctx s.SContext, case_x int, case_y int) int {
 	} else {
 		opponent = 1
 	}
-	block := block(ctx, case_x, case_y, opponent)
-	return block
+	horizontal := blockHorizontal(ctx, case_x, case_y, opponent)
+	vertical := blockVertical(ctx, case_x, case_y, opponent)
+	diagLeft := blockDiagLeft(ctx, case_x, case_y, opponent)
+	diagRight := blockDiagRight(ctx, case_x, case_y, opponent)
+	return horizontal + vertical + diagLeft + diagRight
 }
 
 func Heuristic(ctx s.SContext, case_x int, case_y int) int {
-	// align := conditionAlignHeuristic(ctx, case_x, case_y)
-	// capture := captureHeuristic(ctx, case_x, case_y)
-	// return align + capture
+	align := conditionAlignHeuristic(ctx, case_x, case_y)
+	capture := captureHeuristic(ctx, case_x, case_y)
 	block := blockHeuristic(ctx, case_x, case_y)
-	return block
+	return align + capture + block
 }
