@@ -4,26 +4,9 @@ import (
 	s "gomoku/structures"
 )
 
-func checkDoubleThreeVertical(ctx *s.SContext, case_x int, case_y int) bool {
-	leftDoubleThree := checkLeftDoubleThree(ctx, case_x, case_y)
-	rightDoubleThree := checkRightDoubleThree(ctx, case_x, case_y)
-
-	leftUpDiagDoubleThree := checkLefUptDiagDoubleThree(ctx, case_x, case_y)
-	rightDownDiagDoubleThree := checkRightDownDiagDoubleThree(ctx, case_x, case_y)
-
-	leftDownDiagDoubleThree := checkLeftDownDiagDoubleThree(ctx, case_x, case_y)
-	rightUpDiagDoubleThree := checkRightUpDiagDoubleThree(ctx, case_x, case_y)
-
-	if (leftDoubleThree >= 2 || rightDoubleThree >= 2 || leftUpDiagDoubleThree >= 2 || rightDownDiagDoubleThree >= 2 || leftDownDiagDoubleThree >= 2 || rightUpDiagDoubleThree >= 2) {
-		return false
-	}
-
-	return true
-}
-
 func checkVertical(ctx *s.SContext, case_x int, case_y int, leftDoubleThree int, rightDoubleThree int, upDoubleThree int, downDoubleThree int, leftUpDiagDoubleThree int, rightDownDiagDoubleThree int, leftDownDiagDoubleThree int, rightUpDiagDoubleThree int) bool {
 	if (upDoubleThree >= 2) {
-		if (leftDoubleThree >= 2 || rightDoubleThree >= 2 || leftUpDiagDoubleThree >= 2 || rightUpDiagDoubleThree >= 2 || leftDownDiagDoubleThree >= 2 || rightUpDiagDoubleThree >= 2) {
+		if (leftDoubleThree >= 2 || rightDoubleThree >= 2 || leftUpDiagDoubleThree >= 2 || rightDownDiagDoubleThree >= 2 || leftDownDiagDoubleThree >= 2 || rightUpDiagDoubleThree >= 2) {
 			return false
 		}
 
@@ -33,7 +16,7 @@ func checkVertical(ctx *s.SContext, case_x int, case_y int, leftDoubleThree int,
 	}
 
 	if (downDoubleThree >= 2) {
-		if (leftDoubleThree >= 2 || rightDoubleThree >= 2 || leftUpDiagDoubleThree >= 2 || rightUpDiagDoubleThree >= 2 || leftDownDiagDoubleThree >= 2 || rightUpDiagDoubleThree >= 2) {
+		if (leftDoubleThree >= 2 || rightDoubleThree >= 2 || leftUpDiagDoubleThree >= 2 || rightDownDiagDoubleThree >= 2 || leftDownDiagDoubleThree >= 2 || rightUpDiagDoubleThree >= 2) {
 			return false
 		}
 
@@ -43,7 +26,7 @@ func checkVertical(ctx *s.SContext, case_x int, case_y int, leftDoubleThree int,
 	}
 
 	if (upDoubleThree >= 1 && downDoubleThree >= 1) {
-		if (leftDoubleThree >= 2 || rightDoubleThree >= 2 || leftUpDiagDoubleThree >= 2 || rightUpDiagDoubleThree >= 2 || leftDownDiagDoubleThree >= 2 || rightUpDiagDoubleThree >= 2) {
+		if (leftDoubleThree >= 2 || rightDoubleThree >= 2 || leftUpDiagDoubleThree >= 2 || rightDownDiagDoubleThree >= 2 || leftDownDiagDoubleThree >= 2 || rightUpDiagDoubleThree >= 2) {
 			return false
 		}
 

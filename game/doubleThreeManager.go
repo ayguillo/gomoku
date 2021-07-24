@@ -202,7 +202,10 @@ func checkDoubleThree(ctx *s.SContext, case_x int, case_y int) bool {
 	rightUpDiagDoubleThree := checkRightUpDiagDoubleThree(ctx, case_x, case_y)
 
 
-	if (checkHorizon(ctx, case_x, case_y, leftDoubleThree, rightDoubleThree, upDoubleThree, downDoubleThree, leftUpDiagDoubleThree, rightDownDiagDoubleThree, leftDownDiagDoubleThree, rightUpDiagDoubleThree) == false || checkVertical(ctx, case_x, case_y, leftDoubleThree, rightDoubleThree, upDoubleThree, downDoubleThree, leftUpDiagDoubleThree, rightDownDiagDoubleThree, leftDownDiagDoubleThree, rightUpDiagDoubleThree) == false) {
+	if (checkHorizon(ctx, case_x, case_y, leftDoubleThree, rightDoubleThree, upDoubleThree, downDoubleThree, leftUpDiagDoubleThree, rightDownDiagDoubleThree, leftDownDiagDoubleThree, rightUpDiagDoubleThree) == false ||
+		checkVertical(ctx, case_x, case_y, leftDoubleThree, rightDoubleThree, upDoubleThree, downDoubleThree, leftUpDiagDoubleThree, rightDownDiagDoubleThree, leftDownDiagDoubleThree, rightUpDiagDoubleThree) == false ||
+		checkDiagLeft(ctx, case_x, case_y, leftDoubleThree, rightDoubleThree, upDoubleThree, downDoubleThree, leftUpDiagDoubleThree, rightDownDiagDoubleThree, leftDownDiagDoubleThree, rightUpDiagDoubleThree) == false ||
+		checkDiagRight(ctx, case_x, case_y, leftDoubleThree, rightDoubleThree, upDoubleThree, downDoubleThree, leftUpDiagDoubleThree, rightDownDiagDoubleThree, leftDownDiagDoubleThree, rightUpDiagDoubleThree) == false) {
 		return false
 	}
 	// if (/*captureIsNotACapture() && */ horizontal + vertical + left + right >= 4) {
