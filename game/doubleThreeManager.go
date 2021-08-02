@@ -4,212 +4,25 @@ import (
 	s "gomoku/structures"
 )
 
-func checkLefUptDiagDoubleThree(ctx *s.SContext, case_x int, case_y int) int {
-	piece := 0
-	count := 0
-
-	for case_x >= 0 && case_y >= 0 && count < 4 && piece < 2 {
-		if (ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer)) {
-			piece++
-		} else if (ctx.Goban[case_y][case_x] != 0) {
-			return 0
-		}
-
-		count++
-		case_y--
-		case_x--
-	}
-
-	if (case_x <= 0 || case_y <= 0 || ctx.Goban[case_y][case_x] != s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[case_y][case_x] != 0) {
-		return 0
-	}
-
-
-	return piece
-}
-
-func checkRightUpDiagDoubleThree(ctx *s.SContext, case_x int, case_y int) int {
-	piece := 0
-	count := 0
-
-	for case_x < int(ctx.NSize) && case_y >= 0 && count < 4 && piece < 2 {
-		if (ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer)) {
-			piece++
-		} else if (ctx.Goban[case_y][case_x] != 0) {
-			return 0
-		}
-
-		count++
-		case_y--
-		case_x++
-	}
-
-	if (case_x >= int(ctx.NSize) || case_y <= 0 || ctx.Goban[case_y][case_x] != s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[case_y][case_x] != 0) {
-		return 0
-	}
-
-
-	return piece
-}
-
-func checkLeftDownDiagDoubleThree(ctx *s.SContext, case_x int, case_y int) int {
-	piece := 0
-	count := 0
-
-	for case_x >= 0 && case_y < int(ctx.NSize) && count < 4 && piece < 2 {
-		if (ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer)) {
-			piece++
-		} else if (ctx.Goban[case_y][case_x] != 0) {
-			return 0
-		}
-
-		count++
-		case_y++
-		case_x--
-	}
-
-	if (case_x <= 0 || case_y >= int(ctx.NSize) || ctx.Goban[case_y][case_x] != s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[case_y][case_x] != 0) {
-		return 0
-	}
-
-
-	return piece
-}
-
-func checkRightDownDiagDoubleThree(ctx *s.SContext, case_x int, case_y int) int {
-	piece := 0
-	count := 0
-
-	for case_x < int(ctx.NSize) && case_y < int(ctx.NSize) && count < 4 && piece < 2 {
-		if (ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer)) {
-			piece++
-		} else if (ctx.Goban[case_y][case_x] != 0) {
-			return 0
-		}
-
-		count++
-		case_y++
-		case_x++
-	}
-
-	if (case_x >= int(ctx.NSize) || case_y >= int(ctx.NSize) || ctx.Goban[case_y][case_x] != s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[case_y][case_x] != 0) {
-		return 0
-	}
-
-	return piece
-}
-
-func checkUpDoubleThree(ctx *s.SContext, case_x int, case_y int) int {
-	piece := 0
-	count := 0
-
-	for case_y >= 0 && count < 4 && piece < 2 {
-		if (ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer)) {
-			piece++
-		} else if (ctx.Goban[case_y][case_x] != 0) {
-			return 0
-		}
-
-		count++
-		case_y--
-	}
-
-	if (case_y <= 0 || ctx.Goban[case_y][case_x] != s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[case_y][case_x] != 0) {
-		return 0
-	}
-
-	return piece
-}
-
-func checkDownDoubleThree(ctx *s.SContext, case_x int, case_y int) int {
-	piece := 0
-	count := 0
-
-	for case_y < int(ctx.NSize) && count < 4 && piece < 2 {
-		if (ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer)) {
-			piece++
-		} else if (ctx.Goban[case_y][case_x] != 0) {
-			return 0
-		}
-
-		count++
-		case_y++
-	}
-
-	if (case_y >= int(ctx.NSize) || ctx.Goban[case_y][case_x] != s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[case_y][case_x] != 0) {
-		return 0
-	}
-
-	return piece
-}
-
-func checkLeftDoubleThree(ctx *s.SContext, case_x int, case_y int) int {
-	piece := 0
-	count := 0
-
-	for case_x >= 0 && count < 4 && piece < 2 {
-		if (ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer)) {
-			piece++
-		} else if (ctx.Goban[case_y][case_x] != 0) {
-			return 0
-		}
-
-		count++
-		case_x--
-	}
-
-	if (case_x <= 0 || ctx.Goban[case_y][case_x] != s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[case_y][case_x] != 0) {
-		return 0
-	}
-
-	return piece
-}
-
-func checkRightDoubleThree(ctx *s.SContext, case_x int, case_y int) int {
-	piece := 0
-	count := 0
-
-	for case_x < int(ctx.NSize) && count < 4 && piece < 2 {
-		if (ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer)) {
-			piece++
-		} else if (ctx.Goban[case_y][case_x] != 0) {
-			return 0
-		}
-
-		count++
-		case_x++
-	}
-
-	if (case_x >= int(ctx.NSize) || ctx.Goban[case_y][case_x] != s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[case_y][case_x] != 0) {
-		return 0
-	}
-
-	return piece
-}
-
-
 func checkDoubleThree(ctx *s.SContext, case_x int, case_y int) bool {
-	leftDoubleThree := checkLeftDoubleThree(ctx, case_x, case_y)
-	rightDoubleThree := checkRightDoubleThree(ctx, case_x, case_y)
-	
-	upDoubleThree := checkUpDoubleThree(ctx, case_x, case_y)
-	downDoubleThree := checkDownDoubleThree(ctx, case_x, case_y)
+	leftDoubleThree := checkLeftDoubleThree(ctx, case_x, case_y, 2)
+	rightDoubleThree := checkRightDoubleThree(ctx, case_x, case_y, 2)
 
-	leftUpDiagDoubleThree := checkLefUptDiagDoubleThree(ctx, case_x, case_y)
-	rightDownDiagDoubleThree := checkRightDownDiagDoubleThree(ctx, case_x, case_y)
+	upDoubleThree := checkUpDoubleThree(ctx, case_x, case_y, 2)
+	downDoubleThree := checkDownDoubleThree(ctx, case_x, case_y, 2)
 
-	leftDownDiagDoubleThree := checkLeftDownDiagDoubleThree(ctx, case_x, case_y)
-	rightUpDiagDoubleThree := checkRightUpDiagDoubleThree(ctx, case_x, case_y)
+	leftUpDiagDoubleThree := checkLefUptDiagDoubleThree(ctx, case_x, case_y, 2)
+	rightDownDiagDoubleThree := checkRightDownDiagDoubleThree(ctx, case_x, case_y, 2)
 
+	leftDownDiagDoubleThree := checkLeftDownDiagDoubleThree(ctx, case_x, case_y, 2)
+	rightUpDiagDoubleThree := checkRightUpDiagDoubleThree(ctx, case_x, case_y, 2)
 
-	if (checkHorizon(ctx, case_x, case_y, leftDoubleThree, rightDoubleThree, upDoubleThree, downDoubleThree, leftUpDiagDoubleThree, rightDownDiagDoubleThree, leftDownDiagDoubleThree, rightUpDiagDoubleThree) == false ||
-		checkVertical(ctx, case_x, case_y, leftDoubleThree, rightDoubleThree, upDoubleThree, downDoubleThree, leftUpDiagDoubleThree, rightDownDiagDoubleThree, leftDownDiagDoubleThree, rightUpDiagDoubleThree) == false ||
-		checkDiagLeft(ctx, case_x, case_y, leftDoubleThree, rightDoubleThree, upDoubleThree, downDoubleThree, leftUpDiagDoubleThree, rightDownDiagDoubleThree, leftDownDiagDoubleThree, rightUpDiagDoubleThree) == false ||
-		checkDiagRight(ctx, case_x, case_y, leftDoubleThree, rightDoubleThree, upDoubleThree, downDoubleThree, leftUpDiagDoubleThree, rightDownDiagDoubleThree, leftDownDiagDoubleThree, rightUpDiagDoubleThree) == false) {
+	if !checkHorizon(ctx, case_x, case_y, leftDoubleThree, rightDoubleThree, upDoubleThree, downDoubleThree, leftUpDiagDoubleThree, rightDownDiagDoubleThree, leftDownDiagDoubleThree, rightUpDiagDoubleThree) ||
+		!checkVertical(ctx, case_x, case_y, leftDoubleThree, rightDoubleThree, upDoubleThree, downDoubleThree, leftUpDiagDoubleThree, rightDownDiagDoubleThree, leftDownDiagDoubleThree, rightUpDiagDoubleThree) ||
+		!checkDiagLeft(ctx, case_x, case_y, leftDoubleThree, rightDoubleThree, upDoubleThree, downDoubleThree, leftUpDiagDoubleThree, rightDownDiagDoubleThree, leftDownDiagDoubleThree, rightUpDiagDoubleThree) ||
+		!checkDiagRight(ctx, case_x, case_y, leftDoubleThree, rightDoubleThree, upDoubleThree, downDoubleThree, leftUpDiagDoubleThree, rightDownDiagDoubleThree, leftDownDiagDoubleThree, rightUpDiagDoubleThree) {
 		return false
 	}
-	// if (/*captureIsNotACapture() && */ horizontal + vertical + left + right >= 4) {
-	// 	return false
-	// }
+
 	return true
 }
