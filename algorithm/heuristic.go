@@ -17,7 +17,19 @@ func conditionAlignHeuristic(ctx s.SContext, case_x int, case_y int) int {
 	vertical := verticalHeuristicAlign(ctx, case_x, case_y, capturePlayer, nbCapture)
 	diagonal := diagonalHeuristicAlign(ctx, case_x, case_y, capturePlayer, nbCapture)
 	return horizontal + vertical + diagonal
-	return horizontal
+}
+
+func PlacementHeuristic(ctx s.SContext, case_x int, case_y int) uint8 {
+	if ctx.Capture.X != -1 {
+		if case_x != ctx.Capture.X || case_y != ctx.Capture.Y {
+			return 2
+		}
+	}
+	if ctx.Goban[int(case_y)][int(case_x)] == 0 {
+		return 1
+	} else {
+		return 0
+	}
 }
 
 func captureHeuristic(ctx s.SContext, case_x int, case_y int) int {

@@ -30,12 +30,13 @@ func main() {
 	ctx.NSize = 19
 	ctx.Goban = make([][]s.Tnumber, ctx.NSize)
 	ctx.MapX = make(map[int]string)
+	ctx.Capture = s.SVertex{X: -1, Y: -1}
 	c := 'A'
 	for i := 1; i <= int(ctx.NSize); i++ {
 		ctx.MapX[i] = string(c)
 		c++
 	}
-	ctx.CurrentPlayer = uint8((rand.Intn(3-1) + 1))
+	ctx.CurrentPlayer = 1
 	ctx.NbVictoryP1, ctx.NbVictoryP2, ctx.NbCaptureP1, ctx.NbCaptureP2 = 0, 0, 0, 0
 	index := 0
 	for index < int(ctx.NSize) {
@@ -97,11 +98,37 @@ func main() {
 	d.TraceGoban(&visu, ctx)
 	d.DisplayPlayer(&ctx, &visu, true)
 	d.DisplayCounter(ctx, &visu)
+	middle := math.Round(float64(ctx.NSize)/2) - 2
+	var color [4]uint8
+	color = [4]uint8{35, 33, 33, 255}
+	d.TraceStone(middle, middle, &ctx, &visu, color, false)
+	ctx.Goban[int(middle)][int(middle)] = s.Tnumber(2)
+	a.FindNeighbors(&ctx, int(middle), int(middle), &visu)
 	running := true
 	endgame := false
-	var color [4]uint8
-	// // Loop de jeu
+	// Loop de jeu
 	for running {
+		if ctx.CurrentPlayer == 2 {
+			time.Sleep(1 * time.Second)
+			vertex_next := a.PlayOne(ctx)
+			color := [4]uint8{35, 33, 33, 255}
+			d.TraceStone(float64(vertex_next.X), float64(vertex_next.Y), &ctx, &visu, color, false)
+			ctx.Goban[int(vertex_next.Y)][int(vertex_next.X)] = s.Tnumber(2)
+			g.Capture(&ctx, &visu, int(vertex_next.X), int(vertex_next.Y), true)
+			d.DisplayCapture(ctx, &visu)
+			a.FindNeighbors(&ctx, int(vertex_next.X), int(vertex_next.Y), &visu)
+			if g.VictoryConditionAlign(&ctx, int(vertex_next.X), int(vertex_next.Y), &visu) == true || g.VictoryCapture(ctx) {
+				d.DisplayVictory(&visu, ctx)
+				sdl.Log("VICTORY")
+				d.DisplayMessage(&visu, size, "Cliquez pour", "relancer", ctx)
+				ctx.CurrentPlayer = 1
+				endgame = true
+				continue
+			} else {
+				d.DisplayPlayer(&ctx, &visu, false)
+			}
+			fmt.Println(ctx)
+		}
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch t := event.(type) {
 			case *sdl.QuitEvent:
@@ -127,10 +154,7 @@ func main() {
 						if g.Placement(&ctx, int(case_x), int(case_y)) == true {
 							a.FindNeighbors(&ctx, int(case_x), int(case_y), &visu)
 							d.DisplayMessage(&visu, size, "", "", ctx)
-							start := time.Now()
-							heuris := a.Heuristic(ctx, int(case_x), int(case_y))
-							fmt.Println(time.Since(start))
-							fmt.Println("Heuristic = ", heuris)
+							// heuris := a.Heuristic(ctx, int(case_x), int(case_y))
 							if ctx.CurrentPlayer == 1 {
 								color = [4]uint8{240, 228, 229, 255}
 							} else {
@@ -180,6 +204,11 @@ func main() {
 					ctx.NbCaptureP2 = 0
 					ctx.CasesNonNull = nil
 					endgame = false
+					color = [4]uint8{35, 33, 33, 255}
+					d.TraceStone(middle, middle, &ctx, &visu, color, false)
+					ctx.Goban[int(middle)][int(middle)] = s.Tnumber(2)
+					a.FindNeighbors(&ctx, int(middle), int(middle), &visu)
+					ctx.CurrentPlayer = 1
 				}
 			}
 		}
