@@ -180,7 +180,7 @@ func CounterDiagLeft(ctx *s.SContext, case_x int, case_y int, capturePlayer int)
 
 	for current_case_x < int(ctx.NSize) && current_case_y >= 0 {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(capturePlayer) {
-			if current_case_y >= 3 && current_case_x < int(ctx.NSize)-3 {
+			if current_case_x >= 3 && current_case_y < int(ctx.NSize)-3 {
 				if ctx.Goban[current_case_y+3][current_case_x-3] != s.Tnumber(0) {
 					return false
 				}

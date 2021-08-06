@@ -9,7 +9,7 @@ func diagLeftCaptureHeuristic(ctx s.SContext, case_x int, case_y int, capture ui
 	current_case_x := case_x + 1
 	current_case_y := case_y + 1
 	ret_value := 0
-	for current_case_x < int(ctx.NSize) && current_case_y < int(ctx.NSize) {
+	for (current_case_x < int(ctx.NSize) && current_case_x > 0) && (current_case_y < int(ctx.NSize) && current_case_y > 0) {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(capture) {
 			count_stone++
 			current_case_x++
@@ -18,7 +18,7 @@ func diagLeftCaptureHeuristic(ctx s.SContext, case_x int, case_y int, capture ui
 			break
 		}
 	}
-	if count_stone == 2 && current_case_x < int(ctx.NSize) && current_case_y < int(ctx.NSize) {
+	if count_stone == 2 && (current_case_x < int(ctx.NSize) && current_case_x > 0) && (current_case_y < int(ctx.NSize) && current_case_y > 0) {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(ctx.CurrentPlayer) {
 			// addToNeigbors(ctx, current_case_x-1, current_case_y-1, current_case_x, current_case_y, visu) A ajouter sans visu
 			// addToNeigbors(ctx, current_case_x-2, current_case_y-2, case_x, case_y, visu) A ajouter sans visu
@@ -59,7 +59,7 @@ func diagRightCaptureHeuristic(ctx s.SContext, case_x int, case_y int, capture u
 	current_case_x := case_x + 1
 	current_case_y := case_y - 1
 	ret_value := 0
-	for current_case_x < int(ctx.NSize) && current_case_y >= 0 {
+	for (current_case_x < int(ctx.NSize) && current_case_x > 0) && (current_case_y < int(ctx.NSize) && current_case_y > 0) {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(capture) {
 			count_stone++
 			current_case_x++
@@ -68,7 +68,7 @@ func diagRightCaptureHeuristic(ctx s.SContext, case_x int, case_y int, capture u
 			break
 		}
 	}
-	if count_stone == 2 && current_case_x < int(ctx.NSize) && current_case_y >= 0 {
+	if count_stone == 2 && (current_case_x < int(ctx.NSize) && current_case_x > 0) && (current_case_y < int(ctx.NSize) && current_case_y > 0) {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(ctx.CurrentPlayer) {
 			// addToNeigbors(ctx, current_case_x-1, current_case_y+1, current_case_x, current_case_y, visu) A ajouter sans visu
 			// addToNeigbors(ctx, current_case_x-2, current_case_y+2, case_x, case_y, visu) A ajouter sans visu
@@ -89,7 +89,7 @@ func diagRightCaptureHeuristic(ctx s.SContext, case_x int, case_y int, capture u
 			break
 		}
 	}
-	if count_stone == 2 && current_case_x < int(ctx.NSize) && current_case_y >= 0 {
+	if count_stone == 2 && (current_case_x < int(ctx.NSize) && current_case_x > 0) && (current_case_y < int(ctx.NSize) && current_case_y > 0) {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(ctx.CurrentPlayer) {
 			// addToNeigbors(ctx, current_case_x+1, current_case_y-1, current_case_x, current_case_y, visu) A ajouter sans visu
 			// addToNeigbors(ctx, current_case_x+2, current_case_y-2, case_x, case_y, visu) A ajouter sans visu

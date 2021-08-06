@@ -89,16 +89,14 @@ func diagLeft(ctx *s.SContext, case_x int, case_y int, capturePlayer int, nbCapt
 	var message string
 	if CounterVertical(ctx, case_x, case_y, capturePlayer) == true || CounterHorizontal(ctx, case_x, case_y, capturePlayer) ||
 		CounterDiag(ctx, case_x, case_y, capturePlayer) {
-		message = "Capture in " + ctx.MapX[case_x] + " " + strconv.Itoa(int(ctx.NSize)-case_y+1)
-		ctx.Capture = s.SVertex{X: case_x, Y: case_y}
+		message = "Capture in " + ctx.MapX[ctx.Capture.X+1] + " " + strconv.Itoa(int(ctx.NSize)-ctx.Capture.Y)
 	}
 
 	for current_case_x, current_case_y := case_x+1, case_y+1; current_case_x < int(ctx.NSize) && current_case_y < int(ctx.NSize); {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(ctx.CurrentPlayer) {
 			if CounterVertical(ctx, current_case_x, current_case_y, capturePlayer) == true || CounterHorizontal(ctx, current_case_x, current_case_y, capturePlayer) ||
 				CounterDiag(ctx, current_case_x, current_case_y, capturePlayer) {
-				message = "Capture in " + ctx.MapX[current_case_x+1] + " " + strconv.Itoa(int(ctx.NSize)-current_case_y)
-				ctx.Capture = s.SVertex{X: current_case_x, Y: current_case_y}
+				message = "Capture in " + ctx.MapX[ctx.Capture.X+1] + " " + strconv.Itoa(int(ctx.NSize)-ctx.Capture.Y)
 			}
 			count_stone++
 			current_case_x++
@@ -111,8 +109,7 @@ func diagLeft(ctx *s.SContext, case_x int, case_y int, capturePlayer int, nbCapt
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(ctx.CurrentPlayer) {
 			if CounterVertical(ctx, current_case_x, current_case_y, capturePlayer) == true || CounterHorizontal(ctx, current_case_x, current_case_y, capturePlayer) ||
 				CounterDiag(ctx, current_case_x, current_case_y, capturePlayer) {
-				message = "Capture in " + ctx.MapX[current_case_x+1] + " " + strconv.Itoa(int(ctx.NSize)-current_case_y)
-				ctx.Capture = s.SVertex{X: current_case_x, Y: current_case_y}
+				message = "Capture in " + ctx.MapX[ctx.Capture.X+1] + " " + strconv.Itoa(int(ctx.NSize)-ctx.Capture.Y)
 			}
 			count_stone++
 			current_case_x--
@@ -138,14 +135,12 @@ func diagRight(ctx *s.SContext, case_x int, case_y int, capturePlayer int, nbCap
 	if CounterVertical(ctx, case_x, case_y, capturePlayer) == true || CounterHorizontal(ctx, case_x, case_y, capturePlayer) ||
 		CounterDiag(ctx, case_x, case_y, capturePlayer) {
 		message = "Capture in " + ctx.MapX[case_x] + " " + strconv.Itoa(int(ctx.NSize)-case_y+1)
-		ctx.Capture = s.SVertex{X: case_x, Y: case_y}
 	}
 	for current_case_x, current_case_y := case_x+1, case_y-1; current_case_x < int(ctx.NSize) && current_case_y >= 0; {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(ctx.CurrentPlayer) {
 			if CounterVertical(ctx, current_case_x, current_case_y, capturePlayer) == true || CounterHorizontal(ctx, current_case_x, current_case_y, capturePlayer) ||
 				CounterDiag(ctx, current_case_x, current_case_y, capturePlayer) {
-				message = "Capture in " + ctx.MapX[current_case_x+1] + " " + strconv.Itoa(int(ctx.NSize)-current_case_y+1)
-				ctx.Capture = s.SVertex{X: current_case_x, Y: current_case_y}
+				message = "Capture in " + ctx.MapX[ctx.Capture.X+1] + " " + strconv.Itoa(int(ctx.NSize)-ctx.Capture.Y)
 			}
 			count_stone++
 			current_case_x++
@@ -158,8 +153,7 @@ func diagRight(ctx *s.SContext, case_x int, case_y int, capturePlayer int, nbCap
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(ctx.CurrentPlayer) {
 			if CounterVertical(ctx, current_case_x, current_case_y, capturePlayer) == true || CounterHorizontal(ctx, current_case_x, current_case_y, capturePlayer) ||
 				CounterDiag(ctx, current_case_x, current_case_y, capturePlayer) {
-				message = "Capture in " + ctx.MapX[current_case_x+1] + " " + strconv.Itoa(int(ctx.NSize)-current_case_y+1)
-				ctx.Capture = s.SVertex{X: current_case_x, Y: current_case_y}
+				message = "Capture in " + ctx.MapX[ctx.Capture.X+1] + " " + strconv.Itoa(int(ctx.NSize)-ctx.Capture.Y)
 			}
 			count_stone++
 			current_case_x--

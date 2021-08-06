@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	d "gomoku/display"
 	s "gomoku/structures"
 )
@@ -23,6 +24,7 @@ func addToNeigbors(ctx *s.SContext, case_x_neigbors int, case_y_neigbors int, cu
 func Placement(ctx *s.SContext, case_x int, case_y int) bool {
 	if ctx.Capture.X != -1 {
 		if case_x != ctx.Capture.X || case_y != ctx.Capture.Y {
+			fmt.Println(ctx.Capture, case_x, case_y)
 			return false
 		}
 	}
