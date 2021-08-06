@@ -65,7 +65,10 @@ func max_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor 
 				}
 				explor += 1
 				if explor >= max_explor {
-					return neighbor, int32(tmp_heuris)
+					if int32(tmp_heuris) > u {
+						return neighbor, int32(tmp_heuris)
+					}
+					return vertex, u
 				}
 				// Nouveaux voisins à explorer
 				// tmp_ctx.CasesNonNull = FindNeighborsExplo(tmp_ctx, int(neighbor.X), int(neighbor.Y))
@@ -78,7 +81,6 @@ func max_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor 
 					u = tmp_u
 					vertex = tmp_vertex
 				}
-
 			}
 			alpha = int32(math.Max(float64(alpha), float64(u)))
 		}
@@ -111,11 +113,17 @@ func min_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor 
 		for _, neighbor := range tmp_ctx.CasesNonNull[stone] {
 			placement := PlacementHeuristic(tmp_ctx, neighbor.X, neighbor.Y)
 			if placement >= 1 {
+				if placement == 2 {
+					return neighbor, int32(-50000)
+				}
 				tmp_heuris := Heuristic(tmp_ctx, int(neighbor.X), int(neighbor.Y))
 				tmp_ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(playerMin)
 				explor += 1
 				if explor >= max_explor {
-					return neighbor, int32(tmp_heuris)
+					if int32(tmp_heuris) < u {
+						return neighbor, int32(tmp_heuris)
+					}
+					return vertex, u
 				}
 				// Nouveaux voisins à explorer
 				// tmp_ctx.CasesNonNull = FindNeighborsExplo(tmp_ctx, int(neighbor.X), int(neighbor.Y))
