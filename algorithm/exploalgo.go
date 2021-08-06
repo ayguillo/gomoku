@@ -37,7 +37,6 @@ func FindNeighborsExplo(ctx s.SContext, case_x int, case_y int) map[s.SVertex][]
 	array = allNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y}, array)
 	cases[cases_vertex] = array
 	for key, elem := range ctx.CasesNonNull {
-		// fmt.Println("Key", key)
 		len_elem, index := len(elem), 0
 		for index < len_elem {
 			if ctx.Goban[elem[index].Y][elem[index].X] != 0 {

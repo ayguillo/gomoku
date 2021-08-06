@@ -98,40 +98,40 @@ func main() {
 	d.TraceGoban(&visu, ctx)
 	d.DisplayPlayer(&ctx, &visu, true)
 	d.DisplayCounter(ctx, &visu)
-	// middle := math.Round(float64(ctx.NSize)/2) - 2
+	middle := math.Round(float64(ctx.NSize)/2) - 2
 	var color [4]uint8
-	// color = [4]uint8{35, 33, 33, 255}
-	// d.TraceStone(middle, middle, &ctx, &visu, color, false)
-	// ctx.Goban[int(middle)][int(middle)] = s.Tnumber(2)
-	// a.FindNeighbors(&ctx, int(middle), int(middle), &visu)
+	color = [4]uint8{35, 33, 33, 255}
+	d.TraceStone(middle, middle, &ctx, &visu, color, false)
+	ctx.Goban[int(middle)][int(middle)] = s.Tnumber(2)
+	a.FindNeighbors(&ctx, int(middle), int(middle), &visu)
 	running := true
 	endgame := false
 	// Loop de jeu
 	for running {
-		// if ctx.CurrentPlayer == 2 {
-		// 	// time.Sleep(1 * time.Second)
-		// 	now := time.Now()
-		// 	vertex_next, heuris := a.AlphaBetaPruning(ctx, 5)
-		// 	fmt.Println(time.Since(now))
-		// 	fmt.Println("Heuristic", heuris, "vertex", vertex_next)
-		// 	color := [4]uint8{35, 33, 33, 255}
-		// 	d.TraceStone(float64(vertex_next.X), float64(vertex_next.Y), &ctx, &visu, color, false)
-		// 	ctx.Goban[int(vertex_next.Y)][int(vertex_next.X)] = s.Tnumber(2)
-		// 	g.Capture(&ctx, &visu, int(vertex_next.X), int(vertex_next.Y), true)
-		// 	d.DisplayCapture(ctx, &visu)
-		// 	a.FindNeighbors(&ctx, int(vertex_next.X), int(vertex_next.Y), &visu)
-		// 	if g.VictoryConditionAlign(&ctx, int(vertex_next.X), int(vertex_next.Y), &visu) == true || g.VictoryCapture(ctx) {
-		// 		d.DisplayVictory(&visu, ctx)
-		// 		sdl.Log("VICTORY")
-		// 		d.DisplayMessage(&visu, size, "Cliquez pour", "relancer", ctx)
-		// 		ctx.CurrentPlayer = 1
-		// 		endgame = true
-		// 		continue
-		// 	} else {
-		// 		d.DisplayPlayer(&ctx, &visu, false)
-		// 	}
-		// 	fmt.Println(ctx)
-		// }
+		if ctx.CurrentPlayer == 2 {
+			// time.Sleep(1 * time.Second)
+			now := time.Now()
+			vertex_next, heuris := a.AlphaBetaPruning(ctx, 10)
+			fmt.Println(time.Since(now))
+			fmt.Println("Heuristic", heuris, "vertex", vertex_next)
+			color := [4]uint8{35, 33, 33, 255}
+			ctx.Goban[int(vertex_next.Y)][int(vertex_next.X)] = s.Tnumber(2)
+			a.FindNeighbors(&ctx, int(vertex_next.X), int(vertex_next.Y), &visu)
+			d.TraceStone(float64(vertex_next.X), float64(vertex_next.Y), &ctx, &visu, color, false)
+			g.Capture(&ctx, &visu, int(vertex_next.X), int(vertex_next.Y), true)
+			d.DisplayCapture(ctx, &visu)
+			if g.VictoryConditionAlign(&ctx, int(vertex_next.X), int(vertex_next.Y), &visu) == true || g.VictoryCapture(ctx) {
+				d.DisplayVictory(&visu, ctx)
+				sdl.Log("VICTORY")
+				d.DisplayMessage(&visu, size, "Cliquez pour", "relancer", ctx)
+				ctx.CurrentPlayer = 1
+				endgame = true
+				continue
+			} else {
+				d.DisplayPlayer(&ctx, &visu, false)
+			}
+			fmt.Println(ctx)
+		}
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch t := event.(type) {
 			case *sdl.QuitEvent:
@@ -207,10 +207,10 @@ func main() {
 					ctx.NbCaptureP2 = 0
 					ctx.CasesNonNull = nil
 					endgame = false
-					// color = [4]uint8{35, 33, 33, 255}
-					// d.TraceStone(middle, middle, &ctx, &visu, color, false)
-					// ctx.Goban[int(middle)][int(middle)] = s.Tnumber(2)
-					// a.FindNeighbors(&ctx, int(middle), int(middle), &visu)
+					color = [4]uint8{35, 33, 33, 255}
+					d.TraceStone(middle, middle, &ctx, &visu, color, false)
+					ctx.Goban[int(middle)][int(middle)] = s.Tnumber(2)
+					a.FindNeighbors(&ctx, int(middle), int(middle), &visu)
 					ctx.CurrentPlayer = 1
 				}
 			}

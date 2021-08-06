@@ -1,6 +1,7 @@
 package algorithm
 
 import (
+	"fmt"
 	s "gomoku/structures"
 	"math"
 )
@@ -28,6 +29,7 @@ func AlphaBetaPruning(ctx s.SContext, max_explor int) (s.SVertex, int32) {
 	alpha := int32(-1 << 31)
 	beta := int32(1<<31 - 1)
 	vertex, u := max_player(ctx, alpha, beta, 0, max_explor)
+	fmt.Println("CAPTURE ALPHA", ctx.Capture)
 	return vertex, u
 }
 
@@ -46,36 +48,37 @@ func max_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor 
 		NbCaptureP1:   ctx.NbCaptureP1,
 		NbCaptureP2:   ctx.NbCaptureP2,
 		NSize:         ctx.NSize}
+	// fmt.Println(alpha, beta)
 	for stone := range tmp_ctx.CasesNonNull {
 		for _, neighbor := range tmp_ctx.CasesNonNull[stone] {
 			placement := PlacementHeuristic(tmp_ctx, neighbor.X, neighbor.Y)
-			// fmt.Println("placement max", placement, neighbor)
 			if placement >= 1 {
-				tmp_heuris := 0
 				if placement == 2 {
-					tmp_heuris = 50000
-				} else {
-					tmp_heuris = Heuristic(tmp_ctx, int(neighbor.X), int(neighbor.Y))
+					return neighbor, int32(50000)
 				}
-				explor += 1
-				if explor >= max_explor {
-					return neighbor, int32(tmp_heuris)
-				}
+				tmp_heuris := Heuristic(tmp_ctx, int(neighbor.X), int(neighbor.Y))
 				tmp_ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(tmp_ctx.CurrentPlayer)
 				if tmp_ctx.CurrentPlayer == 1 {
 					tmp_ctx.CurrentPlayer = 2
 				} else {
 					tmp_ctx.CurrentPlayer = 1
 				}
+				explor += 1
+				if explor >= max_explor {
+					return neighbor, int32(tmp_heuris)
+				}
+				// Nouveaux voisins à explorer
 				// tmp_ctx.CasesNonNull = FindNeighborsExplo(tmp_ctx, int(neighbor.X), int(neighbor.Y))
 				tmp_vertex, tmp_u := min_player(tmp_ctx, alpha, beta, explor, max_explor)
-				if tmp_u >= beta {
-					return vertex, u
-				}
+				// Alpha beta prunning a ajouter
+				// if tmp_u >= beta {
+				// 	return vertex, u
+				// }
 				if tmp_u > u {
 					u = tmp_u
 					vertex = tmp_vertex
 				}
+
 			}
 			alpha = int32(math.Max(float64(alpha), float64(u)))
 		}
@@ -107,20 +110,20 @@ func min_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor 
 	for stone := range tmp_ctx.CasesNonNull {
 		for _, neighbor := range tmp_ctx.CasesNonNull[stone] {
 			placement := PlacementHeuristic(tmp_ctx, neighbor.X, neighbor.Y)
-			// fmt.Println("placement min", placement, neighbor)
 			if placement >= 1 {
-				// fmt.Println("min", neighbor)
 				tmp_heuris := Heuristic(tmp_ctx, int(neighbor.X), int(neighbor.Y))
 				tmp_ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(playerMin)
 				explor += 1
 				if explor >= max_explor {
 					return neighbor, int32(tmp_heuris)
 				}
+				// Nouveaux voisins à explorer
 				// tmp_ctx.CasesNonNull = FindNeighborsExplo(tmp_ctx, int(neighbor.X), int(neighbor.Y))
 				tmp_vertex, tmp_u := max_player(tmp_ctx, alpha, beta, explor, max_explor)
-				if tmp_u <= alpha {
-					return vertex, u
-				}
+				// Alpha beta prunning a ajouter
+				// if tmp_u <= alpha {
+				// 	return vertex, u
+				// }
 				if tmp_u < u {
 					u = tmp_u
 					vertex = tmp_vertex

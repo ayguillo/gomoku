@@ -1,7 +1,6 @@
 package algorithm
 
 import (
-	"fmt"
 	s "gomoku/structures"
 )
 
@@ -21,10 +20,9 @@ func conditionAlignHeuristic(ctx s.SContext, case_x int, case_y int) int {
 }
 
 func PlacementHeuristic(ctx s.SContext, case_x int, case_y int) uint8 {
+	// Retour 2 pour une obligation de capture, 1 pour un coup ok, 0 sinon
 	if ctx.Capture.X != -1 {
-		fmt.Println("Ok", ctx.Capture, case_x, case_y)
 		if case_x == ctx.Capture.X && case_y == ctx.Capture.Y {
-			fmt.Println("C'est là", case_x, case_y)
 			return 2
 		}
 	}

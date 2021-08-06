@@ -15,3 +15,5 @@
 # vendor/
 
 gomoku
+go.mod
+go.sum

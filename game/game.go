@@ -13,18 +13,18 @@ func addToNeigbors(ctx *s.SContext, case_x_neigbors int, case_y_neigbors int, cu
 	array_neigh = append(array_neigh, new_vertex)
 	ctx.CasesNonNull[vertex] = array_neigh
 	// Loop display
-	// color := [4]uint8{83, 51, 237, 1}
-	// for _, neighbor := range ctx.CasesNonNull[vertex] {
-	// 	if neighbor == new_vertex {
-	// 		d.TraceStone(float64(neighbor.X), float64(neighbor.Y), ctx, visu, color, false)
-	// 	}
-	// }
+	fmt.Println("Add", case_x_neigbors, case_y_neigbors)
+	color := [4]uint8{83, 51, 237, 1}
+	for _, neighbor := range ctx.CasesNonNull[vertex] {
+		if neighbor == new_vertex {
+			d.TraceStone(float64(neighbor.X), float64(neighbor.Y), ctx, visu, color, false)
+		}
+	}
 }
 
 func Placement(ctx *s.SContext, case_x int, case_y int) bool {
 	if ctx.Capture.X != -1 {
 		if case_x != ctx.Capture.X || case_y != ctx.Capture.Y {
-			fmt.Println(ctx.Capture, case_x, case_y)
 			return false
 		}
 	}
