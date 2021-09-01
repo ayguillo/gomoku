@@ -1,11 +1,13 @@
 package display
 
 import (
-	"fmt"
 	s "gomoku/structures"
+
+	"fmt"
 	"math"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -110,8 +112,10 @@ func TraceGoban(visu *s.SVisu, ctx s.SContext) {
 			}
 			visu.Renderer.DrawLine((ctx.Size/4 + ctx.SizeCase), int32(line*int(ctx.SizeCase)), ctx.Size+ctx.Size/4-ctx.SizeCase, int32(line*int(ctx.SizeCase)))
 			visu.Renderer.DrawLine(int32(line*int(ctx.SizeCase))+ctx.Size/4, ctx.SizeCase, int32(line*int(ctx.SizeCase))+ctx.Size/4, ctx.Size-ctx.SizeCase)
+			visu.Renderer.Present()
 			bmpX, errX := visu.FontMsg.RenderUTF8Solid(ctx.MapX[line], color)
 			bmpY, errY := visu.FontMsg.RenderUTF8Solid(strconv.Itoa(int(ctx.NSize)-line+1), color)
+			time.Sleep(50 * time.Millisecond)
 			if errX != nil || errY != nil {
 				fmt.Fprintf(os.Stderr, "Failed to renderer font: %s\n", errX)
 				panic(errX)

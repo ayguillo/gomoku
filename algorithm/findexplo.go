@@ -1,14 +1,14 @@
 package algorithm
 
 import (
+	d "gomoku/display"
 	s "gomoku/structures"
 )
 
 func inNeighbors(ctx *s.SContext, vertex s.SVertex, array_neigbors []s.SVertex) []s.SVertex {
-	if (vertex.Y < 0 || vertex.Y >= 19) || (vertex.X < 0 || vertex.X >= 19) {
+	if (vertex.Y < 0 || vertex.Y >= int(ctx.NSize)) || (vertex.X < 0 || vertex.X >= int(ctx.NSize)) {
 		return array_neigbors
 	}
-	// fmt.Println(ctx.Goban[vertex.Y][vertex.X], vertex.Y, vertex.X)
 	if ctx.Goban[vertex.Y][vertex.X] != 0 {
 		return array_neigbors
 	}
@@ -39,11 +39,13 @@ func FindNeighbors(ctx *s.SContext, case_x int, case_y int, visu *s.SVisu) {
 	array = inNeighbors(ctx, s.SVertex{X: case_x + 1, Y: case_y}, array)
 	array = inNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y}, array)
 	ctx.CasesNonNull[cases_vertex] = array
+	color := [4]uint8{226, 196, 115, 255}
 	for key, elem := range ctx.CasesNonNull {
 		// fmt.Println("Key", key)
 		len_elem, index := len(elem), 0
 		for index < len_elem {
 			if ctx.Goban[elem[index].Y][elem[index].X] != 0 {
+				d.TraceStone(float64(elem[index].X), float64(elem[index].Y), ctx, visu, color, false)
 				elem[index] = elem[len(elem)-1]
 				elem[len(elem)-1] = s.SVertex{X: 0, Y: 0}
 				elem = elem[:len(elem)-1]
@@ -55,8 +57,8 @@ func FindNeighbors(ctx *s.SContext, case_x int, case_y int, visu *s.SVisu) {
 		}
 	}
 	// Loop display
-	// color := [4]uint8{83, 51, 237, 1}
-	// for _, neighbor := range ctx.CasesNonNull[cases_vertex] {
-	// 	d.TraceStone(float64(neighbor.X), float64(neighbor.Y), ctx, visu, color, false)
-	// }
+	color = [4]uint8{83, 51, 237, 1}
+	for _, neighbor := range ctx.CasesNonNull[cases_vertex] {
+		d.TraceStone(float64(neighbor.X), float64(neighbor.Y), ctx, visu, color, false)
+	}
 }
