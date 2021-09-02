@@ -73,5 +73,6 @@ func Heuristic(ctx s.SContext, case_x int, case_y int) int {
 	align := conditionAlignHeuristic(ctx, case_x, case_y)
 	capture := captureHeuristic(ctx, case_x, case_y)
 	block := blockHeuristic(ctx, case_x, case_y)
+	// fmt.Println("align", align, "capture", capture, "block", block, "total", align+capture+block)
 	return align + capture + block
 }

@@ -111,8 +111,9 @@ func main() {
 		if ctx.CurrentPlayer == 2 {
 			// time.Sleep(1 * time.Second)
 			now := time.Now()
-			vertex_next, heuris := a.AlphaBetaPruning(ctx, 4)
-			fmt.Println(time.Since(now))
+			vertex_next, heuris := a.AlphaBetaPruning(ctx, 3)
+			delta := time.Since(now)
+			fmt.Println(delta)
 			fmt.Println("Heuristic", heuris, "vertex", vertex_next)
 			color := [4]uint8{35, 33, 33, 255}
 			ctx.Goban[int(vertex_next.Y)][int(vertex_next.X)] = s.Tnumber(2)

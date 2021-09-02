@@ -57,8 +57,10 @@ func max_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor 
 			placement := PlacementHeuristic(tmp_ctx, neighbor.X, neighbor.Y)
 			if placement >= 1 {
 				if placement == 2 {
+					fmt.Println("Return counter", neighbor)
 					return neighbor, int32(50000)
 				}
+				// fmt.Println("Max")
 				tmp_heuris := Heuristic(tmp_ctx, int(neighbor.X), int(neighbor.Y))
 				tmp_ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(tmp_ctx.CurrentPlayer)
 				if tmp_ctx.CurrentPlayer == 1 {
@@ -66,21 +68,21 @@ func max_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor 
 				} else {
 					tmp_ctx.CurrentPlayer = 1
 				}
-				explor += 1
 				if explor >= max_explor {
 					if int32(tmp_heuris) > u {
 						return neighbor, int32(tmp_heuris)
 					}
 					return vertex, u
 				}
-				tmp_vertex, tmp_u := min_player(tmp_ctx, alpha, beta, explor, max_explor, &neighbor)
+				tmp_vertex, tmp_u := min_player(tmp_ctx, alpha, beta, explor+1, max_explor, &neighbor)
 				// Alpha beta prunning a ajouter
-				// if tmp_u >= beta {
-				// 	return vertex, u
-				// }
-				if tmp_u > u {
+				if tmp_u >= beta {
+					return vertex, u
+				}
+				if tmp_u >= u {
 					u = tmp_u
 					vertex = tmp_vertex
+					fmt.Println("New max", u, vertex)
 				}
 			}
 			alpha = int32(math.Max(float64(alpha), float64(u)))
@@ -120,23 +122,24 @@ func min_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor 
 				if placement == 2 {
 					return neighbor, int32(-50000)
 				}
+				// fmt.Println("Min")
 				tmp_heuris := Heuristic(tmp_ctx, int(neighbor.X), int(neighbor.Y))
 				tmp_ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(playerMin)
-				explor += 1
 				if explor >= max_explor {
 					if int32(tmp_heuris) < u {
 						return neighbor, int32(tmp_heuris)
 					}
 					return vertex, u
 				}
-				tmp_vertex, tmp_u := max_player(tmp_ctx, alpha, beta, explor, max_explor, &neighbor)
+				tmp_vertex, tmp_u := max_player(tmp_ctx, alpha, beta, explor+1, max_explor, &neighbor)
 				// Alpha beta prunning a ajouter
-				// if tmp_u <= alpha {
-				// 	return vertex, u
-				// }
-				if tmp_u < u {
+				if tmp_u <= alpha {
+					return vertex, u
+				}
+				if tmp_u <= u {
 					u = tmp_u
 					vertex = tmp_vertex
+					fmt.Println("New min", u, vertex)
 				}
 			}
 			beta = int32(math.Min(float64(beta), float64(u)))
