@@ -28,13 +28,13 @@ func CopyCases(ctx s.SContext) map[s.SVertex][]s.SVertex {
 func AlphaBetaPruning(ctx s.SContext, max_explor int) (s.SVertex, int32) {
 	alpha := int32(-1 << 31)
 	beta := int32(1<<31 - 1)
-	vertex, u := max_player(ctx, alpha, beta, 0, max_explor)
+	vertex, u := max_player(ctx, alpha, beta, 0, max_explor, nil)
 	fmt.Println("CAPTURE ALPHA", ctx.Capture)
 	return vertex, u
 }
 
 // 1st player
-func max_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor int) (s.SVertex, int32) {
+func max_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor int, new_vertex *s.SVertex) (s.SVertex, int32) {
 	// fmt.Println("alpha beta max", alpha, beta)
 	u := int32(-1 << 31)
 	vertex := s.SVertex{X: -1, Y: -1}
@@ -48,6 +48,9 @@ func max_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor 
 		NbCaptureP1:   ctx.NbCaptureP1,
 		NbCaptureP2:   ctx.NbCaptureP2,
 		NSize:         ctx.NSize}
+	if new_vertex != nil {
+		FindNeighbors(&tmp_ctx, int(new_vertex.X), int(new_vertex.Y), nil)
+	}
 	// fmt.Println(alpha, beta)
 	for stone := range tmp_ctx.CasesNonNull {
 		for _, neighbor := range tmp_ctx.CasesNonNull[stone] {
@@ -70,9 +73,7 @@ func max_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor 
 					}
 					return vertex, u
 				}
-				// Nouveaux voisins à explorer
-				// tmp_ctx.CasesNonNull = FindNeighborsExplo(tmp_ctx, int(neighbor.X), int(neighbor.Y))
-				tmp_vertex, tmp_u := min_player(tmp_ctx, alpha, beta, explor, max_explor)
+				tmp_vertex, tmp_u := min_player(tmp_ctx, alpha, beta, explor, max_explor, &neighbor)
 				// Alpha beta prunning a ajouter
 				// if tmp_u >= beta {
 				// 	return vertex, u
@@ -89,7 +90,7 @@ func max_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor 
 }
 
 // 2nd player
-func min_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor int) (s.SVertex, int32) {
+func min_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor int, new_vertex *s.SVertex) (s.SVertex, int32) {
 	// fmt.Println("alpha beta min", alpha, beta)
 	playerMin := s.Tnumber(0)
 	if ctx.CurrentPlayer == 1 {
@@ -107,6 +108,9 @@ func min_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor 
 		NbCaptureP1:   ctx.NbCaptureP1,
 		NbCaptureP2:   ctx.NbCaptureP2,
 		NSize:         ctx.NSize}
+	if new_vertex != nil {
+		FindNeighbors(&tmp_ctx, int(new_vertex.X), int(new_vertex.Y), nil)
+	}
 	u := int32(1<<31 - 1)
 	vertex := s.SVertex{X: -1, Y: -1}
 	for stone := range tmp_ctx.CasesNonNull {
@@ -125,9 +129,7 @@ func min_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor 
 					}
 					return vertex, u
 				}
-				// Nouveaux voisins à explorer
-				// tmp_ctx.CasesNonNull = FindNeighborsExplo(tmp_ctx, int(neighbor.X), int(neighbor.Y))
-				tmp_vertex, tmp_u := max_player(tmp_ctx, alpha, beta, explor, max_explor)
+				tmp_vertex, tmp_u := max_player(tmp_ctx, alpha, beta, explor, max_explor, &neighbor)
 				// Alpha beta prunning a ajouter
 				// if tmp_u <= alpha {
 				// 	return vertex, u
@@ -136,7 +138,6 @@ func min_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor 
 					u = tmp_u
 					vertex = tmp_vertex
 				}
-
 			}
 			beta = int32(math.Min(float64(beta), float64(u)))
 		}

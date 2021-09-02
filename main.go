@@ -111,7 +111,7 @@ func main() {
 		if ctx.CurrentPlayer == 2 {
 			// time.Sleep(1 * time.Second)
 			now := time.Now()
-			vertex_next, heuris := a.AlphaBetaPruning(ctx, 10)
+			vertex_next, heuris := a.AlphaBetaPruning(ctx, 4)
 			fmt.Println(time.Since(now))
 			fmt.Println("Heuristic", heuris, "vertex", vertex_next)
 			color := [4]uint8{35, 33, 33, 255}
