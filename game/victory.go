@@ -36,8 +36,10 @@ func horizontalAlign(ctx *s.SContext, case_x int, case_y int, capturePlayer int,
 	}
 	if count_stone >= 4 {
 		if message != "" {
-			sdl.Log(message)
-			d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", *ctx)
+			if visu != nil {
+				sdl.Log(message)
+				d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", *ctx)
+			}
 			return 2
 		}
 		return 1
@@ -74,8 +76,10 @@ func verticalAlign(ctx *s.SContext, case_x int, case_y int, capturePlayer int, n
 	}
 	if count_stone >= 4 {
 		if message != "" {
-			sdl.Log(message)
-			d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", *ctx)
+			if visu != nil {
+				sdl.Log(message)
+				d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", *ctx)
+			}
 			return 2
 		}
 		ctx.Capture = s.SVertex{X: -1, Y: -1}
@@ -120,8 +124,10 @@ func diagLeft(ctx *s.SContext, case_x int, case_y int, capturePlayer int, nbCapt
 	}
 	if count_stone >= 4 {
 		if message != "" {
-			sdl.Log(message)
-			d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", *ctx)
+			if visu != nil  {
+				sdl.Log(message)
+				d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", *ctx)
+			}
 			return 2
 		}
 		return 1
@@ -164,8 +170,10 @@ func diagRight(ctx *s.SContext, case_x int, case_y int, capturePlayer int, nbCap
 	}
 	if count_stone >= 4 {
 		if message != "" {
-			sdl.Log(message)
-			d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", *ctx)
+			if visu != nil {
+				sdl.Log(message)
+				d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", *ctx)
+			}
 			return 2
 		}
 		return 1
@@ -210,10 +218,12 @@ func VictoryConditionAlign(ctx *s.SContext, case_x int, case_y int, visu *s.SVis
 	if tmp_ret == 1 || tmp_ret == 0 {
 		ctx.Capture = s.SVertex{X: -1, Y: -1}
 		if tmp_ret == 1 {
-			if ctx.CurrentPlayer == 1 {
-				ctx.NbVictoryP1++
-			} else {
-				ctx.NbVictoryP2++
+			if visu != nil {
+				if ctx.CurrentPlayer == 1 {
+					ctx.NbVictoryP1++
+				} else {
+					ctx.NbVictoryP2++
+				}
 			}
 			ret_value = true
 		}

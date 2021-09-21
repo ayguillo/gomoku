@@ -111,7 +111,7 @@ func main() {
 		if ctx.CurrentPlayer == 2 {
 			// time.Sleep(1 * time.Second)
 			now := time.Now()
-			vertex_next, heuris := a.AlphaBetaPruning(ctx, 3)
+			vertex_next, heuris := a.AlphaBetaPruning(ctx, 10)
 			delta := time.Since(now)
 			fmt.Println(delta)
 			fmt.Println("Heuristic", heuris, "vertex", vertex_next)

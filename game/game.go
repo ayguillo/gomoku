@@ -13,11 +13,13 @@ func addToNeigbors(ctx *s.SContext, case_x_neigbors int, case_y_neigbors int, cu
 	array_neigh = append(array_neigh, new_vertex)
 	ctx.CasesNonNull[vertex] = array_neigh
 	// Loop display
-	fmt.Println("Add", case_x_neigbors, case_y_neigbors)
-	color := [4]uint8{83, 51, 237, 1}
-	for _, neighbor := range ctx.CasesNonNull[vertex] {
-		if neighbor == new_vertex {
-			d.TraceStone(float64(neighbor.X), float64(neighbor.Y), ctx, visu, color, false)
+	if visu != nil {
+		fmt.Println("Add", case_x_neigbors, case_y_neigbors)
+		color := [4]uint8{83, 51, 237, 1}
+		for _, neighbor := range ctx.CasesNonNull[vertex] {
+			if neighbor == new_vertex {
+				d.TraceStone(float64(neighbor.X), float64(neighbor.Y), ctx, visu, color, false)
+			}
 		}
 	}
 }

@@ -1,7 +1,6 @@
 package algorithm
 
 import (
-	"fmt"
 	s "gomoku/structures"
 	"math"
 )
@@ -28,16 +27,24 @@ func CopyCases(ctx s.SContext) map[s.SVertex][]s.SVertex {
 func AlphaBetaPruning(ctx s.SContext, max_explor int) (s.SVertex, int32) {
 	alpha := int32(-1 << 31)
 	beta := int32(1<<31 - 1)
-	vertex, u := max_player(ctx, alpha, beta, 0, max_explor, nil)
-	fmt.Println("CAPTURE ALPHA", ctx.Capture)
+	vertex := s.SVertex{X: -1, Y: -1}
+	u := int32(-1000000)
+	for stone := range ctx.CasesNonNull {
+		for _, neighbor := range ctx.CasesNonNull[stone] {
+			tmp_u := max_player(ctx, alpha, beta, max_explor, nil)
+			if tmp_u >= u {
+				u = tmp_u
+				vertex = neighbor
+			}
+		}
+	}
 	return vertex, u
 }
 
 // 1st player
-func max_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor int, new_vertex *s.SVertex) (s.SVertex, int32) {
+func max_player(ctx s.SContext, alpha int32, beta int32, explor int, new_vertex *s.SVertex) int32 {
 	// fmt.Println("alpha beta max", alpha, beta)
 	u := int32(-1 << 31)
-	vertex := s.SVertex{X: -1, Y: -1}
 	goban := CopyGoban(ctx)
 	casesnonnull := CopyCases(ctx)
 	tmp_ctx := s.SContext{
@@ -48,6 +55,10 @@ func max_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor 
 		NbCaptureP1:   ctx.NbCaptureP1,
 		NbCaptureP2:   ctx.NbCaptureP2,
 		NSize:         ctx.NSize}
+	if explor == 0 {
+		tmp_heuris := Heuristic(tmp_ctx, int(new_vertex.X), int(new_vertex.Y))
+		return int32(tmp_heuris)
+	}
 	if new_vertex != nil {
 		FindNeighbors(&tmp_ctx, int(new_vertex.X), int(new_vertex.Y), nil)
 	}
@@ -57,42 +68,34 @@ func max_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor 
 			placement := PlacementHeuristic(tmp_ctx, neighbor.X, neighbor.Y)
 			if placement >= 1 {
 				if placement == 2 {
-					fmt.Println("Return counter", neighbor)
-					return neighbor, int32(50000)
+					return int32(50000)
 				}
 				// fmt.Println("Max")
-				tmp_heuris := Heuristic(tmp_ctx, int(neighbor.X), int(neighbor.Y))
+				// tmp_heuris := Heuristic(tmp_ctx, int(neighbor.X), int(neighbor.Y))
 				tmp_ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(tmp_ctx.CurrentPlayer)
 				if tmp_ctx.CurrentPlayer == 1 {
 					tmp_ctx.CurrentPlayer = 2
 				} else {
 					tmp_ctx.CurrentPlayer = 1
 				}
-				if explor >= max_explor {
-					if int32(tmp_heuris) > u {
-						return neighbor, int32(tmp_heuris)
-					}
-					return vertex, u
-				}
-				tmp_vertex, tmp_u := min_player(tmp_ctx, alpha, beta, explor+1, max_explor, &neighbor)
+				tmp_u := min_player(tmp_ctx, alpha, beta, explor-1, &neighbor)
+				// fmt.Println("u max", u)
 				// Alpha beta prunning a ajouter
-				if tmp_u >= beta {
-					return vertex, u
+				if u >= beta {
+					return u
+				} else {
+					alpha = int32(math.Max(float64(alpha), float64(u)))
 				}
-				if tmp_u >= u {
-					u = tmp_u
-					vertex = tmp_vertex
-					fmt.Println("New max", u, vertex)
-				}
+				u = int32(math.Max(float64(tmp_u), float64(u)))
 			}
-			alpha = int32(math.Max(float64(alpha), float64(u)))
+			
 		}
 	}
-	return vertex, u
+	return u
 }
 
 // 2nd player
-func min_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor int, new_vertex *s.SVertex) (s.SVertex, int32) {
+func min_player(ctx s.SContext, alpha int32, beta int32, explor int, new_vertex *s.SVertex) int32 {
 	// fmt.Println("alpha beta min", alpha, beta)
 	playerMin := s.Tnumber(0)
 	if ctx.CurrentPlayer == 1 {
@@ -114,36 +117,26 @@ func min_player(ctx s.SContext, alpha int32, beta int32, explor int, max_explor 
 		FindNeighbors(&tmp_ctx, int(new_vertex.X), int(new_vertex.Y), nil)
 	}
 	u := int32(1<<31 - 1)
-	vertex := s.SVertex{X: -1, Y: -1}
 	for stone := range tmp_ctx.CasesNonNull {
 		for _, neighbor := range tmp_ctx.CasesNonNull[stone] {
 			placement := PlacementHeuristic(tmp_ctx, neighbor.X, neighbor.Y)
 			if placement >= 1 {
 				if placement == 2 {
-					return neighbor, int32(-50000)
+					return int32(-50000)
 				}
 				// fmt.Println("Min")
-				tmp_heuris := Heuristic(tmp_ctx, int(neighbor.X), int(neighbor.Y))
 				tmp_ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(playerMin)
-				if explor >= max_explor {
-					if int32(tmp_heuris) < u {
-						return neighbor, int32(tmp_heuris)
-					}
-					return vertex, u
-				}
-				tmp_vertex, tmp_u := max_player(tmp_ctx, alpha, beta, explor+1, max_explor, &neighbor)
+				tmp_u := max_player(tmp_ctx, alpha, beta, explor-1, &neighbor)
+				// fmt.Println("u min", u)
 				// Alpha beta prunning a ajouter
-				if tmp_u <= alpha {
-					return vertex, u
+				if u <= alpha {
+					return u
+				} else {
+					beta = int32(math.Min(float64(beta), float64(u)))
 				}
-				if tmp_u <= u {
-					u = tmp_u
-					vertex = tmp_vertex
-					fmt.Println("New min", u, vertex)
-				}
+				u = int32(math.Min(float64(tmp_u), float64(u)))
 			}
-			beta = int32(math.Min(float64(beta), float64(u)))
 		}
 	}
-	return vertex, u
+	return u
 }
