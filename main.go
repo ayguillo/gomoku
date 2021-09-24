@@ -103,7 +103,7 @@ func main() {
 	color = [4]uint8{35, 33, 33, 255}
 	d.TraceStone(middle, middle, &ctx, &visu, color, false)
 	ctx.Goban[int(middle)][int(middle)] = s.Tnumber(2)
-	a.FindNeighbors(&ctx, int(middle), int(middle), &visu)
+	a.FindNeighbors(&ctx, int(middle), int(middle))
 	running := true
 	endgame := false
 	// Loop de jeu
@@ -111,13 +111,16 @@ func main() {
 		if ctx.CurrentPlayer == 2 {
 			// time.Sleep(1 * time.Second)
 			now := time.Now()
-			vertex_next, heuris := a.AlphaBetaPruning(ctx, 10)
+			depth := int8(4)
+			// vertex_next, heuris := a.AlphaBetaPruning(ctx, depth)
+			heuris, vertex_next := a.Minimax(ctx, depth, true, nil, -2147483648, 2147483647, depth, nil)
+			fmt.Println("END", heuris, vertex_next)
 			delta := time.Since(now)
 			fmt.Println(delta)
 			fmt.Println("Heuristic", heuris, "vertex", vertex_next)
 			color := [4]uint8{35, 33, 33, 255}
 			ctx.Goban[int(vertex_next.Y)][int(vertex_next.X)] = s.Tnumber(2)
-			a.FindNeighbors(&ctx, int(vertex_next.X), int(vertex_next.Y), &visu)
+			a.FindNeighbors(&ctx, int(vertex_next.X), int(vertex_next.Y))
 			d.TraceStone(float64(vertex_next.X), float64(vertex_next.Y), &ctx, &visu, color, false)
 			g.Capture(&ctx, &visu, int(vertex_next.X), int(vertex_next.Y), true)
 			d.DisplayCapture(ctx, &visu)
@@ -156,9 +159,9 @@ func main() {
 					case_y := math.Round(h_mouse/float64(ctx.SizeCase)) - 1
 					if (case_x >= 0 && uint8(case_x) < ctx.NSize) && (case_y >= 0 && uint8(case_y) < ctx.NSize) {
 						if g.Placement(&ctx, int(case_x), int(case_y)) == true {
-							a.FindNeighbors(&ctx, int(case_x), int(case_y), &visu)
+							a.FindNeighbors(&ctx, int(case_x), int(case_y))
 							d.DisplayMessage(&visu, size, "", "", ctx)
-							// heuris := a.Heuristic(ctx, int(case_x), int(case_y))
+							// 							// heuris := a.Heuristic(ctx, int(case_x), int(case_y))
 							if ctx.CurrentPlayer == 1 {
 								color = [4]uint8{240, 228, 229, 255}
 							} else {
@@ -166,8 +169,8 @@ func main() {
 							}
 							d.TraceStone(case_x, case_y, &ctx, &visu, color, false)
 							g.Capture(&ctx, &visu, int(case_x), int(case_y), true)
-							d.DisplayCapture(ctx, &visu)
-							fmt.Println(ctx)
+							// 							d.DisplayCapture(ctx, &visu)
+							// 							fmt.Println(ctx)
 							if g.VictoryConditionAlign(&ctx, int(case_x), int(case_y), &visu) == true || g.VictoryCapture(ctx) {
 								d.DisplayVictory(&visu, ctx)
 								sdl.Log("VICTORY")
@@ -185,34 +188,34 @@ func main() {
 						d.DisplayMessage(&visu, size, "En dehors", "du terrain", ctx)
 						sdl.Log("En dehors du terrain")
 					}
-				}
-				if t.State == sdl.PRESSED && endgame == true {
-					visu.Renderer.Clear()
-					visu.Renderer.Present()
-					index := 0
-					for index < int(ctx.NSize) {
-						ctx.Goban[index] = nil
-						index++
+					if t.State == sdl.PRESSED && endgame == true {
+						visu.Renderer.Clear()
+						visu.Renderer.Present()
+						index := 0
+						for index < int(ctx.NSize) {
+							ctx.Goban[index] = nil
+							index++
+						}
+						ctx.Goban = nil
+						ctx.Goban = make([][]s.Tnumber, ctx.NSize)
+						index = 0
+						for index < int(ctx.NSize) {
+							ctx.Goban[index] = make([]s.Tnumber, ctx.NSize)
+							index++
+						}
+						d.TraceGoban(&visu, ctx)
+						d.DisplayPlayer(&ctx, &visu, false)
+						d.DisplayCounter(ctx, &visu)
+						ctx.NbCaptureP1 = 0
+						ctx.NbCaptureP2 = 0
+						ctx.CasesNonNull = nil
+						endgame = false
+						color = [4]uint8{35, 33, 33, 255}
+						d.TraceStone(middle, middle, &ctx, &visu, color, false)
+						ctx.Goban[int(middle)][int(middle)] = s.Tnumber(2)
+						a.FindNeighbors(&ctx, int(middle), int(middle))
+						ctx.CurrentPlayer = 1
 					}
-					ctx.Goban = nil
-					ctx.Goban = make([][]s.Tnumber, ctx.NSize)
-					index = 0
-					for index < int(ctx.NSize) {
-						ctx.Goban[index] = make([]s.Tnumber, ctx.NSize)
-						index++
-					}
-					d.TraceGoban(&visu, ctx)
-					d.DisplayPlayer(&ctx, &visu, false)
-					d.DisplayCounter(ctx, &visu)
-					ctx.NbCaptureP1 = 0
-					ctx.NbCaptureP2 = 0
-					ctx.CasesNonNull = nil
-					endgame = false
-					color = [4]uint8{35, 33, 33, 255}
-					d.TraceStone(middle, middle, &ctx, &visu, color, false)
-					ctx.Goban[int(middle)][int(middle)] = s.Tnumber(2)
-					a.FindNeighbors(&ctx, int(middle), int(middle), &visu)
-					ctx.CurrentPlayer = 1
 				}
 			}
 		}

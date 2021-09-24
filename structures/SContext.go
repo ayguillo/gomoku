@@ -16,7 +16,7 @@ type SContext struct {
 	NbCaptureP1   int
 	NbCaptureP2   int
 	MapX          map[int]string
-	CasesNonNull  map[SVertex][]SVertex
+	CasesNonNull  []SVertex
 	Capture       SVertex
 }
 
