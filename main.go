@@ -110,14 +110,14 @@ func main() {
 	for running {
 		if ctx.CurrentPlayer == 2 {
 			// time.Sleep(1 * time.Second)
+			depth := int8(10)
 			now := time.Now()
-			depth := int8(2)
-			vertex_next, heuris := a.AlphaBetaPruning2(ctx, depth)
-			// heuris, vertex_next := a.Minimax(ctx, depth, true, nil, -2147483648, 2147483647, depth, nil)
-			fmt.Println("END", heuris, vertex_next)
+			vertex_next, _ := a.AlphaBetaPruning2(ctx, depth)
 			delta := time.Since(now)
+			// heuris, vertex_next := a.Minimax(ctx, depth, true, nil, -2147483648, 2147483647, depth, nil)
+			// fmt.Println("END", heuris, vertex_next)
 			fmt.Println(delta)
-			fmt.Println("Heuristic", heuris, "vertex", vertex_next)
+			// fmt.Println("Heuristic", heuris, "vertex", vertex_next)
 			color := [4]uint8{35, 33, 33, 255}
 			ctx.Goban[int(vertex_next.Y)][int(vertex_next.X)] = s.Tnumber(2)
 			a.FindNeighbors(&ctx, int(vertex_next.X), int(vertex_next.Y))
@@ -134,7 +134,7 @@ func main() {
 			} else {
 				d.DisplayPlayer(&ctx, &visu, false)
 			}
-			fmt.Println(ctx)
+			// fmt.Println(ctx)
 		}
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch t := event.(type) {
