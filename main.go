@@ -111,9 +111,9 @@ func main() {
 		if ctx.CurrentPlayer == 2 {
 			// time.Sleep(1 * time.Second)
 			now := time.Now()
-			vertex_next, heuris := a.AlphaBetaPruning(ctx, 10)
+			vertex_next, _ := a.AlphaBetaPruning(ctx, 10)
 			fmt.Println(time.Since(now))
-			fmt.Println("Heuristic", heuris, "vertex", vertex_next)
+			// fmt.Println("Heuristic", heuris, "vertex", vertex_next)
 			color := [4]uint8{35, 33, 33, 255}
 			ctx.Goban[int(vertex_next.Y)][int(vertex_next.X)] = s.Tnumber(2)
 			a.FindNeighbors(&ctx, int(vertex_next.X), int(vertex_next.Y), &visu)
@@ -130,7 +130,7 @@ func main() {
 			} else {
 				d.DisplayPlayer(&ctx, &visu, false)
 			}
-			fmt.Println(ctx)
+			// fmt.Println(ctx)
 		}
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch t := event.(type) {
@@ -166,7 +166,7 @@ func main() {
 							d.TraceStone(case_x, case_y, &ctx, &visu, color, false)
 							g.Capture(&ctx, &visu, int(case_x), int(case_y), true)
 							d.DisplayCapture(ctx, &visu)
-							fmt.Println(ctx)
+							// fmt.Println(ctx)
 							if g.VictoryConditionAlign(&ctx, int(case_x), int(case_y), &visu) == true || g.VictoryCapture(ctx) {
 								d.DisplayVictory(&visu, ctx)
 								sdl.Log("VICTORY")
