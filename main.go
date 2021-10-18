@@ -111,9 +111,9 @@ func main() {
 		if ctx.CurrentPlayer == 2 {
 			// time.Sleep(1 * time.Second)
 			now := time.Now()
-			depth := int8(4)
-			// vertex_next, heuris := a.AlphaBetaPruning(ctx, depth)
-			heuris, vertex_next := a.Minimax(ctx, depth, true, nil, -2147483648, 2147483647, depth, nil)
+			depth := int8(2)
+			vertex_next, heuris := a.AlphaBetaPruning2(ctx, depth)
+			// heuris, vertex_next := a.Minimax(ctx, depth, true, nil, -2147483648, 2147483647, depth, nil)
 			fmt.Println("END", heuris, vertex_next)
 			delta := time.Since(now)
 			fmt.Println(delta)
@@ -169,8 +169,8 @@ func main() {
 							}
 							d.TraceStone(case_x, case_y, &ctx, &visu, color, false)
 							g.Capture(&ctx, &visu, int(case_x), int(case_y), true)
-							// 							d.DisplayCapture(ctx, &visu)
-							// 							fmt.Println(ctx)
+							d.DisplayCapture(ctx, &visu)
+							fmt.Println(ctx)
 							if g.VictoryConditionAlign(&ctx, int(case_x), int(case_y), &visu) == true || g.VictoryCapture(ctx) {
 								d.DisplayVictory(&visu, ctx)
 								sdl.Log("VICTORY")
