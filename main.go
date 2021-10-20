@@ -10,6 +10,7 @@ import (
 	a "gomoku/algorithm"
 	d "gomoku/display"
 	g "gomoku/game"
+	h "gomoku/heuristic"
 	s "gomoku/structures"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -110,9 +111,10 @@ func main() {
 	for running {
 		if ctx.CurrentPlayer == 2 {
 			// time.Sleep(1 * time.Second)
-			depth := int8(10)
+			depth := int8(6)
 			now := time.Now()
-			vertex_next, _ := a.AlphaBetaPruning2(ctx, depth)
+			vertex_next, heuris := a.AlphaBetaPruning2(ctx, depth)
+			fmt.Println(vertex_next, heuris)
 			delta := time.Since(now)
 			// heuris, vertex_next := a.Minimax(ctx, depth, true, nil, -2147483648, 2147483647, depth, nil)
 			// fmt.Println("END", heuris, vertex_next)
@@ -161,7 +163,8 @@ func main() {
 						if g.Placement(&ctx, int(case_x), int(case_y)) == true {
 							a.FindNeighbors(&ctx, int(case_x), int(case_y))
 							d.DisplayMessage(&visu, size, "", "", ctx)
-							// 							// heuris := a.Heuristic(ctx, int(case_x), int(case_y))
+							heuris := h.Heuristic3(ctx)
+							fmt.Println(heuris)
 							if ctx.CurrentPlayer == 1 {
 								color = [4]uint8{240, 228, 229, 255}
 							} else {
@@ -170,7 +173,7 @@ func main() {
 							d.TraceStone(case_x, case_y, &ctx, &visu, color, false)
 							g.Capture(&ctx, &visu, int(case_x), int(case_y), true)
 							d.DisplayCapture(ctx, &visu)
-							fmt.Println(ctx)
+							// fmt.Println(ctx)
 							if g.VictoryConditionAlign(&ctx, int(case_x), int(case_y), &visu) == true || g.VictoryCapture(ctx) {
 								d.DisplayVictory(&visu, ctx)
 								sdl.Log("VICTORY")
@@ -188,34 +191,34 @@ func main() {
 						d.DisplayMessage(&visu, size, "En dehors", "du terrain", ctx)
 						sdl.Log("En dehors du terrain")
 					}
-					if t.State == sdl.PRESSED && endgame == true {
-						visu.Renderer.Clear()
-						visu.Renderer.Present()
-						index := 0
-						for index < int(ctx.NSize) {
-							ctx.Goban[index] = nil
-							index++
-						}
-						ctx.Goban = nil
-						ctx.Goban = make([][]s.Tnumber, ctx.NSize)
-						index = 0
-						for index < int(ctx.NSize) {
-							ctx.Goban[index] = make([]s.Tnumber, ctx.NSize)
-							index++
-						}
-						d.TraceGoban(&visu, ctx)
-						d.DisplayPlayer(&ctx, &visu, false)
-						d.DisplayCounter(ctx, &visu)
-						ctx.NbCaptureP1 = 0
-						ctx.NbCaptureP2 = 0
-						ctx.CasesNonNull = nil
-						endgame = false
-						color = [4]uint8{35, 33, 33, 255}
-						d.TraceStone(middle, middle, &ctx, &visu, color, false)
-						ctx.Goban[int(middle)][int(middle)] = s.Tnumber(2)
-						a.FindNeighbors(&ctx, int(middle), int(middle))
-						ctx.CurrentPlayer = 1
+				}
+				if t.State == sdl.PRESSED && endgame == true {
+					visu.Renderer.Clear()
+					visu.Renderer.Present()
+					index := 0
+					for index < int(ctx.NSize) {
+						ctx.Goban[index] = nil
+						index++
 					}
+					ctx.Goban = nil
+					ctx.Goban = make([][]s.Tnumber, ctx.NSize)
+					index = 0
+					for index < int(ctx.NSize) {
+						ctx.Goban[index] = make([]s.Tnumber, ctx.NSize)
+						index++
+					}
+					d.TraceGoban(&visu, ctx)
+					d.DisplayPlayer(&ctx, &visu, false)
+					d.DisplayCounter(ctx, &visu)
+					ctx.NbCaptureP1 = 0
+					ctx.NbCaptureP2 = 0
+					ctx.CasesNonNull = nil
+					endgame = false
+					color = [4]uint8{35, 33, 33, 255}
+					d.TraceStone(middle, middle, &ctx, &visu, color, false)
+					ctx.Goban[int(middle)][int(middle)] = s.Tnumber(2)
+					a.FindNeighbors(&ctx, int(middle), int(middle))
+					ctx.CurrentPlayer = 1
 				}
 			}
 		}
