@@ -1,6 +1,7 @@
 package heuristic
 
 import (
+	"fmt"
 	s "gomoku/structures"
 )
 
@@ -302,10 +303,10 @@ func Heuristic3(ctx s.SContext) int32 {
 			}
 		}
 	}
-	// fmt.Println("Me", gotFive, gotFour, gotFourMid, gotThree, gotThreeMid, gotTwo, gotTwoMid)
-	// fmt.Println("Opp", gotFiveOpp, gotFourOpp, gotFourOppMid, gotThreeOpp, gotThreeOppMid, gotTwoOpp, gotTwoOppMid)
+	fmt.Println("Me", gotFive, gotFour, gotFourMid, gotThree, gotThreeMid, gotTwo, gotTwoMid)
+	fmt.Println("Opp", gotFiveOpp, gotFourOpp, gotFourOppMid, gotThreeOpp, gotThreeOppMid, gotTwoOpp, gotTwoOppMid)
 	// // fmt.Println("Block me", gotBlockFour, gotBlockThree, gotBlockTwo)
 	// // fmt.Println("Block opp", gotBlockFourOpp, gotThreeBlockOpp, gotTwoBlockOpp)
-	value = 6000*(gotFive-gotFiveOpp) + 4800*(gotFour-gotFourOpp) + 500*(gotFourMid-gotFourOppMid) + 500*(gotThree-gotThreeOpp) + 200*(gotThreeMid-gotThreeOppMid) + 50*(gotTwo-gotTwoOpp) + 10*(gotTwoMid-gotTwoOppMid)
+	value = 6000*(gotFive-gotFiveOpp) + 4800*(gotFour-gotFourOpp) + 500*(gotFourMid-gotFourOppMid) + 500*(gotThree-gotThreeOpp) + 200*(gotThreeMid-gotThreeOppMid) + 50*(gotTwo-gotTwoOpp) + 10*(gotTwoMid-gotTwoOppMid) + 5000*(nb_capture-nb_capture_enemy)
 	return int32(value)
 }

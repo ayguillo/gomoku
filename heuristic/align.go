@@ -86,7 +86,7 @@ func verticalHeuristic(ctx s.SContext, case_x int, case_y int, player s.Tnumber)
 				middle = true
 			}
 			align_cases++
-		} else if ctx.Goban[case_y][current_case] == enemy_player {
+		} else if ctx.Goban[current_case][case_x] == enemy_player {
 			block = true
 			break
 		} else {
@@ -110,7 +110,7 @@ func verticalHeuristic(ctx s.SContext, case_x int, case_y int, player s.Tnumber)
 			if empty_cases_top != 0 {
 				middle = true
 			}
-		} else if ctx.Goban[case_y][current_case] == enemy_player {
+		} else if ctx.Goban[current_case][case_x] == enemy_player {
 			block = true
 			break
 		} else {
