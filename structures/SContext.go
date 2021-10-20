@@ -18,6 +18,7 @@ type SContext struct {
 	MapX          map[int]string
 	CasesNonNull  []SVertex
 	Capture       SVertex
+	Players       map[uint8]bool
 }
 
 func (goban Tgoban) String() string {
