@@ -13,13 +13,12 @@ import (
 )
 
 func fillCircle(k float64, h float64, visu *s.SVisu, radius float64) {
-	for dy := 0.0; dy < radius; dy += 1.0 {
+	for dy := 0.0; dy < radius; dy += 0.075 {
 		dx := math.Round(math.Sqrt((2.0 * radius * dy) - (dy * dy)))
 		visu.Renderer.DrawLine(int32(k-dx), int32(h+dy-radius), int32(k+dx), int32(h+dy-radius))
 		visu.Renderer.DrawLine(int32(k-dx), int32(h-dy+radius), int32(k+dx), int32(h-dy+radius))
 	}
 	visu.Renderer.Present()
-
 }
 
 func drawCircle(k float64, h float64, visu *s.SVisu, radius int) {

@@ -181,10 +181,10 @@ func main() {
 	defer visu.FontCounter.Close()
 	defer visu.Renderer.Destroy()
 
-	versus, double_threes, capture, help, time_limite, end, difficulty := m.Menu(&visu, ctx)
+	versus, double_threes, capture, help, time_limit, end, difficulty := m.Menu(&visu, ctx)
 	visu.Renderer.Clear()
 	visu.Renderer.Present()
-	fmt.Println(versus, double_threes, capture, help, time_limite, difficulty)
+	fmt.Println(versus, double_threes, capture, help, time_limit, difficulty)
 	if !end {
 		d.TraceGoban(&visu, ctx)
 		d.DisplayPlayer(&ctx, &visu, true)
