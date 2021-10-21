@@ -113,28 +113,20 @@ func initMax(ctx s.SContext, depth int8, neighbor s.SVertex, alpha int32, beta i
 	ch <- ret
 }
 
-func Heuristic2(ctx s.SContext, isMaximazingPlayer bool) int32 {
-	value := 0
-
-	for y := range ctx.Goban {
-		for x := range ctx.Goban[y] {
-			if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
-				value += Heuristic(ctx, x, y)
-			}
-		}
-	}
-
-	return int32(value)
-}
-
 func victoryCondition(ctx s.SContext) bool {
 	for y := range ctx.Goban {
 		for x := range ctx.Goban[y] {
 			if ctx.Goban[y][x] != 0 {
 				if g.VictoryConditionAlign(&ctx, x, y, nil) {
-					println("true")
 					return true
 				}
+
+				swapPlayer(&ctx)
+				if g.VictoryConditionAlign(&ctx, x, y, nil) {
+					return true
+				}
+
+				swapPlayer(&ctx)
 			}
 		}
 	}
@@ -145,7 +137,7 @@ func victoryCondition(ctx s.SContext) bool {
 func minimax(tmp_ctx s.SContext, neighbors []s.SVertex, depth int8, alpha int32, beta int32, isMaximazingPlayer bool, i int) int32 {
 	if depth == 0 || victoryCondition(tmp_ctx) {
 		depthData[i] = depth
-		return h.CalcHeuristic(tmp_ctx)
+		return h.CalcHeuristic(tmp_ctx, isMaximazingPlayer)
 	}
 
 	if isMaximazingPlayer {
