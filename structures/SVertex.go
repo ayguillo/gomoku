@@ -12,6 +12,6 @@ func (vertex SVertex) String() string {
 	res += fmt.Sprint(vertex.X)
 	res += fmt.Sprint(" Y :")
 	res += fmt.Sprint(vertex.Y)
-	res += fmt.Sprint(" ")
+	res += fmt.Sprint("  ")
 	return res
 }

@@ -26,7 +26,7 @@ func DisplayMessage(visu *s.SVisu, size int32, line1 string, line2 string, ctx s
 		bmp, err := visu.FontMsg.RenderUTF8Solid(line1, color)
 		bmp2, err2 := visu.FontMsg.RenderUTF8Solid(line2, color)
 		if err != nil || err2 != nil {
-			fmt.Fprintf(os.Stderr, "Failed to renderer font: %s\n", err, err2)
+			fmt.Fprintf(os.Stderr, "Failed to renderer font: %s %s\n", err, err2)
 			panic(err)
 		}
 		visu.TextureMessage1, err = visu.Renderer.CreateTextureFromSurface(bmp)
@@ -34,7 +34,7 @@ func DisplayMessage(visu *s.SVisu, size int32, line1 string, line2 string, ctx s
 		bmp.Free()
 		bmp2.Free()
 		if err != nil || err2 != nil {
-			fmt.Fprintf(os.Stderr, "Failed to create texture font: %s\n", err, err2)
+			fmt.Fprintf(os.Stderr, "Failed to create texture font: %s %s\n", err, err2)
 			panic(err)
 		}
 		visu.Renderer.Present()
