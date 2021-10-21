@@ -110,9 +110,9 @@ func main() {
 	for running {
 		if ctx.CurrentPlayer == 2 {
 			// time.Sleep(1 * time.Second)
-			depth := int8(10)
+			depth := int8(8)
 			now := time.Now()
-			vertex_next, _ := a.AlphaBetaPruning2(ctx, depth)
+			vertex_next, _ := a.AlphaBetaPruning(ctx, depth)
 			delta := time.Since(now)
 			// heuris, vertex_next := a.Minimax(ctx, depth, true, nil, -2147483648, 2147483647, depth, nil)
 			// fmt.Println("END", heuris, vertex_next)
