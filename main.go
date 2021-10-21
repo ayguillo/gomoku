@@ -10,6 +10,7 @@ import (
 	a "gomoku/algorithm"
 	d "gomoku/display"
 	g "gomoku/game"
+	m "gomoku/menu"
 	s "gomoku/structures"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -153,125 +154,6 @@ func human(err error, startgame bool, endgame bool, ctx *s.SContext, visu *s.SVi
 	return startgame, endgame
 }
 
-func menu(visu *s.SVisu, ctx s.SContext) (int, bool, bool, int) {
-	versus, double_threes, capture, time_limite := 0, true, true, 0
-	// Window
-	visu.Renderer.SetDrawColor(226, 196, 115, 255)
-	visu.Renderer.DrawRect(&sdl.Rect{X: 0, Y: 0, W: ctx.Size + ctx.Size/2, H: ctx.Size + ((ctx.SizeCase) / 2)})
-	visu.Renderer.FillRect(&sdl.Rect{X: 0, Y: 0, W: ctx.Size + ctx.Size/2, H: ctx.Size + ((ctx.SizeCase) / 2)})
-	// Button quit
-	visu.Renderer.SetDrawColor(212, 66, 62, 255)
-	visu.Renderer.DrawRect(&sdl.Rect{X: ctx.Size + 4 + ctx.Size/4, Y: ctx.Size - 50, W: (ctx.Size / 4), H: 50})
-	visu.Renderer.FillRect(&sdl.Rect{X: ctx.Size + 4 + ctx.Size/4, Y: ctx.Size - 50, W: (ctx.Size / 4), H: 50})
-	// Buttons players
-	visu.Renderer.SetDrawColor(0, 0, 0, 0)
-	visu.Renderer.DrawRect(&sdl.Rect{X: 10, Y: 80, W: 50, H: 50})
-	visu.Renderer.FillRect(&sdl.Rect{X: 10, Y: 80, W: 50, H: 50})
-	visu.Renderer.DrawRect(&sdl.Rect{X: 70, Y: 80, W: 50, H: 50})
-	visu.Renderer.FillRect(&sdl.Rect{X: 70, Y: 80, W: 50, H: 50})
-	visu.Renderer.DrawRect(&sdl.Rect{X: 130, Y: 80, W: 50, H: 50})
-	visu.Renderer.FillRect(&sdl.Rect{X: 130, Y: 80, W: 50, H: 50})
-
-	color := sdl.Color{R: 240, G: 228, B: 229, A: 255}
-	bmp, err := visu.FontPlayer.RenderUTF8Solid("Play >", color)
-	bmp2, err2 := visu.FontPlayer.RenderUTF8Solid("Players :", color)
-	bmp3, err2 := visu.FontPlayer.RenderUTF8Solid("Human vs Bot", color)
-	bmp4, err2 := visu.FontPlayer.RenderUTF8Solid("Human vs Human", color)
-	bmp5, err2 := visu.FontPlayer.RenderUTF8Solid("Bot vs Bot", color)
-
-	if err != nil || err2 != nil {
-		fmt.Fprintf(os.Stderr, "Failed to create texture font: %s %s\n", err, err2)
-		panic(err)
-	}
-	button, err := visu.Renderer.CreateTextureFromSurface(bmp)
-	text_player, err2 := visu.Renderer.CreateTextureFromSurface(bmp2)
-	hvb, err2 := visu.Renderer.CreateTextureFromSurface(bmp3)
-	hvh, err2 := visu.Renderer.CreateTextureFromSurface(bmp4)
-	bvb, err2 := visu.Renderer.CreateTextureFromSurface(bmp5)
-	if err != nil || err2 != nil {
-		fmt.Fprintf(os.Stderr, "Failed to create texture font: %s %s\n", err, err2)
-		panic(err)
-	}
-	bmp.Free()
-	visu.Renderer.Copy(button, nil, &sdl.Rect{X: ctx.Size + 4 + ctx.Size/4, Y: ctx.Size - 50, W: (ctx.Size / 4), H: 50})
-	visu.Renderer.Copy(text_player, nil, &sdl.Rect{X: 10, Y: 10, W: 130, H: 50})
-	visu.Renderer.Present()
-	running := true
-	for running {
-		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-			if versus == 0 {
-				visu.Renderer.SetDrawColor(226, 196, 115, 255)
-				visu.Renderer.DrawRect(&sdl.Rect{X: 150, Y: 10, W: 230, H: 50})
-				visu.Renderer.FillRect(&sdl.Rect{X: 150, Y: 10, W: 230, H: 50})
-				visu.Renderer.Copy(hvb, nil, &sdl.Rect{X: 150, Y: 10, W: 170, H: 50})
-				visu.Renderer.SetDrawColor(83, 51, 237, 1)
-				visu.Renderer.DrawRect(&sdl.Rect{X: 10, Y: 80, W: 50, H: 50})
-				visu.Renderer.FillRect(&sdl.Rect{X: 10, Y: 80, W: 50, H: 50})
-				visu.Renderer.SetDrawColor(0, 0, 0, 0)
-				visu.Renderer.DrawRect(&sdl.Rect{X: 70, Y: 80, W: 50, H: 50})
-				visu.Renderer.FillRect(&sdl.Rect{X: 70, Y: 80, W: 50, H: 50})
-				visu.Renderer.DrawRect(&sdl.Rect{X: 130, Y: 80, W: 50, H: 50})
-				visu.Renderer.FillRect(&sdl.Rect{X: 130, Y: 80, W: 50, H: 50})
-				visu.Renderer.Present()
-			} else if versus == 1 {
-				visu.Renderer.SetDrawColor(226, 196, 115, 255)
-				visu.Renderer.DrawRect(&sdl.Rect{X: 150, Y: 10, W: 230, H: 50})
-				visu.Renderer.FillRect(&sdl.Rect{X: 150, Y: 10, W: 230, H: 50})
-				visu.Renderer.Copy(hvh, nil, &sdl.Rect{X: 150, Y: 10, W: 220, H: 50})
-				visu.Renderer.SetDrawColor(0, 0, 0, 0)
-				visu.Renderer.DrawRect(&sdl.Rect{X: 10, Y: 80, W: 50, H: 50})
-				visu.Renderer.FillRect(&sdl.Rect{X: 10, Y: 80, W: 50, H: 50})
-				visu.Renderer.SetDrawColor(83, 51, 237, 1)
-				visu.Renderer.DrawRect(&sdl.Rect{X: 70, Y: 80, W: 50, H: 50})
-				visu.Renderer.FillRect(&sdl.Rect{X: 70, Y: 80, W: 50, H: 50})
-				visu.Renderer.SetDrawColor(0, 0, 0, 0)
-				visu.Renderer.DrawRect(&sdl.Rect{X: 130, Y: 80, W: 50, H: 50})
-				visu.Renderer.FillRect(&sdl.Rect{X: 130, Y: 80, W: 50, H: 50})
-				visu.Renderer.Present()
-			} else {
-				visu.Renderer.SetDrawColor(226, 196, 115, 255)
-				visu.Renderer.DrawRect(&sdl.Rect{X: 150, Y: 10, W: 230, H: 50})
-				visu.Renderer.FillRect(&sdl.Rect{X: 150, Y: 10, W: 230, H: 50})
-				visu.Renderer.Copy(bvb, nil, &sdl.Rect{X: 150, Y: 10, W: 120, H: 50})
-				visu.Renderer.SetDrawColor(0, 0, 0, 0)
-				visu.Renderer.DrawRect(&sdl.Rect{X: 10, Y: 80, W: 50, H: 50})
-				visu.Renderer.FillRect(&sdl.Rect{X: 10, Y: 80, W: 50, H: 50})
-				visu.Renderer.DrawRect(&sdl.Rect{X: 70, Y: 80, W: 50, H: 50})
-				visu.Renderer.FillRect(&sdl.Rect{X: 70, Y: 80, W: 50, H: 50})
-				visu.Renderer.SetDrawColor(83, 51, 237, 1)
-				visu.Renderer.DrawRect(&sdl.Rect{X: 130, Y: 80, W: 50, H: 50})
-				visu.Renderer.FillRect(&sdl.Rect{X: 130, Y: 80, W: 50, H: 50})
-				visu.Renderer.Present()
-			}
-			switch t := event.(type) {
-			case *sdl.QuitEvent:
-				running = false
-			case *sdl.KeyboardEvent:
-				if t.State == sdl.PRESSED && t.Keysym.Sym == sdl.K_ESCAPE {
-					running = false
-				}
-			case *sdl.MouseButtonEvent:
-				if t.State == sdl.PRESSED {
-					if t.Y >= ctx.Size-50 && t.X >= ctx.Size+4+ctx.Size/4 {
-						running = false
-					}
-					if (t.Y >= 80 && t.Y <= 80+50) && (t.X >= 10 && t.X <= 60) {
-						versus = 0
-					}
-					if (t.Y >= 80 && t.Y <= 80+50) && (t.X >= 70 && t.X <= 120) {
-						versus = 1
-					}
-					if (t.Y >= 80 && t.Y <= 80+50) && (t.X >= 130 && t.X <= 180) {
-						versus = 2
-					}
-				}
-			}
-
-		}
-	}
-	return versus, double_threes, capture, time_limite
-}
-
 func main() {
 
 	// 0xe2c473
@@ -299,26 +181,31 @@ func main() {
 	defer visu.FontCounter.Close()
 	defer visu.Renderer.Destroy()
 
-	versus, double_threes, capture, time_limite := menu(&visu, ctx)
+	versus, double_threes, capture, help, time_limite, end, difficulty := m.Menu(&visu, ctx)
 	visu.Renderer.Clear()
 	visu.Renderer.Present()
-	fmt.Println(versus, double_threes, capture, time_limite)
-	d.TraceGoban(&visu, ctx)
-	d.DisplayPlayer(&ctx, &visu, true)
-	d.DisplayCounter(ctx, &visu)
-	ctx.Players = make(map[uint8]bool)
-	ctx.Players[1] = true
-	ctx.Players[2] = false
-	// middle := math.Round(float64(ctx.NSize)/2) - 2
-	// color = [4]uint8{35, 33, 33, 255}
-	// d.TraceStone(middle, middle, &ctx, &visu, color, false)
-	// ctx.Goban[int(middle)][int(middle)] = s.Tnumber(2)
-	// a.FindNeighbors(&ctx, int(middle), int(middle))
+	fmt.Println(versus, double_threes, capture, help, time_limite, difficulty)
+	if !end {
+		d.TraceGoban(&visu, ctx)
+		d.DisplayPlayer(&ctx, &visu, true)
+		d.DisplayCounter(ctx, &visu)
+		ctx.Players = make(map[uint8]bool)
+		if versus == 0 {
+			ctx.Players[1] = true
+			ctx.Players[2] = false
+		} else if versus == 1 {
+			ctx.Players[1] = false
+			ctx.Players[2] = false
+		} else {
+			ctx.Players[1] = true
+			ctx.Players[2] = true
+		}
+	}
 	running := true
 	endgame := false
 	startgame := true
 	// Loop de jeu
-	for running {
+	for running && !end {
 		if ctx.Players[ctx.CurrentPlayer] == true && endgame != true {
 			startgame, endgame = bot(startgame, endgame, &ctx, &visu)
 		}
@@ -334,7 +221,7 @@ func main() {
 				}
 			case *sdl.MouseButtonEvent:
 				if t.State == sdl.PRESSED && endgame == false {
-					startgame, endgame = human(err, endgame, startgame, &ctx, &visu, t)
+					startgame, endgame = human(err, startgame, endgame, &ctx, &visu, t)
 					if endgame == true {
 						t.State = 0
 					}
