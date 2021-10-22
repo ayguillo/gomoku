@@ -120,7 +120,6 @@ func initMax(ctx s.SContext, depth int8, neighbor s.SVertex, alpha int32, beta i
 
 	if VictoryCondition(tmp_ctx) {
 		eval = h.CalcHeuristic(tmp_ctx)
-		println("ici", eval, neighbor.X, neighbor.Y)
 		depthData[i] = depth
 		isWin = true
 		//kill toutes les goroutines

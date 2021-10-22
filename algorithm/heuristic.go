@@ -1,6 +1,7 @@
 package algorithm
 
 import (
+	g "gomoku/game"
 	s "gomoku/structures"
 )
 
@@ -33,11 +34,14 @@ func PlacementHeuristic(ctx s.SContext, case_x int, case_y int) uint8 {
 			return 2
 		}
 	}
+	if ctx.ActiveDoubleThrees && !g.CheckDoubleThree(&ctx, case_x, case_y) {
+		return 0
+	}
 	if case_y < 0 || case_y > int(ctx.NSize) {
-		return (0)
+		return 0
 	}
 	if case_x < 0 || case_x > int(ctx.NSize) {
-		return (0)
+		return 0
 	}
 	if ctx.Goban[int(case_y)][int(case_x)] == 0 {
 		return 1
