@@ -21,8 +21,15 @@ func conditionAlignHeuristic(ctx s.SContext, case_x int, case_y int) int {
 
 func PlacementHeuristic(ctx s.SContext, case_x int, case_y int) uint8 {
 	// Retour 2 pour une obligation de capture, 1 pour un coup ok, 0 sinon
+	capture := false
 	if ctx.ActiveCapture && len(ctx.Capture) > 0 {
-		if case_x == ctx.Capture[0].X && case_y == ctx.Capture[0].Y {
+		for _, cap := range ctx.Capture {
+			if case_x == cap.X && case_y == cap.Y {
+				capture = true
+				break
+			}
+		}
+		if capture == false {
 			return 2
 		}
 	}
