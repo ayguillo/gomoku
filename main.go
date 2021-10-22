@@ -25,7 +25,7 @@ func initialize() (s.SVisu, s.SContext, error) {
 	ctx.NSize = 19
 	ctx.Goban = make([][]s.Tnumber, ctx.NSize)
 	ctx.MapX = make(map[int]string)
-	ctx.Capture = s.SVertex{X: -1, Y: -1}
+	ctx.Capture = make([]s.SVertex, 0)
 	c := 'A'
 	for i := 1; i <= int(ctx.NSize); i++ {
 		ctx.MapX[i] = string(c)
@@ -87,8 +87,10 @@ func displayPlay(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu, v
 	a.FindNeighbors(ctx, int(vertex_next.X), int(vertex_next.Y))
 	d.DisplayMessage(visu, ctx.Size, "", "", *ctx)
 	d.TraceStone(float64(vertex_next.X), float64(vertex_next.Y), ctx, visu, color, false)
-	g.Capture(ctx, visu, int(vertex_next.X), int(vertex_next.Y), true)
-	d.DisplayCapture(*ctx, visu)
+	if ctx.ActiveCapture {
+		g.Capture(ctx, visu, int(vertex_next.X), int(vertex_next.Y), true)
+		d.DisplayCapture(*ctx, visu)
+	}
 	if g.VictoryConditionAlign(ctx, int(vertex_next.X), int(vertex_next.Y), visu) == true || g.VictoryCapture(*ctx) {
 		d.DisplayVictory(visu, *ctx)
 		sdl.Log("VICTORY")
@@ -120,7 +122,7 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 	} else {
 		depth := int8(6)
 		now := time.Now()
-		vertex_next, heuris := a.AlphaBetaPruning2(*ctx, depth)
+		vertex_next, heuris := a.AlphaBetaPruning(*ctx, depth)
 		fmt.Println(vertex_next, heuris)
 		delta := time.Since(now)
 		fmt.Println(delta)
@@ -141,11 +143,16 @@ func human(err error, startgame bool, endgame bool, ctx *s.SContext, visu *s.SVi
 	case_x := math.Round((k_mouse-float64(ctx.Size/4))/float64(ctx.SizeCase)) - 1
 	case_y := math.Round(h_mouse/float64(ctx.SizeCase)) - 1
 	if (case_x >= 0 && uint8(case_x) < ctx.NSize) && (case_y >= 0 && uint8(case_y) < ctx.NSize) {
-		if g.Placement(ctx, int(case_x), int(case_y)) == true {
+		placement := g.Placement(ctx, int(case_x), int(case_y))
+		if placement == 0 {
+			ctx.Goban[int(case_y)][int(case_x)] = s.Tnumber(ctx.CurrentPlayer)
 			startgame, endgame = displayPlay(startgame, endgame, ctx, visu, s.SVertex{X: int(case_x), Y: int(case_y)})
-		} else {
+		} else if placement < 0 {
 			d.DisplayMessage(visu, ctx.Size, "Il y a déjà", "une pierre", *ctx)
 			sdl.Log("Il y a déjà une pierre")
+		} else if placement == 1 {
+			d.DisplayMessage(visu, ctx.Size, "Double Three", "", *ctx)
+			sdl.Log("Double three")
 		}
 	} else {
 		d.DisplayMessage(visu, ctx.Size, "En dehors", "du terrain", *ctx)
@@ -200,6 +207,16 @@ func main() {
 			ctx.Players[1] = true
 			ctx.Players[2] = true
 		}
+		ctx.ActiveDoubleThrees = double_threes
+		ctx.ActiveCapture = capture
+		ctx.ActiveHelp = help
+		if difficulty == 0 {
+			ctx.Depth = 2
+		} else if difficulty == 1 {
+			ctx.Depth = 5
+		} else {
+			ctx.Depth = 8
+		}
 	}
 	running := true
 	endgame := false
@@ -212,11 +229,11 @@ func main() {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch t := event.(type) {
 			case *sdl.QuitEvent:
-				fmt.Println("Quit")
+				sdl.Log("Quit")
 				running = false
 			case *sdl.KeyboardEvent:
 				if t.State == sdl.PRESSED && t.Keysym.Sym == sdl.K_ESCAPE {
-					fmt.Println("Quit")
+					sdl.Log("Quit")
 					running = false
 				}
 			case *sdl.MouseButtonEvent:

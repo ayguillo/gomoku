@@ -69,7 +69,6 @@ func checkRightUpDiagDoubleThree(ctx *s.SContext, case_x int, case_y int, totalP
 	}
 
 	if lp == 1 && (case_x >= int(ctx.NSize) || case_y <= 0 || ctx.Goban[case_y][case_x] != s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[case_y][case_x] != 0) {
-		println("INFO: RU: obstrued")
 		return -1
 	}
 
@@ -104,7 +103,6 @@ func checkLeftDownDiagDoubleThree(ctx *s.SContext, case_x int, case_y int, total
 	}
 
 	if lp == 1 && (case_x <= 0 || case_y >= int(ctx.NSize) || ctx.Goban[case_y][case_x] != s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[case_y][case_x] != 0) {
-		println("INFO: LD: obstrued")
 		return -1
 	}
 

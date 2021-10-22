@@ -12,7 +12,7 @@ func isEnnemyCase(ctx *s.SContext, case_x int, case_y int) bool {
 	return false
 }
 
-func checkDoubleThree(ctx *s.SContext, case_x int, case_y int) bool {
+func CheckDoubleThree(ctx *s.SContext, case_x int, case_y int) bool {
 	horizonDoubleThree := checkHorizonDoubleThree(ctx, case_x, case_y)
 	leftDoubleThree := checkLeftDoubleThree(ctx, case_x, case_y, 2)
 	rightDoubleThree := checkRightDoubleThree(ctx, case_x, case_y, 2)

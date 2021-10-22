@@ -6,19 +6,23 @@ type Tnumber uint8
 type Tgoban [][]Tnumber
 
 type SContext struct {
-	Goban         Tgoban
-	NSize         uint8
-	SizeCase      int32
-	Size          int32
-	CurrentPlayer uint8
-	NbVictoryP1   int
-	NbVictoryP2   int
-	NbCaptureP1   int
-	NbCaptureP2   int
-	MapX          map[int]string
-	CasesNonNull  []SVertex
-	Capture       SVertex
-	Players       map[uint8]bool
+	Goban              Tgoban
+	NSize              uint8
+	SizeCase           int32
+	Size               int32
+	CurrentPlayer      uint8
+	NbVictoryP1        int
+	NbVictoryP2        int
+	NbCaptureP1        int
+	NbCaptureP2        int
+	MapX               map[int]string
+	CasesNonNull       []SVertex
+	Capture            []SVertex
+	Players            map[uint8]bool
+	ActiveDoubleThrees bool
+	ActiveCapture      bool
+	ActiveHelp         bool
+	Depth              uint8
 }
 
 func (goban Tgoban) String() string {

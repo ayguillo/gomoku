@@ -68,7 +68,6 @@ func checkUpDoubleThree(ctx *s.SContext, case_x int, case_y int, totalPiece int)
 	}
 
 	if lp == 1 && (case_y <= 0 || ctx.Goban[case_y][case_x] != s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[case_y][case_x] != 0) {
-		println("INFO: U: obstrued")
 		return -1
 	}
 
@@ -103,7 +102,6 @@ func checkDownDoubleThree(ctx *s.SContext, case_x int, case_y int, totalPiece in
 	}
 
 	if lp == 1 && (case_y >= int(ctx.NSize) || ctx.Goban[case_y][case_x] != s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[case_y][case_x] != 0) {
-		println("INFO: D: obstrued")
 		return -1
 	}
 
