@@ -45,13 +45,13 @@ func heuristicAlign(ctx s.SContext, case_x int, case_y int, player s.Tnumber) (u
 func CalcHeuristic(ctx s.SContext) int32 {
 	value := 0
 	// gotFiveInRow := false
-	// gotFiveInRowOpp := false
-	gotLiveEmptyFour := false
-	gotLiveEmptyFourOpp := false
-	gotLiveEmptyThree := false
-	gotLiveEmptyThreeOpp := false
-	gotLiveEmptyTwo := false
-	gotLiveEmptyTwoOpp := false
+	// // gotFiveInRowOpp := false
+	// gotLiveEmptyFour := false
+	// gotLiveEmptyFourOpp := false
+	// gotLiveEmptyThree := false
+	// gotLiveEmptyThreeOpp := false
+	// gotLiveEmptyTwo := false
+	// gotLiveEmptyTwoOpp := false
 	gotFive, gotFiveOpp, gotFour, gotFourOpp, gotThree, gotThreeOpp, gotTwo, gotTwoOpp := 0, 0, 0, 0, 0, 0, 0, 0
 	gotFourMid, gotFourMidOpp, gotThreeMid, gotThreeMidOpp, gotTwoMid, gotTwoMidOpp := 0, 0, 0, 0, 0, 0
 	gotFourBlock, gotFourBlockOpp, gotThreeBlock, gotThreeBlockOpp, gotTwoBlock, gotTwoBlockOpp := 0, 0, 0, 0, 0, 0
@@ -114,51 +114,22 @@ func CalcHeuristic(ctx s.SContext) int32 {
 							gotTwoOpp++
 						}
 					}
-				} else if middle == true && block == false { // trou
-					if nb_align == 5 {
+				} else if middle == true && block == false && false { // trou
+					if nb_align == 4 && place_ok == true {
 						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
-							if gotLiveEmptyFour == false {
-								gotLiveEmptyFour = true
-							}
+							gotFourMid += 1
 						} else {
-							if gotLiveEmptyFourOpp == false {
-								gotLiveEmptyFourOpp = true
-							}
-						}
-					} else if nb_align == 4 && place_ok == true {
-						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
-							if gotLiveEmptyFour == false {
-								gotLiveEmptyFour = true
-							}
-						} else {
-							if gotLiveEmptyFourOpp == false {
-								gotLiveEmptyFourOpp = true
-							}
+							gotFourMidOpp += 1
 						}
 					} else if nb_align == 3 && place_ok == true {
 						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
-							if gotLiveEmptyThree == false {
-								gotLiveEmptyThree = true
-							}
+							gotThreeMid += 1
 						} else {
-							if gotLiveEmptyThreeOpp == false {
-								gotLiveEmptyThreeOpp = true
-							}
-						}
-					} else if nb_align == 2 && place_ok == true {
-						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
-							if gotLiveEmptyTwo == false {
-								gotLiveEmptyTwo = true
-							}
-						} else {
-							if gotLiveEmptyTwoOpp == false {
-							}
+							gotThreeMidOpp += 1
 						}
 					}
-				} else if block == true { // bloquer + 1 cote libre si place_ok
-					if nb_align >= 5 {
-						println("nb_asasd")
-					} else if nb_align == 4 && place_ok == false {
+				} else if block == true && middle == false { // bloquer + 1 cote libre si place_ok
+					if nb_align == 4 && place_ok == false {
 						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
 							gotFourBlock += 1
 						} else {
@@ -199,10 +170,18 @@ func CalcHeuristic(ctx s.SContext) int32 {
 			}
 		}
 	}
-	// fmt.Println("Me", gotFive, gotFour, gotFourMid, gotThree, gotThreeMid, gotTwo, gotTwoMid)
-	// fmt.Println("Opp", gotFiveOpp, gotFourOpp, gotFourOppMid, gotThreeOpp, gotThreeOppMid, gotTwoOpp, gotTwoOppMid)
+
+	valueMe := 6000*gotFive + 4800*gotFour + 900*gotFourMid + 500*gotThree + 200*gotThreeMid + 200*gotTwo
+	valueOp := 6000*gotFiveOpp + 4800*gotFourOpp + 900*gotFourMidOpp + 500*gotThreeOpp + 200*gotThreeMidOpp + 200*gotTwoOpp
+
+	value = valueMe - valueOp
+
+	// println("on est :", ctx.CurrentPlayer)
+	// fmt.Println("Me:", gotFive, gotFour, gotFourMid, gotThree, gotThreeMid, gotTwo, gotTwoMid, valueMe)
+	// fmt.Println("Op:", gotFiveOpp, gotFourOpp, gotFourMidOpp, gotThreeOpp, gotThreeMidOpp, gotTwoOpp, gotTwoMidOpp, valueOp)
+	// println()
 	// // fmt.Println("Block me", gotBlockFour, gotBlockThree, gotBlockTwo)
 	// // fmt.Println("Block opp", gotBlockFourOpp, gotThreeBlockOpp, gotTwoBlockOpp)
-	value = 15000*(gotFive-gotFiveOpp) + 6000*(gotFour-gotFourOpp) + 500*(gotFourMid-gotFourMidOpp) + 500*(gotThree-gotThreeOpp) + 100*(gotThreeMid-gotThreeMidOpp) + 20*(gotTwo-gotTwoOpp) + 5*(gotTwoMid-gotTwoMidOpp)
+
 	return int32(value)
 }

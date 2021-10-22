@@ -120,7 +120,7 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 		startgame = false
 		d.DisplayPlayer(ctx, visu, false)
 	} else {
-		depth := int8(6)
+		depth := int8(ctx.Depth)
 		now := time.Now()
 		vertex_next, heuris := a.AlphaBetaPruning(*ctx, depth)
 		fmt.Println(vertex_next, heuris)
@@ -128,6 +128,16 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 		fmt.Println(delta)
 		ctx.Goban[int(vertex_next.Y)][int(vertex_next.X)] = s.Tnumber(ctx.CurrentPlayer)
 		startgame, endgame = displayPlay(startgame, endgame, ctx, visu, vertex_next)
+	}
+	if ctx.ActiveHelp {
+		if ctx.VertexHelp.X != -1 && ctx.Goban[ctx.VertexHelp.Y][ctx.VertexHelp.X] == 0 {
+			color = [4]uint8{226, 196, 115, 255}
+			d.TraceStone(float64(ctx.VertexHelp.X), float64(ctx.VertexHelp.Y), ctx, visu, color, true)
+		}
+		vertex_help, _ := a.AlphaBetaPruning(*ctx, 7)
+		ctx.VertexHelp = vertex_help
+		color = [4]uint8{83, 51, 237, 1}
+		d.TraceStone(float64(vertex_help.X), float64(vertex_help.Y), ctx, visu, color, false)
 	}
 	return startgame, endgame
 }
@@ -209,13 +219,16 @@ func main() {
 		}
 		ctx.ActiveDoubleThrees = double_threes
 		ctx.ActiveCapture = capture
+		if help {
+			ctx.VertexHelp = s.SVertex{X: -1, Y: -1}
+		}
 		ctx.ActiveHelp = help
 		if difficulty == 0 {
-			ctx.Depth = 2
+			ctx.Depth = 3
 		} else if difficulty == 1 {
 			ctx.Depth = 5
 		} else {
-			ctx.Depth = 8
+			ctx.Depth = 7
 		}
 	}
 	running := true

@@ -236,8 +236,11 @@ func VictoryCapture(ctx s.SContext) bool {
 		return false
 	}
 	if ctx.NbCaptureP1 >= 5 {
+		println("catpure")
 		return true
 	} else if ctx.NbCaptureP2 >= 5 {
+		println("catpure")
+
 		return true
 	}
 	return false

@@ -1,8 +1,6 @@
 package algorithm
 
 import (
-	"fmt"
-	g "gomoku/game"
 	h "gomoku/heuristic"
 	s "gomoku/structures"
 
@@ -11,6 +9,7 @@ import (
 
 var depthData []int8
 var depthStart int8
+var isWin bool
 
 func CopyGoban(ctx s.SContext) s.Tgoban {
 	newGoban := make([][]s.Tnumber, ctx.NSize)
@@ -37,6 +36,24 @@ type stockData struct {
 	Depth  int8
 }
 
+func VictoryCondition(ctx s.SContext) bool {
+	if checkCaptureVictory(ctx) {
+		return true
+	}
+
+	for y := range ctx.Goban {
+		for x := range ctx.Goban[y] {
+			if ctx.Goban[y][x] != 0 {
+				if CheckAlignVictory(ctx, x, y) {
+					return true
+				}
+			}
+		}
+	}
+
+	return false
+}
+
 func AlphaBetaPruning(ctx s.SContext, depth int8) (s.SVertex, int32) {
 	neighbors := make([]s.SVertex, len(ctx.CasesNonNull))
 	copy(neighbors, ctx.CasesNonNull)
@@ -51,6 +68,7 @@ func AlphaBetaPruning(ctx s.SContext, depth int8) (s.SVertex, int32) {
 	i := len(neighbors)
 	depthData = make([]int8, i)
 	depthStart = depth
+	isWin = false
 
 	k := 0
 	for _, neighbor := range neighbors {
@@ -69,23 +87,25 @@ func AlphaBetaPruning(ctx s.SContext, depth int8) (s.SVertex, int32) {
 		i--
 	}
 
-	fmt.Printf("%v\n", data)
 	close(ch)
 
+	reDepth := int8(0)
 	for _, value := range data {
 		eval := value.Heur
 		if eval >= maxEval {
 			maxEval = eval
 			vertex = value.Vertex
+			reDepth = value.Depth
 		}
 	}
 
-	fmt.Printf("%v %v\n", vertex, maxEval)
-
+	println(depth - reDepth)
 	return vertex, maxEval
 }
 
 func initMax(ctx s.SContext, depth int8, neighbor s.SVertex, alpha int32, beta int32, ch chan stockData, i int) {
+	var eval int32
+
 	goban := CopyGoban(ctx)
 	tmp_ctx := s.SContext{
 		Goban:         goban,
@@ -97,55 +117,45 @@ func initMax(ctx s.SContext, depth int8, neighbor s.SVertex, alpha int32, beta i
 		NSize:         ctx.NSize}
 
 	tmp_ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
-	newNeighbors := getNeighbors(tmp_ctx, neighbor) // fct getNeighbors a faire
-	tmp := tmp_ctx.CurrentPlayer
-	swapPlayer(&tmp_ctx)
-	eval := minimax(tmp_ctx, newNeighbors, depth-1, alpha, beta, false, i)
-	tmp_ctx.CurrentPlayer = tmp
-	tmp_ctx.Goban[neighbor.Y][neighbor.X] = 0
+
+	if VictoryCondition(tmp_ctx) {
+		eval = h.CalcHeuristic(tmp_ctx)
+		println("ici", eval, neighbor.X, neighbor.Y)
+		depthData[i] = depth
+		isWin = true
+		//kill toutes les goroutines
+	} else {
+		newNeighbors := getNeighbors(tmp_ctx, neighbor) // fct getNeighbors a faire
+		tmp := tmp_ctx.CurrentPlayer
+		swapPlayer(&tmp_ctx)
+		eval = minimax(tmp_ctx, newNeighbors, depth-1, alpha, beta, false, i)
+		tmp_ctx.CurrentPlayer = tmp
+		tmp_ctx.Goban[neighbor.Y][neighbor.X] = 0
+	}
 
 	ret := stockData{
 		Heur:   eval,
 		Vertex: neighbor,
-		Depth:  depthStart - depthData[i],
+		Depth:  depthData[i],
 	}
 
 	ch <- ret
 }
 
-func Heuristic2(ctx s.SContext, isMaximazingPlayer bool) int32 {
-	value := 0
-
-	for y := range ctx.Goban {
-		for x := range ctx.Goban[y] {
-			if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
-				value += Heuristic(ctx, x, y)
-			}
-		}
-	}
-
-	return int32(value)
-}
-
-func victoryCondition(ctx s.SContext) bool {
-	for y := range ctx.Goban {
-		for x := range ctx.Goban[y] {
-			if ctx.Goban[y][x] != 0 {
-				if g.VictoryConditionAlign(&ctx, x, y, nil) {
-					println("true")
-					return true
-				}
-			}
-		}
-	}
-
-	return false
-}
-
 func minimax(tmp_ctx s.SContext, neighbors []s.SVertex, depth int8, alpha int32, beta int32, isMaximazingPlayer bool, i int) int32 {
-	if depth == 0 || victoryCondition(tmp_ctx) {
+	if depthData[i] >= depth {
 		depthData[i] = depth
-		return h.CalcHeuristic(tmp_ctx)
+	}
+	if isWin {
+		return 0
+	}
+
+	if depth == 0 || VictoryCondition(tmp_ctx) {
+		// depthData[i] = depth
+		swapPlayer(&tmp_ctx)
+		heur := h.CalcHeuristic(tmp_ctx)
+		swapPlayer(&tmp_ctx)
+		return heur
 	}
 
 	if isMaximazingPlayer {

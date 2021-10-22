@@ -6,7 +6,7 @@ import (
 
 func Placement(ctx *s.SContext, case_x int, case_y int) int {
 	capture := false
-	if len(ctx.Capture) > 0 && ctx.ActiveCapture {
+	if ctx.ActiveCapture && len(ctx.Capture) > 0 {
 		for _, cap := range ctx.Capture {
 			if case_x == cap.X && case_y == cap.Y {
 				capture = true
@@ -17,7 +17,7 @@ func Placement(ctx *s.SContext, case_x int, case_y int) int {
 			return 2
 		}
 	}
-	if !CheckDoubleThree(ctx, case_x, case_y) && ctx.ActiveDoubleThrees {
+	if ctx.ActiveDoubleThrees && !CheckDoubleThree(ctx, case_x, case_y) {
 		return 1
 	}
 	if ctx.Goban[int(case_y)][int(case_x)] == 0 {

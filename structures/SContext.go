@@ -23,6 +23,7 @@ type SContext struct {
 	ActiveCapture      bool
 	ActiveHelp         bool
 	Depth              uint8
+	VertexHelp         SVertex
 }
 
 func (goban Tgoban) String() string {
