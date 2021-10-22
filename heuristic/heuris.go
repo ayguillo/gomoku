@@ -42,7 +42,7 @@ func heuristicAlign(ctx s.SContext, case_x int, case_y int, player s.Tnumber) (u
 	return nb_align, place_ok, block, middle
 }
 
-func CalcHeuristic(ctx s.SContext, t bool) int32 {
+func CalcHeuristic(ctx s.SContext) int32 {
 	value := 0
 	// gotFiveInRow := false
 	// // gotFiveInRowOpp := false
@@ -56,11 +56,6 @@ func CalcHeuristic(ctx s.SContext, t bool) int32 {
 	gotFourMid, gotFourMidOpp, gotThreeMid, gotThreeMidOpp, gotTwoMid, gotTwoMidOpp := 0, 0, 0, 0, 0, 0
 	gotFourBlock, gotFourBlockOpp, gotThreeBlock, gotThreeBlockOpp, gotTwoBlock, gotTwoBlockOpp := 0, 0, 0, 0, 0, 0
 
-	if ctx.CurrentPlayer == 1 {
-		ctx.CurrentPlayer = 2
-	} else {
-		ctx.CurrentPlayer = 1
-	}
 	nb_capture := ctx.NbCaptureP1
 	nb_capture_enemy := ctx.NbCaptureP2
 	if ctx.CurrentPlayer == 2 {
@@ -119,7 +114,7 @@ func CalcHeuristic(ctx s.SContext, t bool) int32 {
 							gotTwoOpp++
 						}
 					}
-				} else if middle == true && block == false { // trou
+				} else if middle == true && block == false && false { // trou
 					if nb_align == 4 && place_ok == true {
 						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
 							gotFourMid += 1
@@ -133,7 +128,7 @@ func CalcHeuristic(ctx s.SContext, t bool) int32 {
 							gotThreeMidOpp += 1
 						}
 					}
-				} else if block == true { // bloquer + 1 cote libre si place_ok
+				} else if block == true && middle == false { // bloquer + 1 cote libre si place_ok
 					if nb_align == 4 && place_ok == false {
 						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
 							gotFourBlock += 1
@@ -176,19 +171,17 @@ func CalcHeuristic(ctx s.SContext, t bool) int32 {
 		}
 	}
 
-	value = 15000*gotFive - 20000*gotFiveOpp + 6000*gotFour - 7500*gotFourOpp + 500*gotFourMid - 700*gotFourMidOpp + 500*gotThree - 700*gotThreeOpp + 100*gotThreeMid - 150*gotThreeMidOpp
+	valueMe := 6000*gotFive + 4800*gotFour + 900*gotFourMid + 500*gotThree + 200*gotThreeMid + 200*gotTwo
+	valueOp := 6000*gotFiveOpp + 4800*gotFourOpp + 900*gotFourMidOpp + 500*gotThreeOpp + 200*gotThreeMidOpp + 200*gotTwoOpp
 
-	// fmt.Println("Me", gotFive, gotFour, gotFourMid, gotThree, gotThreeMid, gotTwo, gotTwoMid, value, ctx.CurrentPlayer, t)
-	// fmt.Println("Opp", gotFiveOpp, gotFourOpp, gotFourMidOpp, gotThreeOpp, gotThreeMidOpp, gotTwoOpp, gotTwoMidOpp, value, ctx.CurrentPlayer, t)
+	value = valueMe - valueOp
+
+	// println("on est :", ctx.CurrentPlayer)
+	// fmt.Println("Me:", gotFive, gotFour, gotFourMid, gotThree, gotThreeMid, gotTwo, gotTwoMid, valueMe)
+	// fmt.Println("Op:", gotFiveOpp, gotFourOpp, gotFourMidOpp, gotThreeOpp, gotThreeMidOpp, gotTwoOpp, gotTwoMidOpp, valueOp)
 	// println()
 	// // fmt.Println("Block me", gotBlockFour, gotBlockThree, gotBlockTwo)
 	// // fmt.Println("Block opp", gotBlockFourOpp, gotThreeBlockOpp, gotTwoBlockOpp)
-
-	if ctx.CurrentPlayer == 1 {
-		ctx.CurrentPlayer = 2
-	} else {
-		ctx.CurrentPlayer = 1
-	}
 
 	return int32(value)
 }

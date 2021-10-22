@@ -10,6 +10,7 @@ import (
 	a "gomoku/algorithm"
 	d "gomoku/display"
 	g "gomoku/game"
+	h "gomoku/heuristic"
 	s "gomoku/structures"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -142,6 +143,8 @@ func human(err error, startgame bool, endgame bool, ctx *s.SContext, visu *s.SVi
 	case_y := math.Round(h_mouse/float64(ctx.SizeCase)) - 1
 	if (case_x >= 0 && uint8(case_x) < ctx.NSize) && (case_y >= 0 && uint8(case_y) < ctx.NSize) {
 		if g.Placement(ctx, int(case_x), int(case_y)) == true {
+			a.VictoryCondition(*ctx)
+			h.CalcHeuristic(*ctx)
 			startgame, endgame = displayPlay(startgame, endgame, ctx, visu, s.SVertex{X: int(case_x), Y: int(case_y)})
 		} else {
 			d.DisplayMessage(visu, ctx.Size, "Il y a déjà", "une pierre", *ctx)

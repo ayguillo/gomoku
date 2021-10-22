@@ -124,7 +124,7 @@ func diagLeft(ctx *s.SContext, case_x int, case_y int, capturePlayer int, nbCapt
 	}
 	if count_stone >= 4 {
 		if message != "" {
-			if visu != nil  {
+			if visu != nil {
 				sdl.Log(message)
 				d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", *ctx)
 			}
@@ -233,8 +233,11 @@ func VictoryConditionAlign(ctx *s.SContext, case_x int, case_y int, visu *s.SVis
 
 func VictoryCapture(ctx s.SContext) bool {
 	if ctx.NbCaptureP1 >= 5 {
+		println("catpure")
 		return true
 	} else if ctx.NbCaptureP2 >= 5 {
+		println("catpure")
+
 		return true
 	}
 	return false
