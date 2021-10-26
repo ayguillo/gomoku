@@ -119,7 +119,7 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 		startgame = false
 		d.DisplayPlayer(ctx, visu, false)
 	} else {
-		depth := int8(5)
+		depth := int8(7)
 		now := time.Now()
 		vertex_next, heuris := a.AlphaBetaPruning(*ctx, depth)
 		fmt.Println(vertex_next, heuris)

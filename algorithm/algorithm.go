@@ -7,8 +7,18 @@ import (
 	"math"
 )
 
-var depthData []int8
-var depthStart int8
+type stockData struct {
+	Heur   int32
+	Vertex s.SVertex
+	Depth  depthStruct
+}
+
+type depthStruct struct {
+	maxDepth     int8
+	victoryDepth int8
+}
+
+var depthData []depthStruct
 var isWin bool
 
 func CopyGoban(ctx s.SContext) s.Tgoban {
@@ -28,12 +38,6 @@ func swapPlayer(ctx *s.SContext) {
 	} else {
 		ctx.CurrentPlayer = 1
 	}
-}
-
-type stockData struct {
-	Heur   int32
-	Vertex s.SVertex
-	Depth  int8
 }
 
 func VictoryCondition(ctx s.SContext) bool {
@@ -66,8 +70,7 @@ func AlphaBetaPruning(ctx s.SContext, depth int8) (s.SVertex, int32) {
 
 	ch := make(chan stockData)
 	i := len(neighbors)
-	depthData = make([]int8, i)
-	depthStart = depth
+	depthData = make([]depthStruct, i)
 	isWin = false
 
 	k := 0
@@ -90,16 +93,18 @@ func AlphaBetaPruning(ctx s.SContext, depth int8) (s.SVertex, int32) {
 	close(ch)
 
 	reDepth := int8(0)
+	maxDepth := int8(0)
 	for _, value := range data {
 		eval := value.Heur
 		if eval >= maxEval {
 			maxEval = eval
 			vertex = value.Vertex
-			reDepth = value.Depth
+			maxDepth = value.Depth.maxDepth
+			reDepth = value.Depth.victoryDepth
 		}
 	}
 
-	println(depth - reDepth)
+	println(reDepth, maxDepth)
 	return vertex, maxEval
 }
 
@@ -120,12 +125,13 @@ func initMax(ctx s.SContext, depth int8, neighbor s.SVertex, alpha int32, beta i
 
 	if VictoryCondition(tmp_ctx) {
 		eval = h.CalcHeuristic(tmp_ctx)
-		println("ici", eval, neighbor.X, neighbor.Y)
-		depthData[i] = depth
+
+		depthData[i].maxDepth = depth
+		depthData[i].victoryDepth = depth
+
 		isWin = true
-		//kill toutes les goroutines
 	} else {
-		newNeighbors := getNeighbors(tmp_ctx, neighbor) // fct getNeighbors a faire
+		newNeighbors := getNeighbors(tmp_ctx, neighbor)
 		tmp := tmp_ctx.CurrentPlayer
 		swapPlayer(&tmp_ctx)
 		eval = minimax(tmp_ctx, newNeighbors, depth-1, alpha, beta, false, i)
@@ -143,15 +149,16 @@ func initMax(ctx s.SContext, depth int8, neighbor s.SVertex, alpha int32, beta i
 }
 
 func minimax(tmp_ctx s.SContext, neighbors []s.SVertex, depth int8, alpha int32, beta int32, isMaximazingPlayer bool, i int) int32 {
-	if depthData[i] >= depth {
-		depthData[i] = depth
+	if depthData[i].maxDepth >= depth {
+		depthData[i].maxDepth = depth
 	}
+
 	if isWin {
 		return 0
 	}
 
 	if depth == 0 || VictoryCondition(tmp_ctx) {
-		// depthData[i] = depth
+		depthData[i].victoryDepth = depth
 		swapPlayer(&tmp_ctx)
 		heur := h.CalcHeuristic(tmp_ctx)
 		swapPlayer(&tmp_ctx)

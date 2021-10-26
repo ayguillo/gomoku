@@ -89,13 +89,7 @@ func CalcHeuristic(ctx s.SContext) int32 {
 					continue
 				}
 				if middle == false && block == false { // libre
-					if nb_align >= 5 {
-						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
-							gotFive++
-						} else {
-							gotFiveOpp++
-						}
-					} else if nb_align == 4 && place_ok == true {
+					if nb_align == 4 && place_ok == true {
 						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
 							gotFour++
 						} else {
@@ -114,8 +108,8 @@ func CalcHeuristic(ctx s.SContext) int32 {
 							gotTwoOpp++
 						}
 					}
-				} else if middle == true && block == false && false { // trou
-					if nb_align == 4 && place_ok == true {
+				} else if middle == true && block == false {
+					if nb_align >= 4 && place_ok == true {
 						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
 							gotFourMid += 1
 						} else {
@@ -128,7 +122,21 @@ func CalcHeuristic(ctx s.SContext) int32 {
 							gotThreeMidOpp += 1
 						}
 					}
-				} else if block == true && middle == false { // bloquer + 1 cote libre si place_ok
+				} else if middle == true && block == true {
+					if nb_align >= 4 && place_ok == true {
+						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
+							gotFourMid += 1
+						} else {
+							gotFourMidOpp += 1
+						}
+					} else if nb_align == 3 && place_ok == true {
+						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
+							gotThreeMid += 1
+						} else {
+							gotThreeMidOpp += 1
+						}
+					}
+				} else if middle == false && block == true { // bloquer + 1 cote libre si place_ok
 					if nb_align == 4 && place_ok == false {
 						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
 							gotFourBlock += 1
@@ -171,8 +179,13 @@ func CalcHeuristic(ctx s.SContext) int32 {
 		}
 	}
 
-	valueMe := 6000*gotFive + 4800*gotFour + 900*gotFourMid + 500*gotThree + 200*gotThreeMid + 200*gotTwo
-	valueOp := 6000*gotFiveOpp + 4800*gotFourOpp + 900*gotFourMidOpp + 500*gotThreeOpp + 200*gotThreeMidOpp + 200*gotTwoOpp
+	if gotFive > 0 {
+		return 1000000
+	} else if gotFiveOpp > 0 {
+
+	}
+	valueMe := 6000*gotFive + 4800*gotFour + 900*gotFourMid + 500*gotThree + 200*gotThreeMid
+	valueOp := 6000*gotFiveOpp + 4800*gotFourOpp + 900*gotFourMidOpp + 500*gotThreeOpp + 200*gotThreeMidOpp
 
 	value = valueMe - valueOp
 
