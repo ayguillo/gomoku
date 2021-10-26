@@ -36,6 +36,11 @@ type stockData struct {
 	Depth  int8
 }
 
+type heurData struct {
+	Play stockData
+	Heur int32
+}
+
 func VictoryCondition(ctx s.SContext) bool {
 	if checkCaptureVictory(ctx) {
 		return true
@@ -71,14 +76,16 @@ func AlphaBetaPruning(ctx s.SContext, depth int8) (s.SVertex, int32) {
 	isWin = false
 
 	k := 0
+	println("on est al")
 	for _, neighbor := range neighbors {
 		placement := PlacementHeuristic(ctx, neighbor.X, neighbor.Y)
 		if placement >= 1 {
 			go initMax(ctx, depth, neighbor, alpha, beta, ch, k)
+			println("go go")
 			k++
 		}
 	}
-
+	println("end: on est al")
 	var data []stockData
 
 	for i > 0 {
@@ -86,7 +93,7 @@ func AlphaBetaPruning(ctx s.SContext, depth int8) (s.SVertex, int32) {
 		data = append(data, ret)
 		i--
 	}
-
+	println("end 2 on est al")
 	close(ch)
 
 	reDepth := int8(0)
@@ -96,6 +103,43 @@ func AlphaBetaPruning(ctx s.SContext, depth int8) (s.SVertex, int32) {
 			maxEval = eval
 			vertex = value.Vertex
 			reDepth = value.Depth
+		}
+	}
+
+	goban := CopyGoban(ctx)
+	tmp_ctx := s.SContext{
+		Goban:         goban,
+		CurrentPlayer: ctx.CurrentPlayer,
+		CasesNonNull:  nil,
+		Capture:       ctx.Capture,
+		NbCaptureP1:   ctx.NbCaptureP1,
+		NbCaptureP2:   ctx.NbCaptureP2,
+		NSize:         ctx.NSize}
+
+	var finalState []heurData
+
+	for _, neighbor := range neighbors {
+		placement := PlacementHeuristic(ctx, neighbor.X, neighbor.Y)
+		if placement >= 1 {
+			tmp_ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
+
+			for _, value := range data {
+				if value.Heur == maxEval && value.Vertex == neighbor {
+					calcHeur := h.CalcHeuristic(tmp_ctx)
+					tmp := heurData{Heur: calcHeur, Play: value}
+					finalState = append(finalState, tmp)
+				}
+			}
+			tmp_ctx.Goban[neighbor.Y][neighbor.X] = 0
+		}
+	}
+
+	maxStock := int32(-2147483648)
+
+	for _, value := range finalState {
+		if value.Heur > maxStock {
+			vertex = value.Play.Vertex
+			reDepth = value.Play.Depth
 		}
 	}
 
