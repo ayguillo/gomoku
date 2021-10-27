@@ -76,16 +76,13 @@ func AlphaBetaPruning(ctx s.SContext, depth int8) (s.SVertex, int32) {
 	isWin = false
 
 	k := 0
-	println("on est al")
 	for _, neighbor := range neighbors {
 		placement := PlacementHeuristic(ctx, neighbor.X, neighbor.Y)
 		if placement >= 1 {
 			go initMax(ctx, depth, neighbor, alpha, beta, ch, k)
-			println("go go")
 			k++
 		}
 	}
-	println("end: on est al")
 	var data []stockData
 
 	for i > 0 {
@@ -93,7 +90,6 @@ func AlphaBetaPruning(ctx s.SContext, depth int8) (s.SVertex, int32) {
 		data = append(data, ret)
 		i--
 	}
-	println("end 2 on est al")
 	close(ch)
 
 	reDepth := int8(0)

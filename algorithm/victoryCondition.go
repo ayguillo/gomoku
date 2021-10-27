@@ -5,6 +5,9 @@ import (
 )
 
 func checkCaptureVictory(ctx s.SContext) bool {
+	if ctx.NbCaptureP1 >= 5 || ctx.NbCaptureP2 >= 5 {
+		return true
+	}
 	return false
 }
 

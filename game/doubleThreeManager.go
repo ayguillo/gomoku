@@ -5,7 +5,7 @@ import (
 )
 
 func isEnnemyCase(ctx *s.SContext, case_x int, case_y int) bool {
-	if ctx.Goban[case_y][case_x] != s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[case_y][case_x] != 0 {
+	if case_x >= 0 && case_x < 19 && case_y >= 0 && case_y > 19 && ctx.Goban[case_y][case_x] != s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[case_y][case_x] != 0 {
 		return true
 	}
 
