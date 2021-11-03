@@ -8,16 +8,16 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-func horizontalAlign(ctx s.SContext, case_x int, case_y int, capturePlayer int, nbCapture int, visu *s.SVisu) bool {
+func horizontalAlign(ctx *s.SContext, case_x int, case_y int, capturePlayer int, nbCapture int, visu *s.SVisu) uint8 {
 	count_stone := 0
 	var message string
-	if counterVertical(ctx, case_x, case_y, capturePlayer) == true || counterDiag(ctx, case_x, case_y, capturePlayer) == true {
-		message = "Capture in " + ctx.MapX[case_x+1] + " " + strconv.Itoa(int(ctx.NSize)-case_y)
+	if CounterVertical(ctx, case_x, case_y, capturePlayer) == true || CounterDiag(ctx, case_x, case_y, capturePlayer) == true {
+		message = "Capture in " + ctx.MapX[ctx.Capture[0].X+1] + " " + strconv.Itoa(int(ctx.NSize)-ctx.Capture[0].Y)
 	}
 	for current_case := case_x + 1; current_case < int(ctx.NSize); current_case++ {
 		if ctx.Goban[case_y][current_case] == s.Tnumber(ctx.CurrentPlayer) {
-			if counterVertical(ctx, current_case, case_y, capturePlayer) == true || counterDiag(ctx, current_case, case_y, capturePlayer) == true {
-				message = "Capture in " + ctx.MapX[current_case+1] + " " + strconv.Itoa(int(ctx.NSize)-case_y)
+			if CounterVertical(ctx, current_case, case_y, capturePlayer) == true || CounterDiag(ctx, current_case, case_y, capturePlayer) == true {
+				message = "Capture in " + ctx.MapX[ctx.Capture[0].X+1] + " " + strconv.Itoa(int(ctx.NSize)-ctx.Capture[0].Y)
 			}
 			count_stone++
 		} else {
@@ -26,8 +26,8 @@ func horizontalAlign(ctx s.SContext, case_x int, case_y int, capturePlayer int, 
 	}
 	for current_case := case_x - 1; current_case >= 0; current_case-- {
 		if ctx.Goban[case_y][current_case] == s.Tnumber(ctx.CurrentPlayer) {
-			if counterVertical(ctx, current_case, case_y, capturePlayer) == true || counterDiag(ctx, current_case, case_y, capturePlayer) == true {
-				message = "Capture in " + ctx.MapX[current_case+1] + " " + strconv.Itoa(int(ctx.NSize)-case_y)
+			if CounterVertical(ctx, current_case, case_y, capturePlayer) == true || CounterDiag(ctx, current_case, case_y, capturePlayer) == true {
+				message = "Capture in " + ctx.MapX[ctx.Capture[0].X+1] + " " + strconv.Itoa(int(ctx.NSize)-ctx.Capture[0].Y)
 			}
 			count_stone++
 		} else {
@@ -35,26 +35,29 @@ func horizontalAlign(ctx s.SContext, case_x int, case_y int, capturePlayer int, 
 		}
 	}
 	if count_stone >= 4 {
-		if message != "" {
-			sdl.Log(message)
-			d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", ctx)
-			return false
+		if message != "" && ctx.ActiveCapture {
+			if visu != nil {
+				sdl.Log(message)
+				d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", *ctx)
+			}
+			return 2
 		}
-		return true
+		return 1
 	}
-	return false
+	return 0
 }
 
-func verticalAlign(ctx s.SContext, case_x int, case_y int, capturePlayer int, nbCapture int, visu *s.SVisu) bool {
+func verticalAlign(ctx *s.SContext, case_x int, case_y int, capturePlayer int, nbCapture int, visu *s.SVisu) uint8 {
 	count_stone := 0
 	var message string
-	if counterHorizontal(ctx, case_x, case_y, capturePlayer) == true || counterDiag(ctx, case_x, case_y, capturePlayer) == true {
-		message = "Capture in " + ctx.MapX[case_x] + " " + strconv.Itoa(int(ctx.NSize)-case_y)
+	if CounterHorizontal(ctx, case_x, case_y, capturePlayer) == true || CounterDiag(ctx, case_x, case_y, capturePlayer) == true {
+		message = "Capture in " + ctx.MapX[ctx.Capture[0].X+1] + " " + strconv.Itoa(int(ctx.NSize)-ctx.Capture[0].Y)
+
 	}
 	for current_case := case_y + 1; current_case < int(ctx.NSize); current_case++ {
 		if ctx.Goban[current_case][case_x] == s.Tnumber(ctx.CurrentPlayer) {
-			if counterHorizontal(ctx, case_x, current_case, capturePlayer) == true || counterDiag(ctx, case_x, current_case, capturePlayer) == true {
-				message = "Capture in " + ctx.MapX[case_x+1] + " " + strconv.Itoa(int(ctx.NSize)-current_case)
+			if CounterHorizontal(ctx, case_x, current_case, capturePlayer) == true || CounterDiag(ctx, case_x, current_case, capturePlayer) == true {
+				message = "Capture in " + ctx.MapX[ctx.Capture[0].X+1] + " " + strconv.Itoa(int(ctx.NSize)-ctx.Capture[0].Y)
 			}
 			count_stone++
 		} else {
@@ -63,8 +66,8 @@ func verticalAlign(ctx s.SContext, case_x int, case_y int, capturePlayer int, nb
 	}
 	for current_case := case_y - 1; current_case >= 0; current_case-- {
 		if ctx.Goban[current_case][case_x] == s.Tnumber(ctx.CurrentPlayer) {
-			if counterHorizontal(ctx, case_x, current_case, capturePlayer) == true || counterDiag(ctx, case_x, current_case, capturePlayer) == true {
-				message = "Capture in " + ctx.MapX[case_x+1] + " " + strconv.Itoa(int(ctx.NSize)-current_case)
+			if CounterHorizontal(ctx, case_x, current_case, capturePlayer) == true || CounterDiag(ctx, case_x, current_case, capturePlayer) == true {
+				message = "Capture in " + ctx.MapX[ctx.Capture[0].X+1] + " " + strconv.Itoa(int(ctx.NSize)-ctx.Capture[0].Y)
 			}
 			count_stone++
 		} else {
@@ -72,28 +75,32 @@ func verticalAlign(ctx s.SContext, case_x int, case_y int, capturePlayer int, nb
 		}
 	}
 	if count_stone >= 4 {
-		if message != "" {
-			sdl.Log(message)
-			d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", ctx)
-			return false
+		if message != "" && ctx.ActiveCapture {
+			if visu != nil {
+				sdl.Log(message)
+				d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", *ctx)
+			}
+			return 2
 		}
-		return true
+		ctx.Capture = nil
+		return 1
 	}
-	return false
+	return 0
 }
 
-func diagLeft(ctx s.SContext, case_x int, case_y int, capturePlayer int, nbCapture int, visu *s.SVisu) bool {
+func diagLeft(ctx *s.SContext, case_x int, case_y int, capturePlayer int, nbCapture int, visu *s.SVisu) uint8 {
 	count_stone := 0
 	var message string
-	if counterVertical(ctx, case_x, case_y, capturePlayer) == true || counterHorizontal(ctx, case_x, case_y, capturePlayer) ||
-		counterDiag(ctx, case_x, case_y, capturePlayer) {
-		message = "Capture in " + ctx.MapX[case_x] + " " + strconv.Itoa(int(ctx.NSize)-case_y+1)
+	if CounterVertical(ctx, case_x, case_y, capturePlayer) == true || CounterHorizontal(ctx, case_x, case_y, capturePlayer) ||
+		CounterDiag(ctx, case_x, case_y, capturePlayer) {
+		message = "Capture in " + ctx.MapX[ctx.Capture[0].X+1] + " " + strconv.Itoa(int(ctx.NSize)-ctx.Capture[0].Y)
 	}
+
 	for current_case_x, current_case_y := case_x+1, case_y+1; current_case_x < int(ctx.NSize) && current_case_y < int(ctx.NSize); {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(ctx.CurrentPlayer) {
-			if counterVertical(ctx, current_case_x, current_case_y, capturePlayer) == true || counterHorizontal(ctx, current_case_x, current_case_y, capturePlayer) ||
-				counterDiag(ctx, current_case_x, current_case_y, capturePlayer) {
-				message = "Capture in " + ctx.MapX[current_case_x+1] + " " + strconv.Itoa(int(ctx.NSize)-current_case_y)
+			if CounterVertical(ctx, current_case_x, current_case_y, capturePlayer) == true || CounterHorizontal(ctx, current_case_x, current_case_y, capturePlayer) ||
+				CounterDiag(ctx, current_case_x, current_case_y, capturePlayer) {
+				message = "Capture in " + ctx.MapX[ctx.Capture[0].X+1] + " " + strconv.Itoa(int(ctx.NSize)-ctx.Capture[0].Y)
 			}
 			count_stone++
 			current_case_x++
@@ -104,9 +111,9 @@ func diagLeft(ctx s.SContext, case_x int, case_y int, capturePlayer int, nbCaptu
 	}
 	for current_case_x, current_case_y := case_x-1, case_y-1; current_case_x >= 0 && current_case_y >= 0; {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(ctx.CurrentPlayer) {
-			if counterVertical(ctx, current_case_x, current_case_y, capturePlayer) == true || counterHorizontal(ctx, current_case_x, current_case_y, capturePlayer) ||
-				counterDiag(ctx, current_case_x, current_case_y, capturePlayer) {
-				message = "Capture in " + ctx.MapX[current_case_x+1] + " " + strconv.Itoa(int(ctx.NSize)-current_case_y)
+			if CounterVertical(ctx, current_case_x, current_case_y, capturePlayer) == true || CounterHorizontal(ctx, current_case_x, current_case_y, capturePlayer) ||
+				CounterDiag(ctx, current_case_x, current_case_y, capturePlayer) {
+				message = "Capture in " + ctx.MapX[ctx.Capture[0].X+1] + " " + strconv.Itoa(int(ctx.NSize)-ctx.Capture[0].Y)
 			}
 			count_stone++
 			current_case_x--
@@ -116,28 +123,30 @@ func diagLeft(ctx s.SContext, case_x int, case_y int, capturePlayer int, nbCaptu
 		}
 	}
 	if count_stone >= 4 {
-		if message != "" {
-			sdl.Log(message)
-			d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", ctx)
-			return false
+		if message != "" && ctx.ActiveCapture {
+			if visu != nil {
+				sdl.Log(message)
+				d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", *ctx)
+			}
+			return 2
 		}
-		return true
+		return 1
 	}
-	return false
+	return 0
 }
 
-func diagRight(ctx s.SContext, case_x int, case_y int, capturePlayer int, nbCapture int, visu *s.SVisu) bool {
+func diagRight(ctx *s.SContext, case_x int, case_y int, capturePlayer int, nbCapture int, visu *s.SVisu) uint8 {
 	count_stone := 0
 	var message string
-	if counterVertical(ctx, case_x, case_y, capturePlayer) == true || counterHorizontal(ctx, case_x, case_y, capturePlayer) ||
-		counterDiag(ctx, case_x, case_y, capturePlayer) {
+	if CounterVertical(ctx, case_x, case_y, capturePlayer) == true || CounterHorizontal(ctx, case_x, case_y, capturePlayer) ||
+		CounterDiag(ctx, case_x, case_y, capturePlayer) {
 		message = "Capture in " + ctx.MapX[case_x] + " " + strconv.Itoa(int(ctx.NSize)-case_y+1)
 	}
 	for current_case_x, current_case_y := case_x+1, case_y-1; current_case_x < int(ctx.NSize) && current_case_y >= 0; {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(ctx.CurrentPlayer) {
-			if counterVertical(ctx, current_case_x, current_case_y, capturePlayer) == true || counterHorizontal(ctx, current_case_x, current_case_y, capturePlayer) ||
-				counterDiag(ctx, current_case_x, current_case_y, capturePlayer) {
-				message = "Capture in " + ctx.MapX[current_case_x+1] + " " + strconv.Itoa(int(ctx.NSize)-current_case_y+1)
+			if CounterVertical(ctx, current_case_x, current_case_y, capturePlayer) == true || CounterHorizontal(ctx, current_case_x, current_case_y, capturePlayer) ||
+				CounterDiag(ctx, current_case_x, current_case_y, capturePlayer) {
+				message = "Capture in " + ctx.MapX[ctx.Capture[0].X+1] + " " + strconv.Itoa(int(ctx.NSize)-ctx.Capture[0].Y)
 			}
 			count_stone++
 			current_case_x++
@@ -148,9 +157,9 @@ func diagRight(ctx s.SContext, case_x int, case_y int, capturePlayer int, nbCapt
 	}
 	for current_case_x, current_case_y := case_x-1, case_y+1; current_case_x >= 0 && current_case_y < int(ctx.NSize); {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(ctx.CurrentPlayer) {
-			if counterVertical(ctx, current_case_x, current_case_y, capturePlayer) == true || counterHorizontal(ctx, current_case_x, current_case_y, capturePlayer) ||
-				counterDiag(ctx, current_case_x, current_case_y, capturePlayer) {
-				message = "Capture in " + ctx.MapX[current_case_x+1] + " " + strconv.Itoa(int(ctx.NSize)-current_case_y+1)
+			if CounterVertical(ctx, current_case_x, current_case_y, capturePlayer) == true || CounterHorizontal(ctx, current_case_x, current_case_y, capturePlayer) ||
+				CounterDiag(ctx, current_case_x, current_case_y, capturePlayer) {
+				message = "Capture in " + ctx.MapX[ctx.Capture[0].X+1] + " " + strconv.Itoa(int(ctx.NSize)-ctx.Capture[0].Y)
 			}
 			count_stone++
 			current_case_x--
@@ -160,28 +169,32 @@ func diagRight(ctx s.SContext, case_x int, case_y int, capturePlayer int, nbCapt
 		}
 	}
 	if count_stone >= 4 {
-		if message != "" {
-			sdl.Log(message)
-			d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", ctx)
-			return false
+		if message != "" && ctx.ActiveCapture {
+			if visu != nil {
+				sdl.Log(message)
+				d.DisplayMessage(visu, int32((int32(ctx.NSize+1))*ctx.SizeCase), message, "", *ctx)
+			}
+			return 2
 		}
-		return true
+		return 1
 	}
-	return false
+	return 0
 }
 
-func diagonalAlign(ctx s.SContext, case_x int, case_y int, capturePlayer int, nbCapture int, visu *s.SVisu) bool {
-	if diagLeft(ctx, case_x, case_y, capturePlayer, nbCapture, visu) == true {
-		return true
+func diagonalAlign(ctx *s.SContext, case_x int, case_y int, capturePlayer int, nbCapture int, visu *s.SVisu) uint8 {
+	left := diagLeft(ctx, case_x, case_y, capturePlayer, nbCapture, visu)
+	right := diagRight(ctx, case_x, case_y, capturePlayer, nbCapture, visu)
+	if left != 0 {
+		return left
 	}
-	if diagRight(ctx, case_x, case_y, capturePlayer, nbCapture, visu) == true {
-		return true
+	if right != 0 {
+		return right
 	}
-	return false
+	return 0
 }
 
 func VictoryConditionAlign(ctx *s.SContext, case_x int, case_y int, visu *s.SVisu) bool {
-	ret_value := false
+	tmp_ret, ret_value := uint8(0), false
 	capturePlayer, nbCapture := 0, 0
 	if ctx.CurrentPlayer == 1 {
 		capturePlayer = 2
@@ -190,29 +203,44 @@ func VictoryConditionAlign(ctx *s.SContext, case_x int, case_y int, visu *s.SVis
 		capturePlayer = 1
 		nbCapture = ctx.NbCaptureP1
 	}
-	if horizontalAlign(*ctx, case_x, case_y, capturePlayer, nbCapture, visu) == true {
-		ret_value = true
+	horiz := horizontalAlign(ctx, case_x, case_y, capturePlayer, nbCapture, visu)
+	vert := verticalAlign(ctx, case_x, case_y, capturePlayer, nbCapture, visu)
+	diag := diagonalAlign(ctx, case_x, case_y, capturePlayer, nbCapture, visu)
+	if horiz >= tmp_ret {
+		tmp_ret = horiz
 	}
-	if verticalAlign(*ctx, case_x, case_y, capturePlayer, nbCapture, visu) == true {
-		ret_value = true
+	if vert >= tmp_ret {
+		tmp_ret = vert
 	}
-	if diagonalAlign(*ctx, case_x, case_y, capturePlayer, nbCapture, visu) == true {
-		ret_value = true
+	if diag >= tmp_ret {
+		tmp_ret = diag
 	}
-	if ret_value == true {
-		if ctx.CurrentPlayer == 1 {
-			ctx.NbVictoryP1++
-		} else {
-			ctx.NbVictoryP2++
+	if tmp_ret == 1 || tmp_ret == 0 {
+		ctx.Capture = nil
+		if tmp_ret == 1 {
+			if visu != nil {
+				if ctx.CurrentPlayer == 1 {
+					ctx.NbVictoryP1++
+				} else {
+					ctx.NbVictoryP2++
+				}
+			}
+			ret_value = true
 		}
 	}
 	return ret_value
 }
 
 func VictoryCapture(ctx s.SContext) bool {
+	if !ctx.ActiveCapture {
+		return false
+	}
 	if ctx.NbCaptureP1 >= 5 {
+		println("catpure")
 		return true
 	} else if ctx.NbCaptureP2 >= 5 {
+		println("catpure")
+
 		return true
 	}
 	return false

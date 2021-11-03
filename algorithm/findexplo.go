@@ -4,59 +4,43 @@ import (
 	s "gomoku/structures"
 )
 
-func inNeighbors(ctx *s.SContext, vertex s.SVertex, array_neigbors []s.SVertex) []s.SVertex {
-	if (vertex.Y < 0 || vertex.Y >= 19) || (vertex.X < 0 || vertex.X >= 19) {
-		return array_neigbors
-	}
-	// fmt.Println(ctx.Goban[vertex.Y][vertex.X], vertex.Y, vertex.X)
-	if ctx.Goban[vertex.Y][vertex.X] != 0 {
-		return array_neigbors
-	}
-	for _, elem := range ctx.CasesNonNull {
-		for _, onecase := range elem {
-			if onecase == vertex {
-				return array_neigbors
-			}
+func removeDuplicate(ctx *s.SContext, vertex s.SVertex) {
+	keys := make(map[s.SVertex]bool)
+	list := []s.SVertex{}
+	for _, entry := range ctx.CasesNonNull {
+		if _, value := keys[entry]; !value && entry != vertex {
+			keys[entry] = true
+			list = append(list, entry)
 		}
 	}
-	array_neigbors = append(array_neigbors, vertex)
-	return array_neigbors
+	ctx.CasesNonNull = list
 }
 
-func FindNeighbors(ctx *s.SContext, case_x int, case_y int, visu *s.SVisu) {
-	if ctx.CasesNonNull == nil {
-		ctx.CasesNonNull = make(map[s.SVertex][]s.SVertex)
+func inNeighbors(ctx *s.SContext, vertex s.SVertex) {
+	if (vertex.Y < 0 || vertex.Y >= int(ctx.NSize)) || (vertex.X < 0 || vertex.X >= int(ctx.NSize)) {
+		return
 	}
-	cases_vertex := s.SVertex{X: case_x, Y: case_y}
-	array := make([]s.SVertex, 0)
+	if ctx.Goban[vertex.Y][vertex.X] != 0 {
+		return
+	}
+	ctx.CasesNonNull = append(ctx.CasesNonNull, vertex)
+}
 
-	array = inNeighbors(ctx, s.SVertex{X: case_x + 1, Y: case_y + 1}, array)
-	array = inNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y - 1}, array)
-	array = inNeighbors(ctx, s.SVertex{X: case_x + 1, Y: case_y - 1}, array)
-	array = inNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y + 1}, array)
-	array = inNeighbors(ctx, s.SVertex{X: case_x, Y: case_y + 1}, array)
-	array = inNeighbors(ctx, s.SVertex{X: case_x, Y: case_y - 1}, array)
-	array = inNeighbors(ctx, s.SVertex{X: case_x + 1, Y: case_y}, array)
-	array = inNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y}, array)
-	ctx.CasesNonNull[cases_vertex] = array
-	for key, elem := range ctx.CasesNonNull {
-		// fmt.Println("Key", key)
-		len_elem, index := len(elem), 0
-		for index < len_elem {
-			if ctx.Goban[elem[index].Y][elem[index].X] != 0 {
-				elem[index] = elem[len(elem)-1]
-				elem[len(elem)-1] = s.SVertex{X: 0, Y: 0}
-				elem = elem[:len(elem)-1]
-				len_elem--
-				ctx.CasesNonNull[key] = elem
-			} else {
-				index++
-			}
-		}
+func FindNeighbors(ctx *s.SContext, case_x int, case_y int) {
+	if ctx.CasesNonNull == nil {
+		ctx.CasesNonNull = make([]s.SVertex, 0)
 	}
-	// Loop display
-	// color := [4]uint8{83, 51, 237, 1}
-	// for _, neighbor := range ctx.CasesNonNull[cases_vertex] {
-	// 	d.TraceStone(float64(neighbor.X), float64(neighbor.Y), ctx, visu, color, false)
-	// }
+	inNeighbors(ctx, s.SVertex{X: case_x + 1, Y: case_y + 1})
+	inNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y - 1})
+	inNeighbors(ctx, s.SVertex{X: case_x + 1, Y: case_y - 1})
+	inNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y + 1})
+	inNeighbors(ctx, s.SVertex{X: case_x, Y: case_y + 1})
+	inNeighbors(ctx, s.SVertex{X: case_x, Y: case_y - 1})
+	inNeighbors(ctx, s.SVertex{X: case_x + 1, Y: case_y})
+	inNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y})
+	inNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y})
+	inNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y})
+	inNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y})
+	inNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y})
+	removeDuplicate(ctx, s.SVertex{X: case_x, Y: case_y})
 }
