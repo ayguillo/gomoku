@@ -122,7 +122,7 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 	} else {
 		// depth := int8(ctx.Depth)
 		now := time.Now()
-		vertex_next, heuris := a.AlphaBetaPruning3(*ctx, 6)
+		vertex_next, heuris := a.AlphaBetaPruning(*ctx, 6)
 		fmt.Println(vertex_next, heuris)
 		delta := time.Since(now)
 		fmt.Println(delta)
@@ -134,7 +134,7 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 			color = [4]uint8{226, 196, 115, 255}
 			d.TraceStone(float64(ctx.VertexHelp.X), float64(ctx.VertexHelp.Y), ctx, visu, color, true)
 		}
-		vertex_help, _ := a.AlphaBetaPruning3(*ctx, 6)
+		vertex_help, _ := a.AlphaBetaPruning(*ctx, 8)
 		ctx.VertexHelp = vertex_help
 		color = [4]uint8{83, 51, 237, 1}
 		d.TraceStone(float64(vertex_help.X), float64(vertex_help.Y), ctx, visu, color, false)

@@ -52,3 +52,21 @@ func CheckAlignVictory(ctx s.SContext, x int, y int) bool {
 	}
 	return false
 }
+
+func VictoryCondition(ctx s.SContext) bool {
+	if checkCaptureVictory(ctx) {
+		return true
+	}
+
+	for y := range ctx.Goban {
+		for x := range ctx.Goban[y] {
+			if ctx.Goban[y][x] != 0 {
+				if CheckAlignVictory(ctx, x, y) {
+					return true
+				}
+			}
+		}
+	}
+
+	return false
+}
