@@ -4,11 +4,13 @@ import (
 	s "gomoku/structures"
 )
 
-func checkCaptureVictory(ctx s.SContext) bool {
-	if ctx.NbCaptureP1 >= 5 || ctx.NbCaptureP2 >= 5 {
-		return true
+func checkCaptureVictory(ctx s.SContext) (bool, s.Tnumber) {
+	if ctx.NbCaptureP1 >= 5 {
+		return true, 1
+	} else if ctx.NbCaptureP2 >= 5 {
+		return true, 2
 	}
-	return false
+	return false, 0
 }
 
 func checkVictory(ctx s.SContext, player s.Tnumber, x int, y int, i int, j int) int {
@@ -53,20 +55,22 @@ func CheckAlignVictory(ctx s.SContext, x int, y int) bool {
 	return false
 }
 
-func VictoryCondition(ctx s.SContext) bool {
-	if checkCaptureVictory(ctx) {
-		return true
+func VictoryCondition(ctx s.SContext) (bool, s.Tnumber) {
+	check, player := checkCaptureVictory(ctx)
+
+	if check {
+		return true, player
 	}
 
 	for y := range ctx.Goban {
 		for x := range ctx.Goban[y] {
 			if ctx.Goban[y][x] != 0 {
 				if CheckAlignVictory(ctx, x, y) {
-					return true
+					return true, ctx.Goban[y][x]
 				}
 			}
 		}
 	}
 
-	return false
+	return false, 0
 }

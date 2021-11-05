@@ -5,16 +5,20 @@ import (
 	s "gomoku/structures"
 )
 
+var initDepth int8
 var depthStock int8
 var alphaStock int32
 var betaStock int32
 
 func AlphaBetaPruning(ctx s.SContext, depth int8) (s.SVertex, int32) {
+	initDepth = depth
+
 	neighbors := make([]s.SVertex, len(ctx.CasesNonNull))
 	copy(neighbors, ctx.CasesNonNull)
 
 	var data []stockData2
 
+	println("_____START________\n")
 	neighbors = sortNeighbors(ctx, neighbors)
 	for _, neighbor := range neighbors {
 		placement := PlacementHeuristic(ctx, neighbor.X, neighbor.Y)
@@ -58,14 +62,17 @@ func initMax(ctx s.SContext, depth int8, neighbor s.SVertex) stockData2 {
 
 	tmp_ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
 
-	if VictoryCondition(tmp_ctx) {
+	check, _ := VictoryCondition(ctx)
+
+	if check {
 		eval = h.CalcHeuristic(tmp_ctx)
 	} else {
 		newNeighbors := getNeighbors(tmp_ctx, neighbor)
 		tmp := tmp_ctx.CurrentPlayer
 		swapPlayer(&tmp_ctx)
 
-		eval = minimax(tmp_ctx, newNeighbors, depth-1, -2147483648)
+		eval = minimax2(tmp_ctx, newNeighbors, depth-1, -2147483648, 2147483647, false)
+		// eval = minimax(tmp_ctx, newNeighbors, depth-1, -2147483648)
 		// eval = negaAlphaBeta(tmp_ctx, newNeighbors, depth, -2147483648, 2147483647)
 
 		tmp_ctx.CurrentPlayer = tmp
@@ -83,8 +90,71 @@ func initMax(ctx s.SContext, depth int8, neighbor s.SVertex) stockData2 {
 	return ret
 }
 
+func minimax2(ctx s.SContext, neighbors []s.SVertex, depth int8, alpha int32, beta int32, isMax bool) int32 {
+	check, _ := VictoryCondition(ctx)
+	if depth <= 0 || check {
+		swapPlayer(&ctx)
+		heur := h.CalcHeuristic(ctx)
+		swapPlayer(&ctx)
+		return heur
+	}
+
+	if isMax {
+		maxEval := int32(-2147483648)
+		for _, neighbor := range neighbors {
+			placement := PlacementHeuristic(ctx, neighbor.X, neighbor.Y)
+			if placement >= 1 {
+				ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
+				newNeighbors := getNeighbors(ctx, neighbor)
+
+				tmp := ctx.CurrentPlayer
+				swapPlayer(&ctx)
+
+				eval := minimax2(ctx, newNeighbors, depth-1, alpha, beta, false)
+
+				ctx.CurrentPlayer = tmp
+				ctx.Goban[neighbor.Y][neighbor.X] = 0
+
+				maxEval = max(maxEval, eval)
+				alpha = max(alpha, eval)
+
+				if beta <= alpha {
+					break
+				}
+			}
+		}
+		return maxEval
+	} else {
+		minEval := int32(2147483647)
+		for _, neighbor := range neighbors {
+			placement := PlacementHeuristic(ctx, neighbor.X, neighbor.Y)
+			if placement >= 1 {
+				ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
+				newNeighbors := getNeighbors(ctx, neighbor)
+
+				tmp := ctx.CurrentPlayer
+				swapPlayer(&ctx)
+
+				eval := minimax2(ctx, newNeighbors, depth-1, alpha, beta, true)
+
+				ctx.CurrentPlayer = tmp
+				ctx.Goban[neighbor.Y][neighbor.X] = 0
+
+				minEval = min(minEval, eval)
+				beta = min(beta, eval)
+
+				if beta <= alpha {
+					break
+				}
+			}
+		}
+		return minEval
+	}
+}
+
 func minimax(ctx s.SContext, neighbors []s.SVertex, depth int8, i int32) int32 {
-	if depth <= 0 || VictoryCondition(ctx) {
+	check, _ := VictoryCondition(ctx)
+	if depth <= 0 || check {
 		swapPlayer(&ctx)
 		heur := h.CalcHeuristic(ctx)
 		swapPlayer(&ctx)

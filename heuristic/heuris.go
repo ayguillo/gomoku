@@ -56,26 +56,26 @@ func CalcHeuristic(ctx s.SContext) int32 {
 	gotFourMid, gotFourMidOpp, gotThreeMid, gotThreeMidOpp, gotTwoMid, gotTwoMidOpp := 0, 0, 0, 0, 0, 0
 	// gotFourBlock, gotFourBlockOpp, gotThreeBlock, gotThreeBlockOpp, gotTwoBlock, gotTwoBlockOpp := 0, 0, 0, 0, 0, 0
 
-	nb_capture := ctx.NbCaptureP1
-	nb_capture_enemy := ctx.NbCaptureP2
-	if ctx.CurrentPlayer == 2 {
-		nb_capture = ctx.NbCaptureP2
-		nb_capture_enemy = ctx.NbCaptureP1
-	}
-	if nb_capture >= 5 {
-		value += 100000
-	} else if nb_capture == 4 || nb_capture == 3 {
-		value += nb_capture * 2000
-	} else {
-		value += nb_capture * 1000
-	}
-	if nb_capture_enemy >= 5 {
-		value -= 150000
-	} else if nb_capture_enemy == 4 || nb_capture_enemy == 3 {
-		value -= nb_capture_enemy * 3000
-	} else {
-		value -= nb_capture_enemy * 2000
-	}
+	// nb_capture := ctx.NbCaptureP1
+	// nb_capture_enemy := ctx.NbCaptureP2
+	// if ctx.CurrentPlayer == 2 {
+	// 	nb_capture = ctx.NbCaptureP2
+	// 	nb_capture_enemy = ctx.NbCaptureP1
+	// }
+	// if nb_capture >= 5 {
+	// 	value += 100000
+	// } else if nb_capture == 4 || nb_capture == 3 {
+	// 	value += nb_capture * 2000
+	// } else {
+	// 	value += nb_capture * 1000
+	// }
+	// if nb_capture_enemy >= 5 {
+	// 	value -= 150000
+	// } else if nb_capture_enemy == 4 || nb_capture_enemy == 3 {
+	// 	value -= nb_capture_enemy * 3000
+	// } else {
+	// 	value -= nb_capture_enemy * 2000
+	// }
 	for y := range ctx.Goban {
 		for x := range ctx.Goban[y] {
 			if ctx.Goban[y][x] != 0 {
@@ -173,13 +173,13 @@ func CalcHeuristic(ctx s.SContext) int32 {
 		}
 	}
 
-	value = 100000*(gotFive-gotFiveOpp) + 15000*(gotFour-gotFourOpp) + 10000*(gotFourMid-gotFourMidOpp) + 10000*(gotThree-gotThreeOpp) + 200*(gotThreeMid-gotThreeMidOpp) + 200*(gotTwo-gotTwoOpp) + 50*(gotTwoMid-gotTwoMidOpp)
+	// value = 6000*(gotFive-gotFiveOpp) + 4800*(gotFour-gotFourOpp) + 500*(gotFourMid-gotFourMidOpp) + 500*(gotThree-gotThreeOpp) + 200*(gotThreeMid-gotThreeMidOpp) + 50*(gotTwo-gotTwoOpp) + 10*(gotTwoMid-gotTwoMidOpp)
 	// value = 1000000*(gotFive) + 15000*(gotFour) + 10000*(gotFourMid) + 10000*(gotThree) + 500*(gotThreeMid) + 200*(gotTwo) + 100*(gotTwoMid)
 
-	// valueMe := 150000*gotFive + 5000*gotFour + 1000*gotFourMid + 500*gotThree + 200*gotThreeMid + 50*gotTwo + 20*gotTwoMid
-	// valueOp := 150000*gotFiveOpp + 10000*gotFourOpp + 5000*gotFourMidOpp + 1000*gotThreeOpp + 200*gotThreeMidOpp + 50*gotTwoOpp + 20*gotTwoMidOpp
+	valueMe := 150000*gotFive + 5000*gotFour + 1000*gotFourMid + 500*gotThree + 200*gotThreeMid + 50*gotTwo + 20*gotTwoMid
+	valueOp := 150000*gotFiveOpp + 20000*gotFourOpp + 10000*gotFourMidOpp + 5000*gotThreeOpp + 200*gotThreeMidOpp + 50*gotTwoOpp + 20*gotTwoMidOpp
 
-	// value = valueMe - valueOp
+	value = valueMe - valueOp
 
 	// if nb_capture >= 5 {
 	// 	value += 100000
@@ -205,3 +205,24 @@ func CalcHeuristic(ctx s.SContext) int32 {
 
 	return int32(value)
 }
+
+// func checkImpMoove(ctx s.SContext) s.SVertex {
+// 	for y := range ctx.Goban {
+// 		for x := range ctx.Goban[y] {
+// 			if ctx.Goban[y][x] != 0 {
+// 				nb_align, place_ok, block, middle := heuristicAlign(ctx, x, y, ctx.Goban[y][x])
+
+// 				if liveFour > 0 {
+// 				} else if liveFourOpp {
+
+// 				} else if liveFourMid {
+
+// 				} else if liveFourMidOpp {
+
+// 				} else if liveThree == 0 && liveThreeOpp > 0 {
+
+// 				}
+// 			}
+// 		}
+// 	}
+// }
