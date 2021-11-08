@@ -98,11 +98,11 @@ func initMax(ctx s.SContext, depth int8, neighbor s.SVertex) stockData2 {
 
 func minimax(ctx s.SContext, neighbors []s.SVertex, depth int8, i int32) int32 {
 	check, _ := VictoryCondition(ctx)
+
 	if depth <= 0 || check {
 		swapPlayer(&ctx)
 		heur := h.CalcHeuristic(ctx)
-		swapPlayer(&ctx)
-		return heur
+		return heur * int32(depth+1)
 	}
 
 	j := int32(-2147483648)
