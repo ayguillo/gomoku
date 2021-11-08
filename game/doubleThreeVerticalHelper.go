@@ -68,7 +68,7 @@ func checkUpDoubleThree(ctx *s.SContext, case_x int, case_y int, totalPiece int)
 	}
 
 	if lp == 1 && (case_y <= 0 || ctx.Goban[case_y][case_x] != s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[case_y][case_x] != 0) {
-		println("INFO: U: obstrued")
+		// println("INFO: U: obstrued")
 		return -1
 	}
 
@@ -103,7 +103,7 @@ func checkDownDoubleThree(ctx *s.SContext, case_x int, case_y int, totalPiece in
 	}
 
 	if lp == 1 && (case_y >= int(ctx.NSize) || ctx.Goban[case_y][case_x] != s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[case_y][case_x] != 0) {
-		println("INFO: D: obstrued")
+		// println("INFO: D: obstrued")
 		return -1
 	}
 
@@ -177,7 +177,7 @@ func checkVertical(ctx *s.SContext, case_x int, case_y int, horizonDoubleThree i
 	if upDoubleThree >= 2 {
 		if leftDoubleThree >= 2 || rightDoubleThree >= 2 || leftUpDiagDoubleThree >= 2 || rightDownDiagDoubleThree >= 2 || leftDownDiagDoubleThree >= 2 || rightUpDiagDoubleThree >= 2 ||
 			horizonDoubleThree == 1 || diagLeftDoubleThree == 1 || diagRightDoubleThree == 1 ||
-			!loopVerticalUpPiece(ctx, case_x, case_y) {
+			(ctx.ActiveDoubleThrees == 2 && !loopVerticalUpPiece(ctx, case_x, case_y)) {
 			return false
 		}
 	}
@@ -185,7 +185,7 @@ func checkVertical(ctx *s.SContext, case_x int, case_y int, horizonDoubleThree i
 	if downDoubleThree >= 2 {
 		if leftDoubleThree >= 2 || rightDoubleThree >= 2 || leftUpDiagDoubleThree >= 2 || rightDownDiagDoubleThree >= 2 || leftDownDiagDoubleThree >= 2 || rightUpDiagDoubleThree >= 2 ||
 			horizonDoubleThree == 1 || diagLeftDoubleThree == 1 || diagRightDoubleThree == 1 ||
-			!loopVerticalDownPiece(ctx, case_x, case_y) {
+			(ctx.ActiveDoubleThrees == 2 && !loopVerticalDownPiece(ctx, case_x, case_y)) {
 			return false
 		}
 	}
@@ -193,7 +193,7 @@ func checkVertical(ctx *s.SContext, case_x int, case_y int, horizonDoubleThree i
 	if verticalDoubleThree == 1 {
 		if leftDoubleThree >= 2 || rightDoubleThree >= 2 || leftUpDiagDoubleThree >= 2 || rightDownDiagDoubleThree >= 2 || leftDownDiagDoubleThree >= 2 || rightUpDiagDoubleThree >= 2 ||
 			horizonDoubleThree == 1 || diagLeftDoubleThree == 1 || diagRightDoubleThree == 1 ||
-			!loopVerticalUpPiece(ctx, case_x, case_y) || !loopVerticalDownPiece(ctx, case_x, case_y) {
+			(ctx.ActiveDoubleThrees == 2 && (!loopVerticalUpPiece(ctx, case_x, case_y) || !loopVerticalDownPiece(ctx, case_x, case_y))) {
 			return false
 		}
 	}

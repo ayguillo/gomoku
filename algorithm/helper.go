@@ -93,8 +93,8 @@ func sortNeighbors(ctx s.SContext, neighbors []s.SVertex) []s.SVertex {
 		placement := PlacementHeuristic(ctx, neighbor.X, neighbor.Y)
 		if placement >= 1 {
 			ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
-
-			plays = insertNeighbors(plays, playData{Heur: h.CalcHeuristic(ctx), Vertex: neighbor})
+			heur := h.CalcHeuristic(ctx)
+			plays = insertNeighbors(plays, playData{Heur: heur, Vertex: neighbor})
 
 			ctx.Goban[neighbor.Y][neighbor.X] = 0
 		}
@@ -121,7 +121,7 @@ func PlacementHeuristic(ctx s.SContext, case_x int, case_y int) uint8 {
 			return 2
 		}
 	}
-	if ctx.ActiveDoubleThrees && !g.CheckDoubleThree(&ctx, case_x, case_y) {
+	if ctx.ActiveDoubleThrees > 0 && !g.CheckDoubleThree(&ctx, case_x, case_y) {
 		return 0
 	}
 	if case_y < 0 || case_y > int(ctx.NSize) {

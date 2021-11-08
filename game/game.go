@@ -17,7 +17,7 @@ func Placement(ctx *s.SContext, case_x int, case_y int) int {
 			return 2
 		}
 	}
-	if ctx.ActiveDoubleThrees && !CheckDoubleThree(ctx, case_x, case_y) {
+	if ctx.ActiveDoubleThrees > 0 && !CheckDoubleThree(ctx, case_x, case_y) {
 		return 1
 	}
 	if ctx.Goban[int(case_y)][int(case_x)] == 0 {

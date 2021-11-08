@@ -120,9 +120,9 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 		startgame = false
 		d.DisplayPlayer(ctx, visu, false)
 	} else {
-		// depth := int8(ctx.Depth)
+		depth := int8(ctx.Depth)
 		now := time.Now()
-		vertex_next, heuris := a.AlphaBetaPruning(*ctx, 5)
+		vertex_next, heuris := a.AlphaBetaPruning(*ctx, depth)
 		fmt.Println(vertex_next, heuris)
 		delta := time.Since(now)
 		fmt.Println(delta)
@@ -134,7 +134,7 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 			color = [4]uint8{226, 196, 115, 255}
 			d.TraceStone(float64(ctx.VertexHelp.X), float64(ctx.VertexHelp.Y), ctx, visu, color, true)
 		}
-		vertex_help, _ := a.AlphaBetaPruning(*ctx, 1)
+		vertex_help, _ := a.AlphaBetaPruning(*ctx, 0)
 		ctx.VertexHelp = vertex_help
 		color = [4]uint8{83, 51, 237, 1}
 		d.TraceStone(float64(vertex_help.X), float64(vertex_help.Y), ctx, visu, color, false)
@@ -168,6 +168,7 @@ func human(err error, startgame bool, endgame bool, ctx *s.SContext, visu *s.SVi
 		d.DisplayMessage(visu, ctx.Size, "En dehors", "du terrain", *ctx)
 		sdl.Log("En dehors du terrain")
 	}
+
 	return startgame, endgame
 }
 
@@ -217,18 +218,18 @@ func main() {
 			ctx.Players[1] = true
 			ctx.Players[2] = true
 		}
-		ctx.ActiveDoubleThrees = double_threes
+		ctx.ActiveDoubleThrees = 1
 		ctx.ActiveCapture = capture
 		if help {
 			ctx.VertexHelp = s.SVertex{X: -1, Y: -1}
 		}
 		ctx.ActiveHelp = help
 		if difficulty == 0 {
-			ctx.Depth = 3
+			ctx.Depth = 2
 		} else if difficulty == 1 {
-			ctx.Depth = 5
+			ctx.Depth = 4
 		} else {
-			ctx.Depth = 7
+			ctx.Depth = 6
 		}
 	}
 	running := true

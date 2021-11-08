@@ -69,7 +69,7 @@ func checkLeftDoubleThree(ctx *s.SContext, case_x int, case_y int, totalPiece in
 	}
 
 	if lp == 1 && (case_x <= 0 || ctx.Goban[case_y][case_x] != s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[case_y][case_x] != 0) {
-		println("INFO: R: obstrued")
+		// println("INFO: R: obstrued")
 		return -1
 	}
 
@@ -104,7 +104,7 @@ func checkRightDoubleThree(ctx *s.SContext, case_x int, case_y int, totalPiece i
 	}
 
 	if lp == 1 && (case_x >= int(ctx.NSize) || ctx.Goban[case_y][case_x] != s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[case_y][case_x] != 0) {
-		println("INFO: R: obstrued")
+		// println("INFO: R: obstrued")
 		return -1
 	}
 
@@ -179,7 +179,7 @@ func checkHorizon(ctx *s.SContext, case_x int, case_y int, horizonDoubleThree in
 	if leftDoubleThree >= 2 {
 		if upDoubleThree >= 2 || downDoubleThree >= 2 || leftUpDiagDoubleThree >= 2 || rightDownDiagDoubleThree >= 2 || leftDownDiagDoubleThree >= 2 || rightUpDiagDoubleThree >= 2 ||
 			verticalDoubleThree == 1 || diagLeftDoubleThree == 1 || diagRightDoubleThree == 1 ||
-			!loopHorizonLeftPiece(ctx, case_x, case_y) {
+			(ctx.ActiveDoubleThrees == 2 && !loopHorizonLeftPiece(ctx, case_x, case_y)) {
 			return false
 		}
 	}
@@ -187,7 +187,7 @@ func checkHorizon(ctx *s.SContext, case_x int, case_y int, horizonDoubleThree in
 	if rightDoubleThree >= 2 {
 		if upDoubleThree >= 2 || downDoubleThree >= 2 || leftUpDiagDoubleThree >= 2 || rightDownDiagDoubleThree >= 2 || leftDownDiagDoubleThree >= 2 || rightUpDiagDoubleThree >= 2 ||
 			verticalDoubleThree == 1 || diagLeftDoubleThree == 1 || diagRightDoubleThree == 1 ||
-			!loopHorizonRightPiece(ctx, case_x, case_y) {
+			(ctx.ActiveDoubleThrees == 2 && !loopHorizonRightPiece(ctx, case_x, case_y)) {
 			return false
 		}
 	}
@@ -195,7 +195,7 @@ func checkHorizon(ctx *s.SContext, case_x int, case_y int, horizonDoubleThree in
 	if horizonDoubleThree == 1 {
 		if upDoubleThree >= 2 || downDoubleThree >= 2 || leftUpDiagDoubleThree >= 2 || rightDownDiagDoubleThree >= 2 || leftDownDiagDoubleThree >= 2 || rightUpDiagDoubleThree >= 2 ||
 			verticalDoubleThree == 1 || diagLeftDoubleThree == 1 || diagRightDoubleThree == 1 ||
-			!loopHorizonLeftPiece(ctx, case_x, case_y) || !loopHorizonRightPiece(ctx, case_x, case_y) {
+			(ctx.ActiveDoubleThrees == 2 && (!loopHorizonLeftPiece(ctx, case_x, case_y) || !loopHorizonRightPiece(ctx, case_x, case_y))) {
 			return false
 		}
 	}

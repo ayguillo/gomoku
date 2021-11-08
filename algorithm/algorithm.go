@@ -18,7 +18,12 @@ func AlphaBetaPruning(ctx s.SContext, depth int8) (s.SVertex, int32) {
 
 	var data []stockData2
 
-	println("_____START________\n")
+	impMove := h.CheckImpMoove(ctx, neighbors)
+
+	if impMove != nil {
+		neighbors = impMove
+	}
+
 	neighbors = sortNeighbors(ctx, neighbors)
 	for _, neighbor := range neighbors {
 		placement := PlacementHeuristic(ctx, neighbor.X, neighbor.Y)
@@ -33,7 +38,7 @@ func AlphaBetaPruning(ctx s.SContext, depth int8) (s.SVertex, int32) {
 
 	for _, value := range data {
 		eval := value.Heur
-		if eval >= maxEval {
+		if eval > maxEval {
 			maxEval = eval
 			vertex = value.Vertex
 			maxDepth = value.Depth
@@ -71,9 +76,10 @@ func initMax(ctx s.SContext, depth int8, neighbor s.SVertex) stockData2 {
 		tmp := tmp_ctx.CurrentPlayer
 		swapPlayer(&tmp_ctx)
 
-		eval = minimax2(tmp_ctx, newNeighbors, depth-1, -2147483648, 2147483647, false)
-		// eval = minimax(tmp_ctx, newNeighbors, depth-1, -2147483648)
-		// eval = negaAlphaBeta(tmp_ctx, newNeighbors, depth, -2147483648, 2147483647)
+		eval = minimax(tmp_ctx, newNeighbors, depth-1, -2147483648) // minimax ab pruning shorter
+		// eval = pvs(tmp_ctx, newNeighbors, depth-1, -2147483648, 2147483647, 1) // negascout
+		// eval = minimax2(tmp_ctx, newNeighbors, depth-1, -2147483648, 2147483647, false) // minimax ab prun
+		// eval = negaAlphaBeta(tmp_ctx, newNeighbors, depth, -2147483648, 2147483647) // negamax ab purn
 
 		tmp_ctx.CurrentPlayer = tmp
 		tmp_ctx.Goban[neighbor.Y][neighbor.X] = 0
@@ -90,12 +96,91 @@ func initMax(ctx s.SContext, depth int8, neighbor s.SVertex) stockData2 {
 	return ret
 }
 
-func minimax2(ctx s.SContext, neighbors []s.SVertex, depth int8, alpha int32, beta int32, isMax bool) int32 {
+func minimax(ctx s.SContext, neighbors []s.SVertex, depth int8, i int32) int32 {
 	check, _ := VictoryCondition(ctx)
 	if depth <= 0 || check {
 		swapPlayer(&ctx)
 		heur := h.CalcHeuristic(ctx)
 		swapPlayer(&ctx)
+		return heur
+	}
+
+	j := int32(-2147483648)
+	for _, neighbor := range neighbors {
+		placement := PlacementHeuristic(ctx, neighbor.X, neighbor.Y)
+		if placement >= 1 {
+			ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
+			newNeighbors := getNeighbors(ctx, neighbor)
+
+			tmp := ctx.CurrentPlayer
+			swapPlayer(&ctx)
+
+			j = max(j, minimax(ctx, newNeighbors, depth-1, j))
+
+			ctx.CurrentPlayer = tmp
+			ctx.Goban[neighbor.Y][neighbor.X] = 0
+
+			if -j <= i {
+				return -j
+			}
+		}
+	}
+	return -j
+}
+
+func pvs(ctx s.SContext, neighbors []s.SVertex, depth int8, alpha int32, beta int32, swap int32) int32 {
+	check, _ := VictoryCondition(ctx)
+	if depth <= 0 || check {
+		swapPlayer(&ctx)
+		heur := h.CalcHeuristic(ctx)
+		swapPlayer(&ctx)
+		return heur
+	}
+
+	i := 0
+	for _, neighbor := range neighbors {
+		placement := PlacementHeuristic(ctx, neighbor.X, neighbor.Y)
+		if placement >= 1 {
+			ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
+			newNeighbors := getNeighbors(ctx, neighbor)
+
+			tmp := ctx.CurrentPlayer
+			swapPlayer(&ctx)
+			score := int32(0)
+
+			if i != 0 {
+				score = -pvs(ctx, newNeighbors, depth-1, -alpha-1, -alpha, -swap)
+
+				if alpha < score && score < beta {
+					score = -pvs(ctx, newNeighbors, depth-1, -beta, -score, -swap)
+				}
+			} else {
+				score = -pvs(ctx, newNeighbors, depth-1, -beta, -alpha, -swap)
+			}
+
+			ctx.CurrentPlayer = tmp
+			ctx.Goban[neighbor.Y][neighbor.X] = 0
+
+			alpha = max(alpha, score)
+
+			if alpha >= beta {
+				break
+			}
+			i++
+		}
+	}
+
+	return alpha
+}
+
+func minimax2(ctx s.SContext, neighbors []s.SVertex, depth int8, alpha int32, beta int32, isMax bool) int32 {
+	check, _ := VictoryCondition(ctx)
+	if depth <= 0 || check {
+		swapPlayer(&ctx)
+		heur := h.CalcHeuristic(ctx)
+		if isMax {
+			return -heur
+		}
 		return heur
 	}
 
@@ -150,38 +235,6 @@ func minimax2(ctx s.SContext, neighbors []s.SVertex, depth int8, alpha int32, be
 		}
 		return minEval
 	}
-}
-
-func minimax(ctx s.SContext, neighbors []s.SVertex, depth int8, i int32) int32 {
-	check, _ := VictoryCondition(ctx)
-	if depth <= 0 || check {
-		swapPlayer(&ctx)
-		heur := h.CalcHeuristic(ctx)
-		swapPlayer(&ctx)
-		return heur
-	}
-
-	j := int32(-2147483648)
-	for _, neighbor := range neighbors {
-		placement := PlacementHeuristic(ctx, neighbor.X, neighbor.Y)
-		if placement >= 1 {
-			ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
-			newNeighbors := getNeighbors(ctx, neighbor)
-
-			tmp := ctx.CurrentPlayer
-			swapPlayer(&ctx)
-
-			j = max(j, minimax(ctx, newNeighbors, depth-1, j))
-
-			ctx.CurrentPlayer = tmp
-			ctx.Goban[neighbor.Y][neighbor.X] = 0
-
-			if -j <= i {
-				return -j
-			}
-		}
-	}
-	return -j
 }
 
 // func negaAlphaBeta(ctx s.SContext, neighbors []s.SVertex, depth int8, alpha int32, beta int32) int32 {
