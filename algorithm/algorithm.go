@@ -1,17 +1,20 @@
 package algorithm
 
 import (
+	g "gomoku/game"
 	h "gomoku/heuristic"
 	s "gomoku/structures"
 )
 
 var initDepth int8
+var initPlayer uint8
 var depthStock int8
 var alphaStock int32
 var betaStock int32
 
 func rePrun(ctx s.SContext, depth int8) (s.SVertex, int32, int8) {
 	initDepth = depth
+	initPlayer = ctx.CurrentPlayer
 
 	neighbors := make([]s.SVertex, len(ctx.CasesNonNull))
 	copy(neighbors, ctx.CasesNonNull)
@@ -50,11 +53,11 @@ func AlphaBetaPruning(ctx s.SContext, depth int8) (s.SVertex, int32) {
 
 	var data []stockData2
 
-	impMove := h.CheckImpMoove(ctx, neighbors)
+	// impMove := h.CheckImpMoove(ctx, neighbors)
 
-	if impMove != nil {
-		neighbors = impMove
-	}
+	// if impMove != nil {
+	// 	neighbors = impMove
+	// }
 
 	neighbors = sortNeighbors(ctx, neighbors)
 	for _, neighbor := range neighbors {
@@ -91,35 +94,44 @@ func initMax(ctx s.SContext, depth int8, neighbor s.SVertex) stockData2 {
 
 	goban := CopyGoban(ctx)
 	tmp_ctx := s.SContext{
-		Goban:         goban,
-		CurrentPlayer: ctx.CurrentPlayer,
-		CasesNonNull:  nil,
-		Capture:       ctx.Capture,
-		NbCaptureP1:   ctx.NbCaptureP1,
-		NbCaptureP2:   ctx.NbCaptureP2,
-		NSize:         ctx.NSize,
-		ActiveCapture: ctx.ActiveCapture,
+		Goban:              goban,
+		CurrentPlayer:      ctx.CurrentPlayer,
+		CasesNonNull:       nil,
+		Capture:            ctx.Capture,
+		NbCaptureP1:        ctx.NbCaptureP1,
+		NbCaptureP2:        ctx.NbCaptureP2,
+		NSize:              ctx.NSize,
+		ActiveCapture:      ctx.ActiveCapture,
+		ActiveDoubleThrees: ctx.ActiveDoubleThrees,
 	}
 
 	tmp_ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
 
-	check, _ := VictoryCondition(ctx)
+	var captureP1 int
+	var captureP2 int
+	var isCap bool
+	var captureVertex []s.SVertex
 
-	if check {
-		eval = h.CalcHeuristic(tmp_ctx)
-	} else {
-		newNeighbors := getNeighbors(tmp_ctx, neighbor)
-		tmp := tmp_ctx.CurrentPlayer
-		swapPlayer(&tmp_ctx)
-
-		eval = minimax(tmp_ctx, newNeighbors, depth-1, -2147483648) // minimax ab pruning shorter
-		// eval = pvs(tmp_ctx, newNeighbors, depth-1, -2147483648, 2147483647, 1) // negascout
-		// eval = minimax2(tmp_ctx, newNeighbors, depth-1, -2147483648, 2147483647, false) // minimax ab prun
-		// eval = negaAlphaBeta(tmp_ctx, newNeighbors, depth, -2147483648, 2147483647) // negamax ab purn
-
-		tmp_ctx.CurrentPlayer = tmp
-		tmp_ctx.Goban[neighbor.Y][neighbor.X] = 0
+	if ctx.ActiveCapture {
+		captureP1, captureP2 = ctx.NbCaptureP1, ctx.NbCaptureP2
+		isCap, captureVertex = g.Capture(&ctx, nil, neighbor.X, neighbor.Y, false)
 	}
+
+	newNeighbors := getNeighbors(tmp_ctx, neighbor)
+	tmp := tmp_ctx.CurrentPlayer
+	swapPlayer(&tmp_ctx)
+
+	eval = minimax(tmp_ctx, newNeighbors, depth-1, -2147483648) // minimax ab pruning shorter
+	// eval = pvs(tmp_ctx, newNeighbors, depth-1, -2147483648, 2147483647, 1) // negascout
+	// eval = minimax2(tmp_ctx, newNeighbors, depth-1, -2147483648, 2147483647, false) // minimax ab prun
+	// eval = negaAlphaBeta(tmp_ctx, newNeighbors, depth, -2147483648, 2147483647) // negamax ab purn
+
+	if ctx.ActiveCapture && isCap {
+		revertCapture(&ctx, captureVertex, captureP1, captureP2, tmp)
+	}
+
+	tmp_ctx.CurrentPlayer = tmp
+	tmp_ctx.Goban[neighbor.Y][neighbor.X] = 0
 
 	ret := stockData2{
 		Heur:   eval,
@@ -138,7 +150,10 @@ func minimax(ctx s.SContext, neighbors []s.SVertex, depth int8, i int32) int32 {
 	if depth <= 0 || check {
 		swapPlayer(&ctx)
 		heur := h.CalcHeuristic(ctx)
-		return heur * int32(depth+1)
+		if ctx.CurrentPlayer == initPlayer {
+			heur *= -1
+		}
+		return heur
 	}
 
 	j := int32(-2147483648)
@@ -146,6 +161,17 @@ func minimax(ctx s.SContext, neighbors []s.SVertex, depth int8, i int32) int32 {
 		placement := PlacementHeuristic(ctx, neighbor.X, neighbor.Y)
 		if placement >= 1 {
 			ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
+
+			var captureP1 int
+			var captureP2 int
+			var isCap bool
+			var captureVertex []s.SVertex
+
+			if ctx.ActiveCapture {
+				captureP1, captureP2 = ctx.NbCaptureP1, ctx.NbCaptureP2
+				isCap, captureVertex = g.Capture(&ctx, nil, neighbor.X, neighbor.Y, false)
+			}
+
 			newNeighbors := getNeighbors(ctx, neighbor)
 
 			tmp := ctx.CurrentPlayer
@@ -153,8 +179,12 @@ func minimax(ctx s.SContext, neighbors []s.SVertex, depth int8, i int32) int32 {
 
 			j = max(j, minimax(ctx, newNeighbors, depth-1, j))
 
-			ctx.CurrentPlayer = tmp
+			if ctx.ActiveCapture && isCap {
+				revertCapture(&ctx, captureVertex, captureP1, captureP2, tmp)
+			}
+
 			ctx.Goban[neighbor.Y][neighbor.X] = 0
+			ctx.CurrentPlayer = tmp
 
 			if -j <= i {
 				return -j

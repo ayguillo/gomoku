@@ -218,7 +218,7 @@ func main() {
 			ctx.Players[1] = true
 			ctx.Players[2] = true
 		}
-		ctx.ActiveDoubleThrees = 1
+		ctx.ActiveDoubleThrees = 0
 		ctx.ActiveCapture = capture
 		if help {
 			ctx.VertexHelp = s.SVertex{X: -1, Y: -1}

@@ -167,26 +167,26 @@ func CalcHeuristic(ctx s.SContext) int32 {
 		}
 
 		if nb_capture >= 5 {
-			value += 6000
+			value += 500000
 		} else if nb_capture == 4 {
-			value += 4800
+			value += 40000
 		} else if nb_capture == 3 {
-			value += 500
+			value += 3000
 		} else if nb_capture == 2 {
-			value += 100
+			value += 200
 		} else if nb_capture == 1 {
-			value += 50
+			value += 10
 		}
 		if nb_capture_enemy >= 5 {
-			value -= 6000
+			value -= 500000
 		} else if nb_capture_enemy == 4 {
-			value -= 4800
+			value -= 40000
 		} else if nb_capture_enemy == 3 {
-			value -= 500
+			value -= 3000
 		} else if nb_capture_enemy == 2 {
-			value -= 100
+			value -= 200
 		} else if nb_capture_enemy == 1 {
-			value -= 50
+			value -= 10
 		}
 	}
 
