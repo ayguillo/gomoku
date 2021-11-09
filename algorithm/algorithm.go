@@ -10,6 +10,38 @@ var depthStock int8
 var alphaStock int32
 var betaStock int32
 
+func rePrun(ctx s.SContext, depth int8) (s.SVertex, int32, int8) {
+	initDepth = depth
+
+	neighbors := make([]s.SVertex, len(ctx.CasesNonNull))
+	copy(neighbors, ctx.CasesNonNull)
+
+	var data []stockData2
+
+	neighbors = sortNeighbors(ctx, neighbors)
+	for _, neighbor := range neighbors {
+		placement := PlacementHeuristic(ctx, neighbor.X, neighbor.Y)
+		if placement >= 1 {
+			data = append(data, initMax(ctx, depth, neighbor))
+		}
+	}
+
+	vertex := s.SVertex{X: -1, Y: -1}
+	maxEval := int32(-2147483648)
+	maxDepth := depth
+
+	for _, value := range data {
+		eval := value.Heur
+		if eval > maxEval {
+			maxEval = eval
+			vertex = value.Vertex
+			maxDepth = value.Depth
+		}
+	}
+
+	return vertex, maxEval, maxDepth
+}
+
 func AlphaBetaPruning(ctx s.SContext, depth int8) (s.SVertex, int32) {
 	initDepth = depth
 
@@ -43,6 +75,10 @@ func AlphaBetaPruning(ctx s.SContext, depth int8) (s.SVertex, int32) {
 			vertex = value.Vertex
 			maxDepth = value.Depth
 		}
+	}
+
+	if vertex.X == -1 || vertex.Y == -1 {
+		vertex, maxEval, maxDepth = rePrun(ctx, depth)
 	}
 
 	println("END:", maxEval, depth-maxDepth, "\n")

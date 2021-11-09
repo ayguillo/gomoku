@@ -144,7 +144,7 @@ func CalcHeuristic(ctx s.SContext) int32 {
 		}
 	}
 
-	value = 500000*(gotFive-gotFiveOpp) + 4800*(gotFour-gotFourOpp) + 500*(gotFourMid-gotFourMidOpp) + 500*(gotThree-gotThreeOpp) + 100*(gotThreeMid-gotThreeMidOpp) + 25*(gotTwo-gotTwoOpp) + 5*(gotTwoMid-gotTwoMidOpp)
+	value = 100000*(gotFive-gotFiveOpp) + 10000*(gotFour-gotFourOpp) + 1000*(gotFourMid-gotFourMidOpp) + 1000*(gotThree-gotThreeOpp) + 100*(gotThreeMid-gotThreeMidOpp) + 100*(gotTwo-gotTwoOpp) + 10*(gotTwoMid-gotTwoMidOpp)
 
 	// value = 6000*(gotFive-gotFiveOpp) + 4800*(gotFour-gotFourOpp) + 500*(gotFourMid-gotFourMidOpp) + 500*(gotThree-gotThreeOpp) + 100*(gotThreeMid-gotThreeMidOpp) + 25*(gotTwo-gotTwoOpp) + 5*(gotTwoMid-gotTwoMidOpp)
 	// value = 1000000*(gotFive) + 15000*(gotFour) + 10000*(gotFourMid) + 10000*(gotThree) + 500*(gotThreeMid) + 200*(gotTwo) + 100*(gotTwoMid)
