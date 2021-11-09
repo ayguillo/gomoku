@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	e "gomoku/algogo"
 	a "gomoku/algorithm"
 	d "gomoku/display"
 	g "gomoku/game"
@@ -120,9 +121,9 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 		startgame = false
 		d.DisplayPlayer(ctx, visu, false)
 	} else {
-		depth := int8(ctx.Depth)
 		now := time.Now()
-		vertex_next, heuris := a.AlphaBetaPruning(*ctx, depth)
+		// vertex_next, heuris := a.AlphaBetaPruning(*ctx, int8(ctx.Depth))
+		vertex_next, heuris := e.MinimaxTree(*ctx)
 		fmt.Println(vertex_next, heuris)
 		delta := time.Since(now)
 		fmt.Println(delta)
@@ -134,7 +135,7 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 			color = [4]uint8{226, 196, 115, 255}
 			d.TraceStone(float64(ctx.VertexHelp.X), float64(ctx.VertexHelp.Y), ctx, visu, color, true)
 		}
-		vertex_help, _ := a.AlphaBetaPruning(*ctx, 0)
+		vertex_help, _ := a.AlphaBetaPruning(*ctx, 2)
 		ctx.VertexHelp = vertex_help
 		color = [4]uint8{83, 51, 237, 1}
 		d.TraceStone(float64(vertex_help.X), float64(vertex_help.Y), ctx, visu, color, false)
@@ -218,18 +219,25 @@ func main() {
 			ctx.Players[1] = true
 			ctx.Players[2] = true
 		}
-		ctx.ActiveDoubleThrees = 0
+
 		ctx.ActiveCapture = capture
+		ctx.ActiveHelp = help
+
+		if double_threes {
+			ctx.ActiveDoubleThrees = 1
+		} else {
+			ctx.ActiveDoubleThrees = 0
+		}
+
 		if help {
 			ctx.VertexHelp = s.SVertex{X: -1, Y: -1}
 		}
-		ctx.ActiveHelp = help
 		if difficulty == 0 {
 			ctx.Depth = 2
 		} else if difficulty == 1 {
-			ctx.Depth = 4
+			ctx.Depth = 5
 		} else {
-			ctx.Depth = 6
+			ctx.Depth = 8
 		}
 	}
 	running := true

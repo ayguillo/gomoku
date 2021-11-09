@@ -56,10 +56,12 @@ func CheckAlignVictory(ctx s.SContext, x int, y int) bool {
 }
 
 func VictoryCondition(ctx s.SContext) (bool, s.Tnumber) {
-	check, player := checkCaptureVictory(ctx)
+	if ctx.ActiveCapture {
+		check, player := checkCaptureVictory(ctx)
 
-	if check {
-		return true, player
+		if check {
+			return true, player
+		}
 	}
 
 	for y := range ctx.Goban {

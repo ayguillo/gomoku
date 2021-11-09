@@ -1,7 +1,6 @@
 package algorithm
 
 import (
-	g "gomoku/game"
 	h "gomoku/heuristic"
 	s "gomoku/structures"
 )
@@ -53,11 +52,11 @@ func AlphaBetaPruning(ctx s.SContext, depth int8) (s.SVertex, int32) {
 
 	var data []stockData2
 
-	// impMove := h.CheckImpMoove(ctx, neighbors)
+	impMove := h.CheckImpMoove(ctx, neighbors)
 
-	// if impMove != nil {
-	// 	neighbors = impMove
-	// }
+	if impMove != nil {
+		neighbors = impMove
+	}
 
 	neighbors = sortNeighbors(ctx, neighbors)
 	for _, neighbor := range neighbors {
@@ -107,26 +106,23 @@ func initMax(ctx s.SContext, depth int8, neighbor s.SVertex) stockData2 {
 
 	tmp_ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
 
-	var captureP1 int
-	var captureP2 int
-	var isCap bool
-	var captureVertex []s.SVertex
+	var captureP1 int = 0
+	var captureP2 int = 0
+	var captureVertex []s.SVertex = nil
 
 	if ctx.ActiveCapture {
 		captureP1, captureP2 = ctx.NbCaptureP1, ctx.NbCaptureP2
-		isCap, captureVertex = g.Capture(&ctx, nil, neighbor.X, neighbor.Y, false)
+		captureVertex = CaptureAlgo(&ctx, neighbor.X, neighbor.Y)
 	}
 
 	newNeighbors := getNeighbors(tmp_ctx, neighbor)
 	tmp := tmp_ctx.CurrentPlayer
 	swapPlayer(&tmp_ctx)
 
-	eval = minimax(tmp_ctx, newNeighbors, depth-1, -2147483648) // minimax ab pruning shorter
-	// eval = pvs(tmp_ctx, newNeighbors, depth-1, -2147483648, 2147483647, 1) // negascout
-	// eval = minimax2(tmp_ctx, newNeighbors, depth-1, -2147483648, 2147483647, false) // minimax ab prun
-	// eval = negaAlphaBeta(tmp_ctx, newNeighbors, depth, -2147483648, 2147483647) // negamax ab purn
+	// eval = minimax(tmp_ctx, newNeighbors, depth-1, -2147483648)
+	eval = minimaxRecursive(tmp_ctx, newNeighbors, depth-1, -2147483648, 2147483647, false)
 
-	if ctx.ActiveCapture && isCap {
+	if ctx.ActiveCapture && captureVertex != nil {
 		revertCapture(&ctx, captureVertex, captureP1, captureP2, tmp)
 	}
 
@@ -153,7 +149,7 @@ func minimax(ctx s.SContext, neighbors []s.SVertex, depth int8, i int32) int32 {
 		if ctx.CurrentPlayer == initPlayer {
 			heur *= -1
 		}
-		return heur
+		return heur * int32(depth+1)
 	}
 
 	j := int32(-2147483648)
@@ -162,14 +158,13 @@ func minimax(ctx s.SContext, neighbors []s.SVertex, depth int8, i int32) int32 {
 		if placement >= 1 {
 			ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
 
-			var captureP1 int
-			var captureP2 int
-			var isCap bool
-			var captureVertex []s.SVertex
+			var captureP1 int = 0
+			var captureP2 int = 0
+			var captureVertex []s.SVertex = nil
 
 			if ctx.ActiveCapture {
 				captureP1, captureP2 = ctx.NbCaptureP1, ctx.NbCaptureP2
-				isCap, captureVertex = g.Capture(&ctx, nil, neighbor.X, neighbor.Y, false)
+				captureVertex = CaptureAlgo(&ctx, neighbor.X, neighbor.Y)
 			}
 
 			newNeighbors := getNeighbors(ctx, neighbor)
@@ -179,7 +174,7 @@ func minimax(ctx s.SContext, neighbors []s.SVertex, depth int8, i int32) int32 {
 
 			j = max(j, minimax(ctx, newNeighbors, depth-1, j))
 
-			if ctx.ActiveCapture && isCap {
+			if ctx.ActiveCapture && captureVertex != nil {
 				revertCapture(&ctx, captureVertex, captureP1, captureP2, tmp)
 			}
 
@@ -194,89 +189,51 @@ func minimax(ctx s.SContext, neighbors []s.SVertex, depth int8, i int32) int32 {
 	return -j
 }
 
-func pvs(ctx s.SContext, neighbors []s.SVertex, depth int8, alpha int32, beta int32, swap int32) int32 {
+const maxInt = int32(2147483647)
+const minInt = int32(-2147483648)
+
+func minimaxRecursive(ctx s.SContext, neighbors []s.SVertex, depth int8, alpha int32, beta int32, maximizingPlayer bool) int32 {
 	check, _ := VictoryCondition(ctx)
+
 	if depth <= 0 || check {
 		swapPlayer(&ctx)
 		heur := h.CalcHeuristic(ctx)
-		swapPlayer(&ctx)
-		return heur
-	}
-
-	i := 0
-	for _, neighbor := range neighbors {
-		placement := PlacementHeuristic(ctx, neighbor.X, neighbor.Y)
-		if placement >= 1 {
-			ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
-			newNeighbors := getNeighbors(ctx, neighbor)
-
-			tmp := ctx.CurrentPlayer
-			swapPlayer(&ctx)
-			score := int32(0)
-
-			if i != 0 {
-				score = -pvs(ctx, newNeighbors, depth-1, -alpha-1, -alpha, -swap)
-
-				if alpha < score && score < beta {
-					score = -pvs(ctx, newNeighbors, depth-1, -beta, -score, -swap)
-				}
-			} else {
-				score = -pvs(ctx, newNeighbors, depth-1, -beta, -alpha, -swap)
-			}
-
-			ctx.CurrentPlayer = tmp
-			ctx.Goban[neighbor.Y][neighbor.X] = 0
-
-			alpha = max(alpha, score)
-
-			if alpha >= beta {
-				break
-			}
-			i++
+		if ctx.CurrentPlayer == initPlayer {
+			heur *= -1
 		}
+		return heur * int32(depth+1)
 	}
 
-	return alpha
-}
-
-func minimax2(ctx s.SContext, neighbors []s.SVertex, depth int8, alpha int32, beta int32, isMax bool) int32 {
-	check, _ := VictoryCondition(ctx)
-	if depth <= 0 || check {
-		swapPlayer(&ctx)
-		heur := h.CalcHeuristic(ctx)
-		if isMax {
-			return -heur
-		}
-		return heur
-	}
-
-	if isMax {
-		maxEval := int32(-2147483648)
+	if maximizingPlayer {
+		maxValue := minInt
 		for _, neighbor := range neighbors {
 			placement := PlacementHeuristic(ctx, neighbor.X, neighbor.Y)
 			if placement >= 1 {
 				ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
+
 				newNeighbors := getNeighbors(ctx, neighbor)
 
 				tmp := ctx.CurrentPlayer
 				swapPlayer(&ctx)
 
-				eval := minimax2(ctx, newNeighbors, depth-1, alpha, beta, false)
+				value := minimaxRecursive(ctx, newNeighbors, depth-1, alpha, beta, false)
 
-				ctx.CurrentPlayer = tmp
 				ctx.Goban[neighbor.Y][neighbor.X] = 0
+				ctx.CurrentPlayer = tmp
 
-				maxEval = max(maxEval, eval)
-				alpha = max(alpha, eval)
+				if value > maxValue {
+					maxValue = value
+				}
 
-				if beta <= alpha {
+				alpha = max(alpha, maxValue)
+				if alpha >= beta {
 					break
 				}
 			}
 		}
-		return maxEval
+		return maxValue
 	} else {
-		minEval := int32(2147483647)
+		minValue := maxInt
 		for _, neighbor := range neighbors {
 			placement := PlacementHeuristic(ctx, neighbor.X, neighbor.Y)
 			if placement >= 1 {
@@ -286,95 +243,21 @@ func minimax2(ctx s.SContext, neighbors []s.SVertex, depth int8, alpha int32, be
 				tmp := ctx.CurrentPlayer
 				swapPlayer(&ctx)
 
-				eval := minimax2(ctx, newNeighbors, depth-1, alpha, beta, true)
+				value := minimaxRecursive(ctx, newNeighbors, depth-1, alpha, beta, true)
 
-				ctx.CurrentPlayer = tmp
 				ctx.Goban[neighbor.Y][neighbor.X] = 0
+				ctx.CurrentPlayer = tmp
 
-				minEval = min(minEval, eval)
-				beta = min(beta, eval)
+				if value < minValue {
+					minValue = value
+				}
 
+				beta = min(beta, minValue)
 				if beta <= alpha {
 					break
 				}
 			}
 		}
-		return minEval
+		return minValue
 	}
 }
-
-// func negaAlphaBeta(ctx s.SContext, neighbors []s.SVertex, depth int8, alpha int32, beta int32) int32 {
-// 	if depth <= 0 || VictoryCondition(ctx) {
-// 		swapPlayer(&ctx)
-// 		heur := h.CalcHeuristic(ctx)
-// 		swapPlayer(&ctx)
-// 		return heur
-// 	}
-
-// 	best := int32(-2147483648)
-
-// 	for _, neighbor := range neighbors {
-// 		placement := PlacementHeuristic(ctx, neighbor.X, neighbor.Y)
-// 		if placement >= 1 {
-// 			ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
-// 			newNeighbors := getNeighbors(ctx, neighbor)
-
-// 			tmp := ctx.CurrentPlayer
-// 			swapPlayer(&ctx)
-
-// 			value := -negaAlphaBeta(ctx, newNeighbors, depth-1, -beta, -alpha)
-
-// 			ctx.CurrentPlayer = tmp
-// 			ctx.Goban[neighbor.Y][neighbor.X] = 0
-
-// 			if value > best {
-// 				best = value
-// 				if best > alpha {
-// 					alpha = best
-// 					if alpha > beta {
-// 						return best
-// 					}
-// 				}
-// 			}
-
-// 		}
-// 	}
-
-// 	return best
-// }
-
-// func reAlphaBeta(ctx s.SContext, neighbors []s.SVertex, depth int8, alpha int32, beta int32, isMaximazingPlayer bool) int32 {
-// 	if depth <= 0 || VictoryCondition(ctx) {
-// 		swapPlayer(&ctx)
-// 		heur := h.CalcHeuristic(ctx)
-// 		swapPlayer(&ctx)
-// 		return heur
-// 	}
-
-// 	var value int32
-
-// 	if isMaximazingPlayer {
-// 		value = int32(-2147483648)
-
-// 		for _, neighbor := range neighbors {
-// 			placement := PlacementHeuristic(ctx, neighbor.X, neighbor.Y)
-// 			if placement >= 1 {
-// 				value = max(value, reAlphaBeta(ctx, neighbors, depth-1, alpha, beta, isMaximazingPlayer))
-// 				if value >= beta {
-// 					return value
-// 				}
-
-// 			}
-// 		}
-// 	} else {
-// 		value = int32(2147483647)
-
-// 		for _, neighbor := range neighbors {
-// 			placement := PlacementHeuristic(ctx, neighbor.X, neighbor.Y)
-// 			if placement >= 1 {
-// 			}
-// 		}
-// 	}
-
-// 	return value
-// }

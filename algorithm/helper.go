@@ -136,18 +136,3 @@ func PlacementHeuristic(ctx s.SContext, case_x int, case_y int) uint8 {
 		return 0
 	}
 }
-
-func revertCapture(ctx *s.SContext, captureVertex []s.SVertex, captureP1 int, captureP2 int, player uint8) {
-	ctx.NbCaptureP1 = captureP1
-	ctx.NbCaptureP2 = captureP2
-
-	swapPlayer := 1
-
-	if player == 1 {
-		swapPlayer = 2
-	}
-
-	for _, vertex := range captureVertex {
-		ctx.Goban[vertex.Y][vertex.X] = s.Tnumber(swapPlayer)
-	}
-}

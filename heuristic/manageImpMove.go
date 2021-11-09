@@ -151,21 +151,22 @@ func countPlays(ctx s.SContext) heurStock {
 }
 
 func CheckImpMoove(ctx s.SContext, neighbors []s.SVertex) []s.SVertex {
+
+	if ctx.Capture != nil {
+		return ctx.Capture
+	}
+
 	heurPlays := countPlays(ctx)
 	player := heurPlays.Player
 	opponent := heurPlays.Opponent
 
 	if player.GotFour > 0 || player.GotFourMid > 0 {
-		println("got four")
 		return getWinPlaysFive(ctx, neighbors)
 	} else if opponent.GotFour > 0 {
-		println("got four opp")
 		return getCounterPlaysFour(ctx, neighbors, opponent.GotFour)
 	} else if opponent.GotFourMid > 0 {
-		println("got four mid opp")
 		return getCounterPlaysFourMid(ctx, neighbors, opponent.GotFourMid)
 	} else if player.GotThree == 0 && opponent.GotThree > 0 {
-		println("got three op")
 		return getCounterPlaysThree(ctx, neighbors, opponent.GotThree)
 	}
 
