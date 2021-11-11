@@ -65,11 +65,22 @@ func MinimaxTree(ctx s.SContext) (s.SVertex, int) {
 	alpha := minInt
 	beta := maxInt
 
-	var emptyVertex s.SVertex = s.SVertex{X: -1, Y: -1}
-	neighbors := make([]s.SVertex, len(ctx.CasesNonNull))
-	copy(neighbors, ctx.CasesNonNull)
+	isCapture = ctx.ActiveCapture
+	isDoubleThree = ctx.ActiveDoubleThrees
 
-	root := createNode(0, 0, copyGoban(ctx.Goban, int(ctx.Size)), emptyVertex, neighbors, ctx.CurrentPlayer, false, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), nil, 1)
+	var emptyVertex s.SVertex = s.SVertex{X: -1, Y: -1}
+
+	var neighbors []s.SVertex
+
+	if ctx.Capture != nil {
+		neighbors = make([]s.SVertex, len(ctx.Capture))
+		copy(neighbors, ctx.Capture)
+	} else {
+		neighbors = make([]s.SVertex, len(ctx.CasesNonNull))
+		copy(neighbors, ctx.CasesNonNull)
+	}
+
+	root := createNode(0, 0, copyGoban(ctx.Goban), emptyVertex, neighbors, ctx.CurrentPlayer, false, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), nil, 1)
 	minimaxRecursive(root, ctx.Depth, alpha, beta, true)
 
 	if root.bestMove != nil {

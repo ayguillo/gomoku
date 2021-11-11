@@ -1,6 +1,7 @@
 package algogo
 
 import (
+	g "gomoku/game"
 	s "gomoku/structures"
 )
 
@@ -18,6 +19,9 @@ const align4FLanked = 500
 const align3Flanked = 400
 const block2 = 1
 const align2Free = 1
+
+var isCapture bool
+var isDoubleThree bool
 
 type position struct {
 	occupied bool
@@ -44,11 +48,10 @@ type node struct {
 	depth            uint8
 }
 
-func copyGoban(goban s.Tgoban, size int) s.Tgoban {
-	size = 19
-	newGoban := make([][]s.Tnumber, size)
+func copyGoban(goban s.Tgoban) s.Tgoban {
+	newGoban := make([][]s.Tnumber, 19)
 	for Y, line := range goban {
-		newGoban[Y] = make([]s.Tnumber, size)
+		newGoban[Y] = make([]s.Tnumber, 19)
 		for X, nb := range line {
 			newGoban[Y][X] = nb
 		}
@@ -56,7 +59,7 @@ func copyGoban(goban s.Tgoban, size int) s.Tgoban {
 	return newGoban
 }
 
-func PlacementHeuristic(goban s.Tgoban, case_x int, case_y int) uint8 {
+func PlacementHeuristic(goban s.Tgoban, case_x int, case_y int, player uint8) uint8 {
 	// if ActiveCapture && len(ctx.Capture) > 0 {
 	// 	for _, cap := range ctx.Capture {
 	// 		if case_x == cap.X && case_y == cap.Y {
@@ -68,9 +71,9 @@ func PlacementHeuristic(goban s.Tgoban, case_x int, case_y int) uint8 {
 	// 		return 2
 	// 	}
 	// }
-	// if ActiveDoubleThrees > 0 && !g.CheckDoubleThree(&ctx, case_x, case_y) {
-	// 	return 0
-	// }
+	if isDoubleThree && g.DoubleThree(s.SVertex{X: case_x, Y: case_y}, goban, player) {
+		return 0
+	}
 	if case_y < 0 || case_y >= 19 {
 		return 0
 	}

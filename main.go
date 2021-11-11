@@ -122,7 +122,6 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 		d.DisplayPlayer(ctx, visu, false)
 	} else {
 		now := time.Now()
-		// vertex_next, heuris := a.AlphaBetaPruning(*ctx, int8(ctx.Depth))
 		vertex_next, heuris := e.MinimaxTree(*ctx)
 		fmt.Println(vertex_next, heuris)
 		delta := time.Since(now)
@@ -135,7 +134,7 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 			color = [4]uint8{226, 196, 115, 255}
 			d.TraceStone(float64(ctx.VertexHelp.X), float64(ctx.VertexHelp.Y), ctx, visu, color, true)
 		}
-		vertex_help, _ := a.AlphaBetaPruning(*ctx, 2)
+		vertex_help, _ := e.MinimaxTree(*ctx)
 		ctx.VertexHelp = vertex_help
 		color = [4]uint8{83, 51, 237, 1}
 		d.TraceStone(float64(vertex_help.X), float64(vertex_help.Y), ctx, visu, color, false)
@@ -222,22 +221,17 @@ func main() {
 
 		ctx.ActiveCapture = capture
 		ctx.ActiveHelp = help
-
-		if double_threes {
-			ctx.ActiveDoubleThrees = 1
-		} else {
-			ctx.ActiveDoubleThrees = 0
-		}
+		ctx.ActiveDoubleThrees = double_threes
 
 		if help {
 			ctx.VertexHelp = s.SVertex{X: -1, Y: -1}
 		}
 		if difficulty == 0 {
-			ctx.Depth = 2
+			ctx.Depth = 1
 		} else if difficulty == 1 {
-			ctx.Depth = 5
+			ctx.Depth = 3
 		} else {
-			ctx.Depth = 7
+			ctx.Depth = 6
 		}
 	}
 	running := true

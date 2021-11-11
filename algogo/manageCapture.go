@@ -1,4 +1,4 @@
-package algorithm
+package algogo
 
 import (
 	s "gomoku/structures"

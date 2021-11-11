@@ -1,48 +1,101 @@
 package game
 
-import (
-	s "gomoku/structures"
-)
+import s "gomoku/structures"
 
-func isInRange(x int, y int) bool {
-	if x < 0 || x >= 19 || y < 0 || y >= 19 {
+func threeBlocked(end1 s.SVertex, end2 s.SVertex, goban s.Tgoban) bool {
+	if positionUnoccupied(end1, goban) == true &&
+		positionUnoccupied(end2, goban) == true {
 		return false
 	}
-
 	return true
 }
 
-func isEnnemyCase(ctx *s.SContext, case_x int, case_y int) bool {
-	if isInRange(case_x, case_y) && ctx.Goban[case_y][case_x] != s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[case_y][case_x] != 0 {
-		return true
+func checkVertexForThree(coordinate s.SVertex, goban s.Tgoban, y int8, x int8, player uint8) bool {
+	minusTwo := findNeighbour(coordinate, y, x, -2)
+	minusOne := findNeighbour(coordinate, y, x, -1)
+	one := findNeighbour(coordinate, y, x, 1)
+	two := findNeighbour(coordinate, y, x, 2)
+	three := findNeighbour(coordinate, y, x, 3)
+	four := findNeighbour(coordinate, y, x, 4)
+	if positionOccupiedByPlayer(one, goban, player) == true {
+		if positionOccupiedByPlayer(two, goban, player) == true &&
+			threeBlocked(minusOne, three, goban) == false {
+			return true
+		}
+		if positionOccupiedByPlayer(three, goban, player) == true &&
+			threeBlocked(minusOne, four, goban) == false &&
+			positionOccupiedByOpponent(two, goban, player) == false {
+			return true
+		}
+		if y < 0 || (y == 0 && x == -1) {
+			if positionOccupiedByPlayer(minusOne, goban, player) == true &&
+				threeBlocked(minusTwo, two, goban) == false {
+				return true
+			}
+		}
 	}
-
+	if positionOccupiedByPlayer(two, goban, player) == true {
+		if positionOccupiedByPlayer(three, goban, player) == true &&
+			threeBlocked(minusOne, four, goban) == false &&
+			positionOccupiedByOpponent(one, goban, player) == false {
+			return true
+		}
+		if positionOccupiedByPlayer(minusOne, goban, player) == true &&
+			threeBlocked(minusTwo, three, goban) == false &&
+			positionOccupiedByOpponent(one, goban, player) == false {
+			return true
+		}
+	}
 	return false
 }
 
-func CheckDoubleThree(ctx *s.SContext, case_x int, case_y int) bool {
-	horizonDoubleThree := checkHorizonDoubleThree(ctx, case_x, case_y)
-	leftDoubleThree := checkLeftDoubleThree(ctx, case_x, case_y, 2)
-	rightDoubleThree := checkRightDoubleThree(ctx, case_x, case_y, 2)
+func willCaptureDirection(coordinate s.SVertex, goban s.Tgoban, y, x int8, player uint8) bool {
+	one := findNeighbour(coordinate, y, x, 1)
+	two := findNeighbour(coordinate, y, x, 2)
+	three := findNeighbour(coordinate, y, x, 3)
+	if positionOccupiedByOpponent(one, goban, player) == true &&
+		positionOccupiedByOpponent(two, goban, player) == true &&
+		positionOccupiedByPlayer(three, goban, player) == true {
+		return true
+	}
+	return false
+}
 
-	verticalDoubleThree := checkVerticalDoubleThree(ctx, case_x, case_y)
-	upDoubleThree := checkUpDoubleThree(ctx, case_x, case_y, 2)
-	downDoubleThree := checkDownDoubleThree(ctx, case_x, case_y, 2)
+func willCaptureBool(coordinate s.SVertex, goban s.Tgoban, player uint8) bool {
+	var y int8
+	var x int8
+	for y = -1; y <= 1; y++ {
+		for x = -1; x <= 1; x++ {
+			if !(x == 0 && y == 0) {
+				if willCaptureDirection(coordinate, goban, y, x, player) == true {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
 
-	diagLeftDoubleThree := checkDiagLeftDoubleThree(ctx, case_x, case_y)
-	leftUpDiagDoubleThree := checkLefUptDiagDoubleThree(ctx, case_x, case_y, 2)
-	rightDownDiagDoubleThree := checkRightDownDiagDoubleThree(ctx, case_x, case_y, 2)
-
-	diagRightDoubleThree := checkDiagRightDoubleThree(ctx, case_x, case_y)
-	leftDownDiagDoubleThree := checkLeftDownDiagDoubleThree(ctx, case_x, case_y, 2)
-	rightUpDiagDoubleThree := checkRightUpDiagDoubleThree(ctx, case_x, case_y, 2)
-
-	if !checkHorizon(ctx, case_x, case_y, horizonDoubleThree, leftDoubleThree, rightDoubleThree, verticalDoubleThree, upDoubleThree, downDoubleThree, diagLeftDoubleThree, leftUpDiagDoubleThree, rightDownDiagDoubleThree, diagRightDoubleThree, leftDownDiagDoubleThree, rightUpDiagDoubleThree) ||
-		!checkVertical(ctx, case_x, case_y, horizonDoubleThree, leftDoubleThree, rightDoubleThree, verticalDoubleThree, upDoubleThree, downDoubleThree, diagLeftDoubleThree, leftUpDiagDoubleThree, rightDownDiagDoubleThree, diagRightDoubleThree, leftDownDiagDoubleThree, rightUpDiagDoubleThree) ||
-		!checkDiagLeft(ctx, case_x, case_y, horizonDoubleThree, leftDoubleThree, rightDoubleThree, verticalDoubleThree, upDoubleThree, downDoubleThree, diagLeftDoubleThree, leftUpDiagDoubleThree, rightDownDiagDoubleThree, diagRightDoubleThree, leftDownDiagDoubleThree, rightUpDiagDoubleThree) ||
-		!checkDiagRight(ctx, case_x, case_y, horizonDoubleThree, leftDoubleThree, rightDoubleThree, verticalDoubleThree, upDoubleThree, downDoubleThree, diagLeftDoubleThree, leftUpDiagDoubleThree, rightDownDiagDoubleThree, diagRightDoubleThree, leftDownDiagDoubleThree, rightUpDiagDoubleThree) {
+func DoubleThree(coordinate s.SVertex, goban s.Tgoban, player uint8) bool {
+	if willCaptureBool(coordinate, goban, player) == true {
 		return false
 	}
-
-	return true
+	var freeThree bool
+	var y int8
+	var x int8
+	for y = -1; y <= 1; y++ {
+		for x = -1; x <= 1; x++ {
+			if !(x == 0 && y == 0) {
+				foundThree := checkVertexForThree(coordinate, goban, y, x, player)
+				if foundThree == true {
+					if freeThree == true {
+						return true
+					} else {
+						freeThree = true
+					}
+				}
+			}
+		}
+	}
+	return false
 }

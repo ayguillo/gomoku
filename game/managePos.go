@@ -1,4 +1,4 @@
-package algogo
+package game
 
 import s "gomoku/structures"
 

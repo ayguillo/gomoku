@@ -19,7 +19,7 @@ type SContext struct {
 	CasesNonNull       []SVertex
 	Capture            []SVertex
 	Players            map[uint8]bool
-	ActiveDoubleThrees int
+	ActiveDoubleThrees bool
 	ActiveCapture      bool
 	ActiveHelp         bool
 	Depth              uint8
