@@ -40,20 +40,10 @@ func generateBoard(current *node, coord s.SVertex, neighbors []s.SVertex, player
 	ctx.NbCaptureP2 = int(current.captures.capture1)
 	ctx.ActiveCapture = false
 
-	if player == 1 {
-		player = 2
-	} else {
-		player = 1
-	}
-
 	if current.maximizingPlayer {
 		value = current.value - int(h.CalcHeuristic(ctx))/int(current.depth)
-		// value = current.value - evaluateMove(coord, newGoban, player, current.captures)/int(current.depth)
-
 	} else {
 		value = current.value + int(h.CalcHeuristic(ctx))/int(current.depth)
-		// value = current.value + evaluateMove(coord, newGoban, player, current.captures)/int(current.depth)
-
 	}
 
 	newNeighbors := getNeighbors(current.goban, coord)

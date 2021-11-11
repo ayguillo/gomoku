@@ -57,6 +57,20 @@ func copyGoban(goban s.Tgoban, size int) s.Tgoban {
 }
 
 func PlacementHeuristic(goban s.Tgoban, case_x int, case_y int) uint8 {
+	// if ActiveCapture && len(ctx.Capture) > 0 {
+	// 	for _, cap := range ctx.Capture {
+	// 		if case_x == cap.X && case_y == cap.Y {
+	// 			capture = true
+	// 			break
+	// 		}
+	// 	}
+	// 	if capture == false {
+	// 		return 2
+	// 	}
+	// }
+	// if ActiveDoubleThrees > 0 && !g.CheckDoubleThree(&ctx, case_x, case_y) {
+	// 	return 0
+	// }
 	if case_y < 0 || case_y >= 19 {
 		return 0
 	}

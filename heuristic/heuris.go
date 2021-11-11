@@ -147,13 +147,13 @@ func CalcHeuristic(ctx s.SContext) int32 {
 	value = 100000*(gotFive-gotFiveOpp) + 10000*(gotFour-gotFourOpp) + 1000*(gotFourMid-gotFourMidOpp) + 1000*(gotThree-gotThreeOpp) + 100*(gotThreeMid-gotThreeMidOpp) + 100*(gotTwo-gotTwoOpp) + 10*(gotTwoMid-gotTwoMidOpp)
 
 	// value = 6000*(gotFive-gotFiveOpp) + 4800*(gotFour-gotFourOpp) + 500*(gotFourMid-gotFourMidOpp) + 500*(gotThree-gotThreeOpp) + 100*(gotThreeMid-gotThreeMidOpp) + 25*(gotTwo-gotTwoOpp) + 5*(gotTwoMid-gotTwoMidOpp)
-	// value = 1000000*(gotFive) + 15000*(gotFour) + 10000*(gotFourMid) + 10000*(gotThree) + 500*(gotThreeMid) + 200*(gotTwo) + 100*(gotTwoMid)
+	// value = 1000000*(gotFive) + 100000*(gotFour) + 10000*(gotFourMid) + 10000*(gotThree) + 1000*(gotThreeMid) + 100*(gotTwo) + 10*(gotTwoMid)
 
-	// valueMe := 150000*gotFive + 5000*gotFour + 1000*gotFourMid + 500*gotThree + 200*gotThreeMid + 50*gotTwo + 20*gotTwoMid
-	// valueOp := 150000*gotFiveOpp + 20000*gotFourOpp + 10000*gotFourMidOpp + 5000*gotThreeOpp + 200*gotThreeMidOpp + 50*gotTwoOpp + 20*gotTwoMidOpp
+	// valueMe := 1000000*gotFive + 100000*gotFour + 10000*gotFourMid + 10000*gotThree + 1000*gotThreeMid
+	// valueOp := 150000*gotFiveOpp + 80000*gotFourOpp + 8000*gotFourMidOpp + 8000*gotThreeOpp + 800*gotThreeMidOpp
 
-	// valueMe := 150000*gotFive + 5000*gotFour + 1000*gotFourMid + 1000*gotThree + 200*gotThreeMid + 50*gotTwo + 20*gotTwoMid
-	// valueOp := 150000*gotFiveOpp + 7000*gotFourOpp + 1500*gotFourMidOpp + 1500*gotThreeOpp + 300*gotThreeMidOpp + 50*gotTwoOpp + 20*gotTwoMidOpp
+	// valueMe := 150000*gotFive + 5000*gotFour + 1000*gotFourMid + 1000*gotThree + 200*gotThreeMid + 50*gotTwo
+	// valueOp := 150000*gotFiveOpp + 5000*2*gotFourOpp + 2000*gotFourMidOpp + 2000*gotThreeOpp + 400*gotThreeMidOpp + 100*gotTwoOpp
 
 	// value = valueMe - valueOp
 
@@ -167,26 +167,26 @@ func CalcHeuristic(ctx s.SContext) int32 {
 		}
 
 		if nb_capture >= 5 {
-			value += 1000000
+			value += 100000
 		} else if nb_capture == 4 {
-			value += 20000
+			value += 10000
 		} else if nb_capture == 3 {
-			value += 2000
+			value += 500
 		} else if nb_capture == 2 {
-			value += 200
+			value += 250
 		} else if nb_capture == 1 {
-			value += 20
+			value += 100
 		}
 		if nb_capture_enemy >= 5 {
-			value -= 1000000
+			value -= 100000
 		} else if nb_capture_enemy == 4 {
 			value -= 10000
 		} else if nb_capture_enemy == 3 {
-			value -= 1000
+			value -= 500
 		} else if nb_capture_enemy == 2 {
-			value -= 100
+			value -= 250
 		} else if nb_capture_enemy == 1 {
-			value -= 10
+			value -= 100
 		}
 	}
 

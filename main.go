@@ -237,7 +237,7 @@ func main() {
 		} else if difficulty == 1 {
 			ctx.Depth = 5
 		} else {
-			ctx.Depth = 8
+			ctx.Depth = 7
 		}
 	}
 	running := true

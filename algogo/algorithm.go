@@ -22,7 +22,9 @@ func min(a, b int) int {
 }
 
 func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPlayer bool) int {
-	if depth == 0 || node.value >= align5Win || node.value <= -align5Win {
+	check, _ := victoryCondition(node.goban, false, 0, 0)
+
+	if depth <= 0 || check {
 		return node.value
 	}
 
@@ -70,5 +72,9 @@ func MinimaxTree(ctx s.SContext) (s.SVertex, int) {
 	root := createNode(0, 0, copyGoban(ctx.Goban, int(ctx.Size)), emptyVertex, neighbors, ctx.CurrentPlayer, false, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), nil, 1)
 	minimaxRecursive(root, ctx.Depth, alpha, beta, true)
 
-	return root.bestMove.coord, root.bestMove.value
+	if root.bestMove != nil {
+		return root.bestMove.coord, root.bestMove.value
+	} else {
+		return s.SVertex{X: -1, Y: -1}, 0
+	}
 }
