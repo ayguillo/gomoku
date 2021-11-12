@@ -49,7 +49,7 @@ func checkVertexForThree(coordinate s.SVertex, goban s.Tgoban, y int8, x int8, p
 	return false
 }
 
-func willCaptureDirection(coordinate s.SVertex, goban s.Tgoban, y, x int8, player uint8) bool {
+func isCaptureDirection(coordinate s.SVertex, goban s.Tgoban, y, x int8, player uint8) bool {
 	one := findNeighbour(coordinate, y, x, 1)
 	two := findNeighbour(coordinate, y, x, 2)
 	three := findNeighbour(coordinate, y, x, 3)
@@ -61,13 +61,13 @@ func willCaptureDirection(coordinate s.SVertex, goban s.Tgoban, y, x int8, playe
 	return false
 }
 
-func willCaptureBool(coordinate s.SVertex, goban s.Tgoban, player uint8) bool {
+func isCapture(coordinate s.SVertex, goban s.Tgoban, player uint8) bool {
 	var y int8
 	var x int8
 	for y = -1; y <= 1; y++ {
 		for x = -1; x <= 1; x++ {
 			if !(x == 0 && y == 0) {
-				if willCaptureDirection(coordinate, goban, y, x, player) == true {
+				if isCaptureDirection(coordinate, goban, y, x, player) == true {
 					return true
 				}
 			}
@@ -76,8 +76,8 @@ func willCaptureBool(coordinate s.SVertex, goban s.Tgoban, player uint8) bool {
 	return false
 }
 
-func DoubleThree(coordinate s.SVertex, goban s.Tgoban, player uint8) bool {
-	if willCaptureBool(coordinate, goban, player) == true {
+func DoubleThree(coordinate s.SVertex, goban s.Tgoban, player uint8, capture bool) bool {
+	if capture && isCapture(coordinate, goban, player) == true {
 		return false
 	}
 	var freeThree bool

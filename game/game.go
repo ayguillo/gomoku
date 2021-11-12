@@ -17,8 +17,7 @@ func Placement(ctx *s.SContext, case_x int, case_y int) int {
 			return 2
 		}
 	}
-	if ctx.ActiveDoubleThrees && DoubleThree(s.SVertex{X: case_x, Y: case_y}, ctx.Goban, ctx.CurrentPlayer) {
-		println("DOUBLE THREE")
+	if ctx.ActiveDoubleThrees && DoubleThree(s.SVertex{X: case_x, Y: case_y}, ctx.Goban, ctx.CurrentPlayer, ctx.ActiveCapture) {
 		return 1
 	}
 	if ctx.Goban[int(case_y)][int(case_x)] == 0 {

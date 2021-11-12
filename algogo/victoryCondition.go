@@ -46,8 +46,8 @@ func CheckAlignVictory(goban s.Tgoban, x int, y int) bool {
 	return false
 }
 
-func victoryCondition(goban s.Tgoban, capture bool, captureP0 int, captureP1 int) (bool, s.Tnumber) {
-	if capture {
+func victoryCondition(goban s.Tgoban, captureP0 int, captureP1 int) (bool, s.Tnumber) {
+	if isCapture {
 		if captureP0 >= 5 {
 			return true, 1
 		} else if captureP1 >= 5 {

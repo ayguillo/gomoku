@@ -71,7 +71,7 @@ func PlacementHeuristic(goban s.Tgoban, case_x int, case_y int, player uint8) ui
 	// 		return 2
 	// 	}
 	// }
-	if isDoubleThree && g.DoubleThree(s.SVertex{X: case_x, Y: case_y}, goban, player) {
+	if isDoubleThree && g.DoubleThree(s.SVertex{X: case_x, Y: case_y}, goban, player, isCapture) {
 		return 0
 	}
 	if case_y < 0 || case_y >= 19 {

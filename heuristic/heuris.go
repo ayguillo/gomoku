@@ -144,7 +144,7 @@ func CalcHeuristic(ctx s.SContext) int32 {
 		}
 	}
 
-	value = 10000000*(gotFive-gotFiveOpp) + 1000000*(gotFour-gotFourOpp) + 100000*(gotFourMid-gotFourMidOpp) + 100000*(gotThree-gotThreeOpp) // + 200*(gotThreeMid-gotThreeMidOpp) + 1*(gotTwo-gotTwoOpp) + 1*(gotTwoMid-gotTwoMidOpp)
+	value = 10000000*(gotFive-gotFiveOpp) + 1000000*(gotFour-gotFourOpp) + 100000*(gotFourMid-gotFourMidOpp) + 100000*(gotThree-gotThreeOpp) // + 3*(gotThreeMid-gotThreeMidOpp) + 1*(gotTwo-gotTwoOpp)
 
 	// value = 600000*(gotFive-gotFiveOpp) + 48000*(gotFour-gotFourOpp) + 5000*(gotFourMid-gotFourMidOpp) + 5000*(gotThree-gotThreeOpp) + 1000*(gotThreeMid-gotThreeMidOpp) //+ 250*(gotTwo-gotTwoOpp) + 50*(gotTwoMid-gotTwoMidOpp)
 	// value = 1000000*(gotFive) + 100000*(gotFour) + 10000*(gotFourMid) + 10000*(gotThree) + 1000*(gotThreeMid) + 100*(gotTwo) + 10*(gotTwoMid)
@@ -157,15 +157,23 @@ func CalcHeuristic(ctx s.SContext) int32 {
 
 	// value = valueMe - valueOp
 
-	if ctx.ActiveCapture {
-		nb_capture := ctx.NbCaptureP1
-		nb_capture_enemy := ctx.NbCaptureP2
+	// if ctx.ActiveCapture {
+	// 	nbCapture := ctx.NbCaptureP1
+	// 	nbCaptureOpp := ctx.NbCaptureP2
 
-		if ctx.CurrentPlayer == 2 {
-			nb_capture = ctx.NbCaptureP2
-			nb_capture_enemy = ctx.NbCaptureP1
-		}
-	}
+	// 	if ctx.CurrentPlayer == 2 {
+	// 		nbCapture = ctx.NbCaptureP2
+	// 		nbCaptureOpp = ctx.NbCaptureP1
+	// 	}
+
+	// 	if nbCapture >= 5 {
+	// 		value += 0
+	// 	} else if nbCaptureOpp >= 5 {
+	// 		value -= 0
+	// 	} else {
+	// 		value += 0 * (nbCapture - nbCaptureOpp)
+	// 	}
+	// }
 
 	return int32(value)
 }

@@ -1,6 +1,7 @@
 package algogo
 
 import (
+	"fmt"
 	s "gomoku/structures"
 )
 
@@ -22,13 +23,20 @@ func min(a, b int) int {
 }
 
 func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPlayer bool) int {
-	check, _ := victoryCondition(node.goban, false, 0, 0)
-
-	if depth <= 0 || check {
+	// check, _ := victoryCondition(node.goban, 0, 0)
+	if depth <= 0 || node.value >= 10000000 || node.value <= -10000000 {
 		return node.value
+		// if node.player == 1 {
+		// 	return node.value * int(node.captures.capture0)
+		// } else {
+		// 	return node.value * int(node.captures.capture1)
+		// }
 	}
 
+	println("before tree")
 	generateTree(node, node.coord, node.neighbors)
+
+	println("after tree")
 
 	if maximizingPlayer {
 		maxValue := minInt
@@ -72,13 +80,23 @@ func MinimaxTree(ctx s.SContext) (s.SVertex, int) {
 
 	var neighbors []s.SVertex
 
-	if ctx.Capture != nil {
+	if isCapture && len(ctx.Capture) > 0 {
+		println("ON EST ALLL")
+		fmt.Printf("%v\n", ctx.Capture)
 		neighbors = make([]s.SVertex, len(ctx.Capture))
 		copy(neighbors, ctx.Capture)
 	} else {
 		neighbors = make([]s.SVertex, len(ctx.CasesNonNull))
 		copy(neighbors, ctx.CasesNonNull)
 	}
+
+	// if isCatpure == false && ctx.Capture != nil {
+	// 	neighbors = make([]s.SVertex, len(ctx.Capture))
+	// 	copy(neighbors, ctx.Capture)
+	// } else {
+	// 	neighbors = make([]s.SVertex, len(ctx.CasesNonNull))
+	// 	copy(neighbors, ctx.CasesNonNull)
+	// }
 
 	root := createNode(0, 0, copyGoban(ctx.Goban), emptyVertex, neighbors, ctx.CurrentPlayer, false, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), nil, 1)
 	minimaxRecursive(root, ctx.Depth, alpha, beta, true)
