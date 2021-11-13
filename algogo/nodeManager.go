@@ -1,7 +1,6 @@
 package algogo
 
 import (
-	"fmt"
 	h "gomoku/heuristic"
 	s "gomoku/structures"
 )
@@ -43,25 +42,25 @@ func generateBoard(current *node, coord s.SVertex, neighbors []s.SVertex, player
 	ctx.ActiveCapture = isCapture
 
 	if isCapture {
-		beforeCap := copyGoban(ctx.Goban)
+		// beforeCap := copyGoban(ctx.Goban)
 		capturesVertex := CaptureAlgo(&ctx, coord.X, coord.Y)
 
 		for _, capture := range capturesVertex {
 			ctx.Goban[capture.Y][capture.X] = 0
 		}
 
-		if capturesVertex != nil {
-			println("PLAYER:", ctx.CurrentPlayer)
-			fmt.Printf("BFR: %v\n%d|%d\n", beforeCap, current.captures.capture0, current.captures.capture1)
-			fmt.Printf("AFT: %v\n%d|%d\n", ctx.Goban, ctx.NbCaptureP1, ctx.NbCaptureP2)
-		}
+		// if capturesVertex != nil {
+		// 	println("PLAYER:", ctx.CurrentPlayer)
+		// 	fmt.Printf("BFR: %v\n%d|%d\n", beforeCap, current.captures.capture0, current.captures.capture1)
+		// 	fmt.Printf("AFT: %v\n%d|%d\n", ctx.Goban, ctx.NbCaptureP1, ctx.NbCaptureP2)
+		// }
 
 	}
 
 	if current.maximizingPlayer {
-		value = current.value - int(h.CalcHeuristic(ctx))/int(current.depth)
+		value = -int(h.CalcHeuristic(ctx)) / int(current.depth)
 	} else {
-		value = current.value + int(h.CalcHeuristic(ctx))/int(current.depth)
+		value = int(h.CalcHeuristic(ctx)) / int(current.depth)
 	}
 
 	newNeighbors := getNeighbors(current.goban, coord)
