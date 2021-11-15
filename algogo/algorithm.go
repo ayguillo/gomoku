@@ -37,7 +37,7 @@ func buildContext(node node) s.SContext {
 }
 
 func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPlayer bool) int {
-	if depth <= 0 || node.value >= 10000000 || node.value <= -10000000 {
+	if depth <= 0 || node.value >= 60000 || node.value <= -60000 {
 		return node.value
 	}
 
@@ -74,15 +74,16 @@ func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPl
 	}
 }
 
-func MinimaxTree(ctx s.SContext) (s.SVertex, int) {
+func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
 	alpha := minInt
 	beta := maxInt
-	initDepth = ctx.Depth
+	initDepth = depth
 
 	isCapture = ctx.ActiveCapture
 	isDoubleThree = ctx.ActiveDoubleThrees
 	initPlayer = ctx.CurrentPlayer
 
+	println(initPlayer)
 	var emptyVertex s.SVertex = s.SVertex{X: -1, Y: -1}
 
 	var neighbors []s.SVertex
@@ -106,7 +107,7 @@ func MinimaxTree(ctx s.SContext) (s.SVertex, int) {
 	}
 
 	root := createNode(0, 0, copyGoban(ctx.Goban), emptyVertex, neighbors, opp, false, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), nil, 1)
-	minimaxRecursive(root, ctx.Depth, alpha, beta, true)
+	minimaxRecursive(root, depth, alpha, beta, true)
 
 	if root.bestMove != nil {
 		return root.bestMove.coord, root.bestMove.value
@@ -138,7 +139,7 @@ func reMinimaxTree(ctx s.SContext) (s.SVertex, int) {
 
 	opp := uint8(2)
 	if ctx.CurrentPlayer == 2 {
-		opp = 2
+		opp = 1
 	}
 
 	root := createNode(0, 0, copyGoban(ctx.Goban), emptyVertex, neighbors, opp, false, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), nil, 1)
