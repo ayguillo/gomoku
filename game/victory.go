@@ -241,7 +241,7 @@ func VictoryGoban(ctx *s.SContext, visu *s.SVisu) bool {
 	victory := false
 	for y := range ctx.Goban {
 		for x := range ctx.Goban[y] {
-			if ctx.Goban[y][x] != 0 {
+			if ctx.Goban[y][x] != 0 && ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
 				victory_condition := VictoryConditionAlign(ctx, x, y, visu)
 				if ctx.Capture != nil {
 					return false
@@ -262,6 +262,7 @@ func VictoryGoban(ctx *s.SContext, visu *s.SVisu) bool {
 		}
 		return true
 	}
+	victory = false
 	if ctx.CurrentPlayer == 2 {
 		ctx.CurrentPlayer = 1
 	} else {
@@ -269,7 +270,7 @@ func VictoryGoban(ctx *s.SContext, visu *s.SVisu) bool {
 	}
 	for y := range ctx.Goban {
 		for x := range ctx.Goban[y] {
-			if ctx.Goban[y][x] != 0 {
+			if ctx.Goban[y][x] != 0 && ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
 				victory_condition := VictoryConditionAlign(ctx, x, y, visu)
 				if ctx.Capture != nil {
 					return false
