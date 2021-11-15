@@ -37,13 +37,11 @@ func buildContext(node node) s.SContext {
 }
 
 func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPlayer bool) int {
-	// fmt.Printf("%v\n", node.goban)
-	// check, _ := victoryCondition(node.goban, int(node.captures.Capture0), int(node.captures.Capture1))
 	if depth <= 0 || node.value >= 10000000 || node.value <= -10000000 {
 		return node.value
 	}
 
-	generateTree(node, node.coord, node.neighbors)
+	generateTree(node, node.neighbors)
 
 	if maximizingPlayer {
 		maxValue := minInt
@@ -136,7 +134,6 @@ func reMinimaxTree(ctx s.SContext) (s.SVertex, int) {
 	} else {
 		neighbors = make([]s.SVertex, len(ctx.CasesNonNull))
 		copy(neighbors, ctx.CasesNonNull)
-
 	}
 
 	opp := uint8(2)
