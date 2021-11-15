@@ -1,4 +1,4 @@
-package heuristic
+package algogo
 
 import (
 	s "gomoku/structures"

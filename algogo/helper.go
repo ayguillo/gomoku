@@ -22,15 +22,11 @@ const align2Free = 1
 
 var isCapture bool
 var isDoubleThree bool
+var initPlayer uint8
 
-type position struct {
-	occupied bool
-	player   bool
-}
-
-type captures struct {
-	capture0 uint8
-	capture1 uint8
+type Captures struct {
+	Capture0 uint8
+	Capture1 uint8
 }
 
 type node struct {
@@ -41,7 +37,7 @@ type node struct {
 	neighbors        []s.SVertex
 	player           uint8
 	maximizingPlayer bool
-	captures         captures
+	captures         Captures
 	parent           *node
 	children         []*node
 	bestMove         *node
@@ -120,10 +116,22 @@ func getNeighbors(goban s.Tgoban, vertex s.SVertex) []s.SVertex {
 	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X, Y: vertex.Y - 1}, ret_list)
 	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X + 1, Y: vertex.Y}, ret_list)
 	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X - 1, Y: vertex.Y}, ret_list)
-	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X - 1, Y: vertex.Y}, ret_list)
-	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X - 1, Y: vertex.Y}, ret_list)
-	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X - 1, Y: vertex.Y}, ret_list)
-	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X - 1, Y: vertex.Y}, ret_list)
 	ret_list = removeDuplicate2(ret_list, s.SVertex{X: vertex.X, Y: vertex.Y})
 	return ret_list
+}
+
+func generateNewNeighobrs(goban s.Tgoban) []s.SVertex {
+	var ret []s.SVertex
+	y := 0
+
+	for y < 19 {
+		x := 0
+		for x < 19 {
+			ret = append(ret, getNeighbors(goban, s.SVertex{Y: y, X: x})...)
+			x++
+		}
+		y++
+	}
+
+	return ret
 }

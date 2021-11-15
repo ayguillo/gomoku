@@ -97,6 +97,11 @@ func displayPlay(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu, v
 		sdl.Log("VICTORY")
 		d.DisplayMessage(visu, ctx.Size, "Cliquez pour", "relancer", *ctx)
 		return true, true
+	} else if g.CheckDraw(*ctx) {
+		d.DisplayEquality(visu, *ctx)
+		sdl.Log("Equality")
+		d.DisplayMessage(visu, ctx.Size, "Cliquez pour", "relancer", *ctx)
+		return true, true
 	} else {
 		d.DisplayPlayer(ctx, visu, false)
 	}
@@ -229,9 +234,9 @@ func main() {
 		if difficulty == 0 {
 			ctx.Depth = 1
 		} else if difficulty == 1 {
-			ctx.Depth = 3
+			ctx.Depth = 5
 		} else {
-			ctx.Depth = 6
+			ctx.Depth = 8
 		}
 	}
 	running := true

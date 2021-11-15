@@ -8,6 +8,18 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
+func CheckDraw(ctx s.SContext) bool {
+	for y := range ctx.Goban {
+		for x := range ctx.Goban[y] {
+			if ctx.Goban[y][x] == 0 {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
 func horizontalAlign(ctx *s.SContext, case_x int, case_y int, capturePlayer int, nbCapture int, visu *s.SVisu) uint8 {
 	count_stone := 0
 	var message string

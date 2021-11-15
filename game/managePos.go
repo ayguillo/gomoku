@@ -10,7 +10,7 @@ func coordinateOnGoban(coordinate s.SVertex) bool {
 	return true
 }
 
-func positionOccupiedByPlayer(coordinate s.SVertex, goban s.Tgoban, player uint8) bool {
+func PositionOccupiedByPlayer(coordinate s.SVertex, goban s.Tgoban, player uint8) bool {
 	if coordinateOnGoban(coordinate) == true {
 		if goban[coordinate.Y][coordinate.X] == s.Tnumber(player) {
 			return true
@@ -19,7 +19,7 @@ func positionOccupiedByPlayer(coordinate s.SVertex, goban s.Tgoban, player uint8
 	return false
 }
 
-func positionOccupiedByOpponent(coordinate s.SVertex, goban s.Tgoban, player uint8) bool {
+func PositionOccupiedByOpponent(coordinate s.SVertex, goban s.Tgoban, player uint8) bool {
 	if coordinateOnGoban(coordinate) == true {
 		if goban[coordinate.Y][coordinate.X] != 0 && goban[coordinate.Y][coordinate.X] != s.Tnumber(player) {
 			return true
@@ -28,7 +28,7 @@ func positionOccupiedByOpponent(coordinate s.SVertex, goban s.Tgoban, player uin
 	return false
 }
 
-func positionUnoccupied(coordinate s.SVertex, goban s.Tgoban) bool {
+func PositionUnoccupied(coordinate s.SVertex, goban s.Tgoban) bool {
 	if coordinateOnGoban(coordinate) == true {
 		if goban[coordinate.Y][coordinate.X] == 0 {
 			return true
@@ -37,7 +37,7 @@ func positionUnoccupied(coordinate s.SVertex, goban s.Tgoban) bool {
 	return false
 }
 
-func findNeighbour(coordinate s.SVertex, y int8, x int8, multiple int8) s.SVertex {
+func FindNeighbour(coordinate s.SVertex, y int8, x int8, multiple int8) s.SVertex {
 	neighbour := coordinate
 	neighbour.Y += int(y * multiple)
 	neighbour.X += int(x * multiple)

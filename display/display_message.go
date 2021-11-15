@@ -124,6 +124,28 @@ func DisplayPlayer(ctx *s.SContext, visu *s.SVisu, current bool) {
 	}
 }
 
+func DisplayEquality(visu *s.SVisu, ctx s.SContext) {
+	size := ctx.Size
+	color := sdl.Color{R: 35, G: 33, B: 33, A: 255}
+
+	if visu.TexturePlayer != nil {
+		visu.TexturePlayer.Destroy()
+	}
+	bmp, err := visu.FontPlayer.RenderUTF8Solid("Equality", color)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to create texture font: %s\n", err)
+		panic(err)
+	}
+	visu.TexturePlayer, err = visu.Renderer.CreateTextureFromSurface(bmp)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to create texture font: %s\n", err)
+		panic(err)
+	}
+	bmp.Free()
+	visu.Renderer.Copy(visu.TexturePlayer, nil, &sdl.Rect{X: 4, Y: 54, W: (size / 4) - 10, H: 50})
+	visu.Renderer.Present()
+}
+
 func DisplayVictory(visu *s.SVisu, ctx s.SContext) {
 	var color sdl.Color
 	size := ctx.Size

@@ -3,46 +3,46 @@ package game
 import s "gomoku/structures"
 
 func threeBlocked(end1 s.SVertex, end2 s.SVertex, goban s.Tgoban) bool {
-	if positionUnoccupied(end1, goban) == true &&
-		positionUnoccupied(end2, goban) == true {
+	if PositionUnoccupied(end1, goban) == true &&
+		PositionUnoccupied(end2, goban) == true {
 		return false
 	}
 	return true
 }
 
 func checkVertexForThree(coordinate s.SVertex, goban s.Tgoban, y int8, x int8, player uint8) bool {
-	minusTwo := findNeighbour(coordinate, y, x, -2)
-	minusOne := findNeighbour(coordinate, y, x, -1)
-	one := findNeighbour(coordinate, y, x, 1)
-	two := findNeighbour(coordinate, y, x, 2)
-	three := findNeighbour(coordinate, y, x, 3)
-	four := findNeighbour(coordinate, y, x, 4)
-	if positionOccupiedByPlayer(one, goban, player) == true {
-		if positionOccupiedByPlayer(two, goban, player) == true &&
+	minusTwo := FindNeighbour(coordinate, y, x, -2)
+	minusOne := FindNeighbour(coordinate, y, x, -1)
+	one := FindNeighbour(coordinate, y, x, 1)
+	two := FindNeighbour(coordinate, y, x, 2)
+	three := FindNeighbour(coordinate, y, x, 3)
+	four := FindNeighbour(coordinate, y, x, 4)
+	if PositionOccupiedByPlayer(one, goban, player) == true {
+		if PositionOccupiedByPlayer(two, goban, player) == true &&
 			threeBlocked(minusOne, three, goban) == false {
 			return true
 		}
-		if positionOccupiedByPlayer(three, goban, player) == true &&
+		if PositionOccupiedByPlayer(three, goban, player) == true &&
 			threeBlocked(minusOne, four, goban) == false &&
-			positionOccupiedByOpponent(two, goban, player) == false {
+			PositionOccupiedByOpponent(two, goban, player) == false {
 			return true
 		}
 		if y < 0 || (y == 0 && x == -1) {
-			if positionOccupiedByPlayer(minusOne, goban, player) == true &&
+			if PositionOccupiedByPlayer(minusOne, goban, player) == true &&
 				threeBlocked(minusTwo, two, goban) == false {
 				return true
 			}
 		}
 	}
-	if positionOccupiedByPlayer(two, goban, player) == true {
-		if positionOccupiedByPlayer(three, goban, player) == true &&
+	if PositionOccupiedByPlayer(two, goban, player) == true {
+		if PositionOccupiedByPlayer(three, goban, player) == true &&
 			threeBlocked(minusOne, four, goban) == false &&
-			positionOccupiedByOpponent(one, goban, player) == false {
+			PositionOccupiedByOpponent(one, goban, player) == false {
 			return true
 		}
-		if positionOccupiedByPlayer(minusOne, goban, player) == true &&
+		if PositionOccupiedByPlayer(minusOne, goban, player) == true &&
 			threeBlocked(minusTwo, three, goban) == false &&
-			positionOccupiedByOpponent(one, goban, player) == false {
+			PositionOccupiedByOpponent(one, goban, player) == false {
 			return true
 		}
 	}
@@ -50,12 +50,12 @@ func checkVertexForThree(coordinate s.SVertex, goban s.Tgoban, y int8, x int8, p
 }
 
 func isCaptureDirection(coordinate s.SVertex, goban s.Tgoban, y, x int8, player uint8) bool {
-	one := findNeighbour(coordinate, y, x, 1)
-	two := findNeighbour(coordinate, y, x, 2)
-	three := findNeighbour(coordinate, y, x, 3)
-	if positionOccupiedByOpponent(one, goban, player) == true &&
-		positionOccupiedByOpponent(two, goban, player) == true &&
-		positionOccupiedByPlayer(three, goban, player) == true {
+	one := FindNeighbour(coordinate, y, x, 1)
+	two := FindNeighbour(coordinate, y, x, 2)
+	three := FindNeighbour(coordinate, y, x, 3)
+	if PositionOccupiedByOpponent(one, goban, player) == true &&
+		PositionOccupiedByOpponent(two, goban, player) == true &&
+		PositionOccupiedByPlayer(three, goban, player) == true {
 		return true
 	}
 	return false

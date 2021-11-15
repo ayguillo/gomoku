@@ -12,10 +12,10 @@ func isInRange(x int, y int) bool {
 	return true
 }
 
-func checkDiagLeftUpCapture(ctx *s.SContext, case_x int, case_y int, player s.Tnumber, opp s.Tnumber) []s.SVertex {
+func checkDiagLeftUpCapture(goban s.Tgoban, case_x int, case_y int, player s.Tnumber, opp s.Tnumber) []s.SVertex {
 	var ret []s.SVertex = nil
 
-	if isInRange(case_x-1, case_y-1) && isInRange(case_x-2, case_y-2) && isInRange(case_x-3, case_y-3) && ctx.Goban[case_y-3][case_x-3] == player && ctx.Goban[case_y-2][case_x-2] == opp && ctx.Goban[case_y-1][case_x-1] == opp {
+	if isInRange(case_x-1, case_y-1) && isInRange(case_x-2, case_y-2) && isInRange(case_x-3, case_y-3) && goban[case_y-3][case_x-3] == player && goban[case_y-2][case_x-2] == opp && goban[case_y-1][case_x-1] == opp {
 		vertex1 := s.SVertex{
 			X: case_x - 1,
 			Y: case_y - 1,
@@ -31,10 +31,10 @@ func checkDiagLeftUpCapture(ctx *s.SContext, case_x int, case_y int, player s.Tn
 	return ret
 }
 
-func checkDiagRightUpCapture(ctx *s.SContext, case_x int, case_y int, player s.Tnumber, opp s.Tnumber) []s.SVertex {
+func checkDiagRightUpCapture(goban s.Tgoban, case_x int, case_y int, player s.Tnumber, opp s.Tnumber) []s.SVertex {
 	var ret []s.SVertex = nil
 
-	if isInRange(case_x+1, case_y-1) && isInRange(case_x+2, case_y-2) && isInRange(case_x+3, case_y-3) && ctx.Goban[case_y-3][case_x+3] == player && ctx.Goban[case_y-2][case_x+2] == opp && ctx.Goban[case_y-1][case_x+1] == opp {
+	if isInRange(case_x+1, case_y-1) && isInRange(case_x+2, case_y-2) && isInRange(case_x+3, case_y-3) && goban[case_y-3][case_x+3] == player && goban[case_y-2][case_x+2] == opp && goban[case_y-1][case_x+1] == opp {
 		vertex1 := s.SVertex{
 			X: case_x + 2,
 			Y: case_y - 2,
@@ -50,10 +50,10 @@ func checkDiagRightUpCapture(ctx *s.SContext, case_x int, case_y int, player s.T
 	return ret
 }
 
-func checkUpCapture(ctx *s.SContext, case_x int, case_y int, player s.Tnumber, opp s.Tnumber) []s.SVertex {
+func checkUpCapture(goban s.Tgoban, case_x int, case_y int, player s.Tnumber, opp s.Tnumber) []s.SVertex {
 	var ret []s.SVertex = nil
 
-	if isInRange(case_x, case_y-1) && isInRange(case_x, case_y-2) && isInRange(case_x, case_y-3) && ctx.Goban[case_y-3][case_x] == player && ctx.Goban[case_y-2][case_x] == opp && ctx.Goban[case_y-1][case_x] == opp {
+	if isInRange(case_x, case_y-1) && isInRange(case_x, case_y-2) && isInRange(case_x, case_y-3) && goban[case_y-3][case_x] == player && goban[case_y-2][case_x] == opp && goban[case_y-1][case_x] == opp {
 		vertex1 := s.SVertex{
 			X: case_x,
 			Y: case_y - 2,
@@ -69,10 +69,10 @@ func checkUpCapture(ctx *s.SContext, case_x int, case_y int, player s.Tnumber, o
 	return ret
 }
 
-func checkDownCapture(ctx *s.SContext, case_x int, case_y int, player s.Tnumber, opp s.Tnumber) []s.SVertex {
+func checkDownCapture(goban s.Tgoban, case_x int, case_y int, player s.Tnumber, opp s.Tnumber) []s.SVertex {
 	var ret []s.SVertex = nil
 
-	if isInRange(case_x, case_y+1) && isInRange(case_x, case_y+2) && isInRange(case_x, case_y+3) && ctx.Goban[case_y+3][case_x] == player && ctx.Goban[case_y+2][case_x] == opp && ctx.Goban[case_y+1][case_x] == opp {
+	if isInRange(case_x, case_y+1) && isInRange(case_x, case_y+2) && isInRange(case_x, case_y+3) && goban[case_y+3][case_x] == player && goban[case_y+2][case_x] == opp && goban[case_y+1][case_x] == opp {
 		vertex1 := s.SVertex{
 			X: case_x,
 			Y: case_y + 2,
@@ -88,10 +88,10 @@ func checkDownCapture(ctx *s.SContext, case_x int, case_y int, player s.Tnumber,
 	return ret
 }
 
-func checkLeftCapture(ctx *s.SContext, case_x int, case_y int, player s.Tnumber, opp s.Tnumber) []s.SVertex {
+func checkLeftCapture(goban s.Tgoban, case_x int, case_y int, player s.Tnumber, opp s.Tnumber) []s.SVertex {
 	var ret []s.SVertex = nil
 
-	if isInRange(case_x-1, case_y) && isInRange(case_x-2, case_y) && isInRange(case_x-3, case_y) && ctx.Goban[case_y][case_x-3] == player && ctx.Goban[case_y][case_x-2] == opp && ctx.Goban[case_y][case_x-1] == opp {
+	if isInRange(case_x-1, case_y) && isInRange(case_x-2, case_y) && isInRange(case_x-3, case_y) && goban[case_y][case_x-3] == player && goban[case_y][case_x-2] == opp && goban[case_y][case_x-1] == opp {
 		vertex1 := s.SVertex{
 			X: case_x - 1,
 			Y: case_y,
@@ -107,10 +107,10 @@ func checkLeftCapture(ctx *s.SContext, case_x int, case_y int, player s.Tnumber,
 	return ret
 }
 
-func checkRightCapture(ctx *s.SContext, case_x int, case_y int, player s.Tnumber, opp s.Tnumber) []s.SVertex {
+func checkRightCapture(goban s.Tgoban, case_x int, case_y int, player s.Tnumber, opp s.Tnumber) []s.SVertex {
 	var ret []s.SVertex = nil
 
-	if isInRange(case_x+1, case_y) && isInRange(case_x+2, case_y) && isInRange(case_x+3, case_y) && ctx.Goban[case_y][case_x+3] == player && ctx.Goban[case_y][case_x+2] == opp && ctx.Goban[case_y][case_x+1] == opp {
+	if isInRange(case_x+1, case_y) && isInRange(case_x+2, case_y) && isInRange(case_x+3, case_y) && goban[case_y][case_x+3] == player && goban[case_y][case_x+2] == opp && goban[case_y][case_x+1] == opp {
 		vertex1 := s.SVertex{
 			X: case_x + 1,
 			Y: case_y,
@@ -126,10 +126,10 @@ func checkRightCapture(ctx *s.SContext, case_x int, case_y int, player s.Tnumber
 	return ret
 }
 
-func checkDiagLeftDownCapture(ctx *s.SContext, case_x int, case_y int, player s.Tnumber, opp s.Tnumber) []s.SVertex {
+func checkDiagLeftDownCapture(goban s.Tgoban, case_x int, case_y int, player s.Tnumber, opp s.Tnumber) []s.SVertex {
 	var ret []s.SVertex = nil
 
-	if isInRange(case_x-1, case_y+1) && isInRange(case_x-2, case_y+2) && isInRange(case_x-3, case_y+3) && ctx.Goban[case_y+3][case_x-3] == player && ctx.Goban[case_y+2][case_x-2] == opp && ctx.Goban[case_y+1][case_x-1] == opp {
+	if isInRange(case_x-1, case_y+1) && isInRange(case_x-2, case_y+2) && isInRange(case_x-3, case_y+3) && goban[case_y+3][case_x-3] == player && goban[case_y+2][case_x-2] == opp && goban[case_y+1][case_x-1] == opp {
 		vertex1 := s.SVertex{
 			X: case_x - 1,
 			Y: case_y + 1,
@@ -145,10 +145,10 @@ func checkDiagLeftDownCapture(ctx *s.SContext, case_x int, case_y int, player s.
 	return ret
 }
 
-func checkDiagRightDownCapture(ctx *s.SContext, case_x int, case_y int, player s.Tnumber, opp s.Tnumber) []s.SVertex {
+func checkDiagRightDownCapture(goban s.Tgoban, case_x int, case_y int, player s.Tnumber, opp s.Tnumber) []s.SVertex {
 	var ret []s.SVertex = nil
 
-	if isInRange(case_x+1, case_y+1) && isInRange(case_x+2, case_y+2) && isInRange(case_x+3, case_y+3) && ctx.Goban[case_y+3][case_x+3] == player && ctx.Goban[case_y+2][case_x+2] == opp && ctx.Goban[case_y+1][case_x+1] == opp {
+	if isInRange(case_x+1, case_y+1) && isInRange(case_x+2, case_y+2) && isInRange(case_x+3, case_y+3) && goban[case_y+3][case_x+3] == player && goban[case_y+2][case_x+2] == opp && goban[case_y+1][case_x+1] == opp {
 		vertex1 := s.SVertex{
 			X: case_x + 1,
 			Y: case_y + 1,
@@ -172,14 +172,14 @@ func CaptureAlgo(ctx *s.SContext, case_x int, case_y int) []s.SVertex {
 		opp = 2
 	}
 
-	leftUp := checkDiagLeftUpCapture(ctx, case_x, case_y, s.Tnumber(ctx.CurrentPlayer), s.Tnumber(opp))
-	rightUp := checkDiagRightUpCapture(ctx, case_x, case_y, s.Tnumber(ctx.CurrentPlayer), s.Tnumber(opp))
-	up := checkUpCapture(ctx, case_x, case_y, s.Tnumber(ctx.CurrentPlayer), s.Tnumber(opp))
-	down := checkDownCapture(ctx, case_x, case_y, s.Tnumber(ctx.CurrentPlayer), s.Tnumber(opp))
-	left := checkLeftCapture(ctx, case_x, case_y, s.Tnumber(ctx.CurrentPlayer), s.Tnumber(opp))
-	right := checkRightCapture(ctx, case_x, case_y, s.Tnumber(ctx.CurrentPlayer), s.Tnumber(opp))
-	leftDown := checkDiagLeftDownCapture(ctx, case_x, case_y, s.Tnumber(ctx.CurrentPlayer), s.Tnumber(opp))
-	rightDown := checkDiagRightDownCapture(ctx, case_x, case_y, s.Tnumber(ctx.CurrentPlayer), s.Tnumber(opp))
+	leftUp := checkDiagLeftUpCapture(ctx.Goban, case_x, case_y, s.Tnumber(ctx.CurrentPlayer), s.Tnumber(opp))
+	rightUp := checkDiagRightUpCapture(ctx.Goban, case_x, case_y, s.Tnumber(ctx.CurrentPlayer), s.Tnumber(opp))
+	up := checkUpCapture(ctx.Goban, case_x, case_y, s.Tnumber(ctx.CurrentPlayer), s.Tnumber(opp))
+	down := checkDownCapture(ctx.Goban, case_x, case_y, s.Tnumber(ctx.CurrentPlayer), s.Tnumber(opp))
+	left := checkLeftCapture(ctx.Goban, case_x, case_y, s.Tnumber(ctx.CurrentPlayer), s.Tnumber(opp))
+	right := checkRightCapture(ctx.Goban, case_x, case_y, s.Tnumber(ctx.CurrentPlayer), s.Tnumber(opp))
+	leftDown := checkDiagLeftDownCapture(ctx.Goban, case_x, case_y, s.Tnumber(ctx.CurrentPlayer), s.Tnumber(opp))
+	rightDown := checkDiagRightDownCapture(ctx.Goban, case_x, case_y, s.Tnumber(ctx.CurrentPlayer), s.Tnumber(opp))
 
 	if leftUp != nil {
 		if ctx.CurrentPlayer == 1 {

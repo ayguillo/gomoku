@@ -1,4 +1,4 @@
-package heuristic
+package algogo
 
 import (
 	s "gomoku/structures"
@@ -42,7 +42,8 @@ func heuristicAlign(ctx s.SContext, case_x int, case_y int, player s.Tnumber) (u
 	return nb_align, place_ok, block, middle
 }
 
-func CalcHeuristic(ctx s.SContext) int32 {
+func EvaluateGoban(ctx s.SContext) int32 {
+	// fmt.Printf("%v\n", ctx.Goban)
 	value := 0
 	gotFive, gotFiveOpp, gotFour, gotFourOpp, gotThree, gotThreeOpp, gotTwo, gotTwoOpp := 0, 0, 0, 0, 0, 0, 0, 0
 	gotFourMid, gotFourMidOpp, gotThreeMid, gotThreeMidOpp, gotTwoMid, gotTwoMidOpp := 0, 0, 0, 0, 0, 0
@@ -140,24 +141,12 @@ func CalcHeuristic(ctx s.SContext) int32 {
 						}
 					}
 				}
+
 			}
 		}
 	}
 
-	// value = 10000000*(gotFive-gotFiveOpp) + 4800*(gotFour-gotFourOpp) + 500*(gotFourMid-gotFourMidOpp) + 500*(gotThree-gotThreeOpp) + 200*(gotThreeMid-gotThreeMidOpp) + 50*(gotTwo-gotTwoOpp) + 10*(gotTwoMid-gotTwoMidOpp)
-
-	// value = 10000000*(gotFive-gotFiveOpp) + 1000000*(gotFour-gotFourOpp) + 100000*(gotFourMid-gotFourMidOpp) + 100000*(gotThree-gotThreeOpp) // + 3*(gotThreeMid-gotThreeMidOpp) + 1*(gotTwo-gotTwoOpp)
-
-	// value = 600000*(gotFive-gotFiveOpp) + 48000*(gotFour-gotFourOpp) + 5000*(gotFourMid-gotFourMidOpp) + 5000*(gotThree-gotThreeOpp) + 1000*(gotThreeMid-gotThreeMidOpp) //+ 250*(gotTwo-gotTwoOpp) + 50*(gotTwoMid-gotTwoMidOpp)
-	value = 10000*(gotFive-gotFiveOpp) + 5000*(gotFour-gotFourOpp) + 1000*(gotFourMid-gotFourMidOpp) + 1000*(gotThree-gotThreeOpp) + 200*(gotThreeMid-gotThreeMidOpp) + 10*(gotTwo-gotTwoOpp)
-
-	// valueMe := 1000000*gotFive + 100000*gotFour + 10000*gotFourMid + 10000*gotThree + 1000*gotThreeMid
-	// valueOp := 150000*gotFiveOpp + 80000*gotFourOpp + 8000*gotFourMidOpp + 8000*gotThreeOpp + 800*gotThreeMidOpp
-
-	// valueMe := 150000*gotFive + 5000*gotFour + 1000*gotFourMid + 1000*gotThree + 200*gotThreeMid + 50*gotTwo
-	// valueOp := 150000*gotFiveOpp + 5000*2*gotFourOpp + 2000*gotFourMidOpp + 2000*gotThreeOpp + 400*gotThreeMidOpp + 100*gotTwoOpp
-
-	// value = valueMe - valueOp
+	value = 10000000*(gotFive-gotFiveOpp) + 100000*(gotFour-gotFourOpp) + 90000*(gotFourMid-gotFourMidOpp) + 1000*(gotThree-gotThreeOpp) + 200*(gotThreeMid-gotThreeMidOpp) + 50*(gotTwo-gotTwoOpp) + 10*(gotTwoMid-gotTwoMidOpp)
 
 	if ctx.ActiveCapture {
 		nbCapture := ctx.NbCaptureP1
@@ -169,13 +158,13 @@ func CalcHeuristic(ctx s.SContext) int32 {
 		}
 
 		if nbCapture >= 5 {
-			value += 100000
+			value += 150000 * 5
 		} else if nbCaptureOpp >= 5 {
-			value -= 100000
+			value -= 150000 * 5
 		} else if nbCapture == 4 {
-			value += 50000
+			value += 5000 * 4
 		} else if nbCaptureOpp == 4 {
-			value -= 50000
+			value -= 5000 * 4
 		} else {
 			value += 100 * (nbCapture - nbCaptureOpp)
 		}

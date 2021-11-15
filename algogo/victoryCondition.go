@@ -46,6 +46,29 @@ func CheckAlignVictory(goban s.Tgoban, x int, y int) bool {
 	return false
 }
 
+func playerCanBeCaptured(goban s.Tgoban, x int, y int) bool {
+	player := goban[y][x]
+	opp := 2
+	if player == 2 {
+		opp = 1
+	}
+
+	leftUp := checkDiagLeftUpCapture(goban, x, y, s.Tnumber(player), s.Tnumber(opp))
+	rightUp := checkDiagRightUpCapture(goban, x, y, s.Tnumber(player), s.Tnumber(opp))
+	up := checkUpCapture(goban, x, y, s.Tnumber(player), s.Tnumber(opp))
+	down := checkDownCapture(goban, x, y, s.Tnumber(player), s.Tnumber(opp))
+	left := checkLeftCapture(goban, x, y, s.Tnumber(player), s.Tnumber(opp))
+	right := checkRightCapture(goban, x, y, s.Tnumber(player), s.Tnumber(opp))
+	leftDown := checkDiagLeftDownCapture(goban, x, y, s.Tnumber(player), s.Tnumber(opp))
+	rightDown := checkDiagRightDownCapture(goban, x, y, s.Tnumber(player), s.Tnumber(opp))
+
+	if leftUp != nil || rightUp != nil || up != nil || down != nil || left != nil || right != nil || leftDown != nil || rightDown != nil {
+		return true
+	}
+
+	return false
+}
+
 func victoryCondition(goban s.Tgoban, captureP0 int, captureP1 int) (bool, s.Tnumber) {
 	if isCapture {
 		if captureP0 >= 5 {
@@ -59,6 +82,9 @@ func victoryCondition(goban s.Tgoban, captureP0 int, captureP1 int) (bool, s.Tnu
 		for x := range goban[y] {
 			if goban[y][x] != 0 {
 				if CheckAlignVictory(goban, x, y) {
+					if isCapture && playerCanBeCaptured(goban, x, y) {
+						return false, 0
+					}
 					return true, goban[y][x]
 				}
 			}
