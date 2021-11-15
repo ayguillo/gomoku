@@ -230,17 +230,68 @@ func VictoryConditionAlign(ctx *s.SContext, case_x int, case_y int, visu *s.SVis
 	if tmp_ret == 1 || tmp_ret == 0 {
 		ctx.Capture = nil
 		if tmp_ret == 1 {
-			if visu != nil {
-				if ctx.CurrentPlayer == 1 {
-					ctx.NbVictoryP1++
-				} else {
-					ctx.NbVictoryP2++
-				}
-			}
 			ret_value = true
 		}
 	}
 	return ret_value
+}
+
+func VictoryGoban(ctx *s.SContext, visu *s.SVisu) bool {
+	tmp_player := ctx.CurrentPlayer
+	victory := false
+	for y := range ctx.Goban {
+		for x := range ctx.Goban[y] {
+			if ctx.Goban[y][x] != 0 {
+				victory_condition := VictoryConditionAlign(ctx, x, y, visu)
+				if ctx.Capture != nil {
+					return false
+				}
+				if victory_condition {
+					victory = true
+				}
+			}
+		}
+	}
+	if victory {
+		if visu != nil {
+			if ctx.CurrentPlayer == 1 {
+				ctx.NbVictoryP1++
+			} else {
+				ctx.NbVictoryP2++
+			}
+		}
+		return true
+	}
+	if ctx.CurrentPlayer == 2 {
+		ctx.CurrentPlayer = 1
+	} else {
+		ctx.CurrentPlayer = 2
+	}
+	for y := range ctx.Goban {
+		for x := range ctx.Goban[y] {
+			if ctx.Goban[y][x] != 0 {
+				victory_condition := VictoryConditionAlign(ctx, x, y, visu)
+				if ctx.Capture != nil {
+					return false
+				}
+				if victory_condition {
+					victory = true
+				}
+			}
+		}
+	}
+	if victory {
+		if visu != nil {
+			if ctx.CurrentPlayer == 1 {
+				ctx.NbVictoryP1++
+			} else {
+				ctx.NbVictoryP2++
+			}
+		}
+		return true
+	}
+	ctx.CurrentPlayer = tmp_player
+	return victory
 }
 
 func VictoryCapture(ctx s.SContext) bool {

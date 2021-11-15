@@ -47,6 +47,7 @@ func EvaluateMove(ctx s.SContext, case_x int, case_y int) int32 {
 	gotFive, gotFiveOpp, gotFour, gotFourOpp, gotThree, gotThreeOpp, gotTwo, gotTwoOpp := 0, 0, 0, 0, 0, 0, 0, 0
 	gotFourMid, gotFourMidOpp, gotThreeMid, gotThreeMidOpp, gotTwoMid, gotTwoMidOpp := 0, 0, 0, 0, 0, 0
 	gotFourMidPlus, gotFourMidPlusOpp, gotThreeMidPlus, gotThreeMidPlusOpp, gotTwoMidPlus, gotTwoMidPlusOpp := 0, 0, 0, 0, 0, 0
+	playerCaptured, playerOppcapture := 0, 0
 	if ctx.Goban[case_y][case_x] != 0 {
 		nb_align, place_ok, block, middle := heuristicAlign(ctx, case_x, case_y, ctx.Goban[case_y][case_x])
 		if nb_align >= 5 {
@@ -131,8 +132,10 @@ func EvaluateMove(ctx s.SContext, case_x int, case_y int) int32 {
 			} else if nb_align == 2 {
 				if ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer) {
 					gotTwoMid += 1
+					playerCaptured += 1
 				} else {
 					gotTwoMidOpp += 1
+					playerOppcapture += 1
 				}
 			}
 		}
@@ -146,22 +149,57 @@ func EvaluateMove(ctx s.SContext, case_x int, case_y int) int32 {
 	if ctx.ActiveCapture {
 		nbCapture := ctx.NbCaptureP1
 		nbCaptureOpp := ctx.NbCaptureP2
+		// value += 5000 * ((nbCapture * playerCaptured) - (nbCaptureOpp * playerOppcapture))
 
+		opp := s.Tnumber(2)
+		if ctx.CurrentPlayer == 2 {
+			opp = 1
+		}
+		for y := -1; y <= 1; y++ {
+			for x := -1; x <= 1; x++ {
+				if y == 0 && x == 0 {
+					continue
+				}
+				one := s.SVertex{Y: (case_y + y), X: (case_x + x)}
+				two := s.SVertex{Y: (case_y + (y * 2)), X: (case_x + (x * 2))}
+				three := s.SVertex{Y: (case_y + (y * 3)), X: (case_x + (x * 3))}
+				if isInRange(one.X, one.Y) && isInRange(two.X, two.Y) && isInRange(three.X, three.Y) {
+					if ctx.Goban[one.Y][one.X] == s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[two.Y][two.X] == s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[three.Y][three.X] == opp {
+						if nbCaptureOpp >= 4 {
+							value += 70000 * 5
+						} else if nbCaptureOpp == 3 {
+							value += 5000 * 3
+						} else if nbCaptureOpp == 2 {
+							value += 1000 * 2
+						}
+					} else if ctx.Goban[one.Y][one.X] == s.Tnumber(ctx.CurrentPlayer) && ctx.Goban[two.Y][two.X] == opp {
+						if nbCaptureOpp >= 4 {
+							value -= 70000 * 5
+						} else if nbCaptureOpp == 3 {
+							value -= 5000 * 3
+						} else if nbCaptureOpp == 2 {
+							value -= 1000 * 2
+						}
+					}
+				}
+
+			}
+		}
 		if ctx.CurrentPlayer == 2 {
 			nbCapture = ctx.NbCaptureP2
 			nbCaptureOpp = ctx.NbCaptureP1
 		}
 
 		if nbCapture >= 5 {
-			value += 1 * 5
+			value += 100000 * 5
 		} else if nbCaptureOpp >= 5 {
-			value -= 1 * 5
+			value -= 100000 * 5
 		} else if nbCapture == 4 {
-			value += 1 * 4
+			value += 6000 * 4
 		} else if nbCaptureOpp == 4 {
-			value -= 1 * 4
+			value -= 6000 * 4
 		} else {
-			value += 1 * (nbCapture - nbCaptureOpp)
+			value += 1000 * (nbCapture - nbCaptureOpp)
 		}
 	}
 
@@ -267,7 +305,6 @@ func EvaluateGoban(ctx s.SContext) int32 {
 						}
 					}
 				}
-
 			}
 		}
 	}

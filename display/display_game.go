@@ -86,8 +86,8 @@ func TraceStone(case_x float64, case_y float64, ctx *s.SContext, visu *s.SVisu, 
 		visu.Renderer.SetDrawColor(0, 0, 0, 200)
 		visu.Renderer.DrawLine(int32(k-radius), int32(h), int32(k+radius+1), int32(h))
 		visu.Renderer.DrawLine(int32(k), int32(h-radius), int32(k), int32(h+radius))
-		if (case_x == 3 && case_y == 3) || (case_x == float64(ctx.NSize)-3.0 && case_y == 3) ||
-			(case_x == 3 && case_y == float64(ctx.NSize)-3.0) ||
+		if (case_x == 4 && case_y == 4) || (case_x == float64(ctx.NSize)-3.0 && case_y == 4) ||
+			(case_x == 4 && case_y == float64(ctx.NSize)-3.0) ||
 			(case_x == float64(ctx.NSize)-3.0 && case_y == float64(ctx.NSize)-3.0) {
 			createCircle(k, h, visu, 5, 0, 0, 0, 200)
 		}
@@ -136,15 +136,15 @@ func TraceGoban(visu *s.SVisu, ctx s.SContext) {
 		}
 	}
 	if ctx.NSize == 19 {
-		x, y := 3.0, 3.0
+		x, y := 4.0, 4.0
 		k := x*float64(ctx.SizeCase) + float64(ctx.Size/4)
 		h := y * float64(ctx.SizeCase)
 		createCircle(k, h, visu, 5, 0, 0, 0, 200)
-		x, y = float64(ctx.NSize-3.0), 3.0
+		x, y = float64(ctx.NSize-3.0), 4.0
 		k = x*float64(ctx.SizeCase) + float64(ctx.Size/4)
 		h = y * float64(ctx.SizeCase)
 		createCircle(k, h, visu, 5, 0, 0, 0, 200)
-		x, y = 3.0, float64(ctx.NSize)-3.0
+		x, y = 4.0, float64(ctx.NSize)-3.0
 		k = x*float64(ctx.SizeCase) + float64(ctx.Size/4)
 		h = y * float64(ctx.SizeCase)
 		createCircle(k, h, visu, 5, 0, 0, 0, 200)

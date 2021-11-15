@@ -92,7 +92,7 @@ func displayPlay(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu, v
 		g.Capture(ctx, visu, int(vertex_next.X), int(vertex_next.Y), true)
 		d.DisplayCapture(*ctx, visu)
 	}
-	if g.VictoryConditionAlign(ctx, int(vertex_next.X), int(vertex_next.Y), visu) == true || g.VictoryCapture(*ctx) {
+	if g.VictoryGoban(ctx, visu) == true || g.VictoryCapture(*ctx) {
 		d.DisplayVictory(visu, *ctx)
 		sdl.Log("VICTORY")
 		d.DisplayMessage(visu, ctx.Size, "Cliquez pour", "relancer", *ctx)
@@ -135,6 +135,12 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 		startgame, endgame = displayPlay(startgame, endgame, ctx, visu, vertex_next)
 	}
 	if ctx.ActiveHelp {
+		current := ctx.CurrentPlayer
+		if ctx.CurrentPlayer == 1 {
+			ctx.CurrentPlayer = 2
+		} else {
+			ctx.CurrentPlayer = 1
+		}
 		if ctx.VertexHelp.X != -1 && ctx.Goban[ctx.VertexHelp.Y][ctx.VertexHelp.X] == 0 {
 			color = [4]uint8{226, 196, 115, 255}
 			d.TraceStone(float64(ctx.VertexHelp.X), float64(ctx.VertexHelp.Y), ctx, visu, color, true)
@@ -143,6 +149,7 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 		ctx.VertexHelp = vertex_help
 		color = [4]uint8{83, 51, 237, 1}
 		d.TraceStone(float64(vertex_help.X), float64(vertex_help.Y), ctx, visu, color, false)
+		ctx.CurrentPlayer = current
 	}
 	return startgame, endgame
 }
@@ -232,7 +239,7 @@ func main() {
 			ctx.VertexHelp = s.SVertex{X: -1, Y: -1}
 		}
 		if difficulty == 0 {
-			ctx.Depth = 3
+			ctx.Depth = 1
 		} else if difficulty == 1 {
 			ctx.Depth = 6
 		} else {
@@ -280,13 +287,12 @@ func main() {
 						index++
 					}
 					d.TraceGoban(&visu, ctx)
-					d.DisplayPlayer(&ctx, &visu, false)
 					d.DisplayCounter(ctx, &visu)
 					ctx.NbCaptureP1 = 0
 					ctx.NbCaptureP2 = 0
 					ctx.CasesNonNull = nil
 					endgame = false
-					ctx.CurrentPlayer = 1
+					d.DisplayPlayer(&ctx, &visu, false)
 				}
 			}
 		}
