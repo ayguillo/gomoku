@@ -57,9 +57,9 @@ func generateBoard(current *node, coord s.SVertex, neighbors []s.SVertex) {
 	}
 
 	if current.maximizingPlayer {
-		value = current.value - int(EvaluateGoban(ctx))/int(current.depth)
+		value = current.value - int(EvaluateMove(ctx, coord.X, coord.Y))/int(current.depth)
 	} else {
-		value = current.value + int(EvaluateGoban(ctx))/int(current.depth)
+		value = current.value + int(EvaluateMove(ctx, coord.X, coord.Y))/int(current.depth)
 	}
 	// value = current.value + int(EvaluateGoban(ctx))/int(current.depth)
 

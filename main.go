@@ -232,11 +232,11 @@ func main() {
 			ctx.VertexHelp = s.SVertex{X: -1, Y: -1}
 		}
 		if difficulty == 0 {
-			ctx.Depth = 2
+			ctx.Depth = 3
 		} else if difficulty == 1 {
-			ctx.Depth = 4
-		} else {
 			ctx.Depth = 6
+		} else {
+			ctx.Depth = 10
 		}
 	}
 	running := true

@@ -42,6 +42,132 @@ func heuristicAlign(ctx s.SContext, case_x int, case_y int, player s.Tnumber) (u
 	return nb_align, place_ok, block, middle
 }
 
+func EvaluateMove(ctx s.SContext, case_x int, case_y int) int32 {
+	value := 0
+	gotFive, gotFiveOpp, gotFour, gotFourOpp, gotThree, gotThreeOpp, gotTwo, gotTwoOpp := 0, 0, 0, 0, 0, 0, 0, 0
+	gotFourMid, gotFourMidOpp, gotThreeMid, gotThreeMidOpp, gotTwoMid, gotTwoMidOpp := 0, 0, 0, 0, 0, 0
+	gotFourMidPlus, gotFourMidPlusOpp, gotThreeMidPlus, gotThreeMidPlusOpp, gotTwoMidPlus, gotTwoMidPlusOpp := 0, 0, 0, 0, 0, 0
+	if ctx.Goban[case_y][case_x] != 0 {
+		nb_align, place_ok, block, middle := heuristicAlign(ctx, case_x, case_y, ctx.Goban[case_y][case_x])
+		if nb_align >= 5 {
+			if ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer) {
+				gotFive++
+			} else {
+				gotFiveOpp++
+			}
+		} else if middle == false && block == false && place_ok == true {
+			if nb_align == 4 {
+				if ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer) {
+					gotFour++
+				} else {
+					gotFourOpp++
+				}
+			} else if nb_align == 3 {
+				if ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer) {
+					gotThree++
+				} else {
+					gotThreeOpp++
+				}
+			} else if nb_align == 2 {
+				if ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer) {
+					gotTwo++
+				} else {
+					gotTwoOpp++
+				}
+			}
+		} else if middle == true && block == false && place_ok == true {
+			if nb_align >= 4 {
+				if ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer) {
+					gotFourMidPlus += 1
+				} else {
+					gotFourMidPlusOpp += 1
+				}
+			} else if nb_align == 3 {
+				if ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer) {
+					gotThreeMidPlus += 1
+				} else {
+					gotThreeMidPlusOpp += 1
+				}
+			} else if nb_align == 2 {
+				if ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer) {
+					gotTwoMidPlus += 1
+				} else {
+					gotTwoMidPlusOpp += 1
+				}
+			}
+		} else if middle == true && block == true && place_ok == true {
+			if nb_align >= 4 {
+				if ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer) {
+					gotFourMid += 1
+				} else {
+					gotFourMidOpp += 1
+				}
+			} else if nb_align == 3 {
+				if ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer) {
+					gotThreeMid += 1
+				} else {
+					gotThreeMidOpp += 1
+				}
+			} else if nb_align == 2 {
+				if ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer) {
+					gotTwoMid += 1
+				} else {
+					gotTwoMidOpp += 1
+				}
+			}
+		} else if middle == false && block == true && place_ok == true { // bloquer + 1 cote libre si place_ok
+			if nb_align == 4 {
+				if ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer) {
+					gotFourMid += 1
+				} else {
+					gotFourMidOpp += 1
+				}
+			} else if nb_align == 3 {
+				if ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer) {
+					gotThreeMid += 1
+				} else {
+					gotThreeMidOpp += 1
+				}
+			} else if nb_align == 2 {
+				if ctx.Goban[case_y][case_x] == s.Tnumber(ctx.CurrentPlayer) {
+					gotTwoMid += 1
+				} else {
+					gotTwoMidOpp += 1
+				}
+			}
+		}
+
+	}
+
+	// value = 1000000*(gotFive-gotFiveOpp) + 100000*(gotFour-gotFourOpp) + 1000*(gotFourMid-gotFourMidOpp) + 1500*(gotThree-gotThreeOpp) + 200*(gotThreeMid-gotThreeMidOpp) + 50*(gotTwo-gotTwoOpp) + 10*(gotTwoMid-gotTwoMidOpp)
+	value = 60000*(gotFive-gotFiveOpp) + 4800*(gotFour-gotFourOpp) + 1000*(gotFourMid-gotFourMidOpp) + 1000*(gotThree-gotThreeOpp) + 300*(gotThreeMid-gotThreeMidOpp) + 50*(gotTwo-gotTwoOpp) + 10*(gotTwoMid-gotTwoMidOpp)
+	value += 1500*(gotFourMidPlus-gotFourMidPlusOpp) + 750*(gotThreeMidPlus-gotThreeMidPlusOpp) + 30*(gotTwoMidPlus-gotTwoMidPlusOpp)
+
+	if ctx.ActiveCapture {
+		nbCapture := ctx.NbCaptureP1
+		nbCaptureOpp := ctx.NbCaptureP2
+
+		if ctx.CurrentPlayer == 2 {
+			nbCapture = ctx.NbCaptureP2
+			nbCaptureOpp = ctx.NbCaptureP1
+		}
+
+		if nbCapture >= 5 {
+			value += 1 * 5
+		} else if nbCaptureOpp >= 5 {
+			value -= 1 * 5
+		} else if nbCapture == 4 {
+			value += 1 * 4
+		} else if nbCaptureOpp == 4 {
+			value -= 1 * 4
+		} else {
+			value += 1 * (nbCapture - nbCaptureOpp)
+		}
+	}
+
+	return int32(value)
+}
+
 func EvaluateGoban(ctx s.SContext) int32 {
 	value := 0
 	gotFive, gotFiveOpp, gotFour, gotFourOpp, gotThree, gotThreeOpp, gotTwo, gotTwoOpp := 0, 0, 0, 0, 0, 0, 0, 0
@@ -148,7 +274,6 @@ func EvaluateGoban(ctx s.SContext) int32 {
 
 	// value = 1000000*(gotFive-gotFiveOpp) + 100000*(gotFour-gotFourOpp) + 1000*(gotFourMid-gotFourMidOpp) + 1500*(gotThree-gotThreeOpp) + 200*(gotThreeMid-gotThreeMidOpp) + 50*(gotTwo-gotTwoOpp) + 10*(gotTwoMid-gotTwoMidOpp)
 	value = 60000*(gotFive-gotFiveOpp) + 4800*(gotFour-gotFourOpp) + 1000*(gotFourMid-gotFourMidOpp) + 1000*(gotThree-gotThreeOpp) + 300*(gotThreeMid-gotThreeMidOpp) + 50*(gotTwo-gotTwoOpp) + 10*(gotTwoMid-gotTwoMidOpp)
-
 	value += 1500*(gotFourMidPlus-gotFourMidPlusOpp) + 750*(gotThreeMidPlus-gotThreeMidPlusOpp) + 30*(gotTwoMidPlus-gotTwoMidPlusOpp)
 
 	if ctx.ActiveCapture {
@@ -160,16 +285,18 @@ func EvaluateGoban(ctx s.SContext) int32 {
 			nbCaptureOpp = ctx.NbCaptureP1
 		}
 
+		println(ctx.CurrentPlayer, nbCapture, nbCaptureOpp)
+
 		if nbCapture >= 5 {
-			value += 50000000 * 5
+			value += 1 * 5
 		} else if nbCaptureOpp >= 5 {
-			value -= 50000000 * 5
+			value -= 1 * 5
 		} else if nbCapture == 4 {
-			value += 200000 * 4
+			value += 1 * 4
 		} else if nbCaptureOpp == 4 {
-			value -= 200000 * 4
+			value -= 1 * 4
 		} else {
-			value += 10000 * (nbCapture - nbCaptureOpp)
+			value += 1 * (nbCapture - nbCaptureOpp)
 		}
 	}
 
