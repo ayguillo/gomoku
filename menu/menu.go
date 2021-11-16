@@ -5,7 +5,6 @@ import (
 	s "gomoku/structures"
 	"math"
 	"os"
-	"strconv"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -116,37 +115,8 @@ func changeDoubleThrees(double_threes bool, visu *s.SVisu, ctx s.SContext, yes *
 	visu.Renderer.Present()
 }
 
-func changeTimeLimit(time_limit int, visu *s.SVisu, ctx s.SContext, no *sdl.Texture) int {
-	if time_limit <= 0 {
-		time_limit = 0
-		visu.Renderer.SetDrawColor(226, 196, 115, 255)
-		visu.Renderer.DrawRect(&sdl.Rect{X: ctx.Size - ctx.Size/4, Y: ctx.Size - ctx.Size/4 + 5, W: 50, H: 50})
-		visu.Renderer.FillRect(&sdl.Rect{X: ctx.Size - ctx.Size/4, Y: ctx.Size - ctx.Size/4 + 5, W: 50, H: 50})
-		visu.Renderer.Copy(no, nil, &sdl.Rect{X: ctx.Size - ctx.Size/4, Y: ctx.Size - ctx.Size/4 + 5, W: 50, H: 50})
-	} else {
-		bmp, err := visu.FontPlayer.RenderUTF8Solid(strconv.Itoa(time_limit), sdl.Color{R: 240, G: 228, B: 229, A: 255})
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to create texture font\n")
-			panic(err)
-		}
-		timer, err := visu.Renderer.CreateTextureFromSurface(bmp)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to create texture font\n")
-			panic(err)
-		}
-		bmp.Free()
-		defer timer.Destroy()
-		visu.Renderer.SetDrawColor(226, 196, 115, 255)
-		visu.Renderer.DrawRect(&sdl.Rect{X: ctx.Size - ctx.Size/4, Y: ctx.Size - ctx.Size/4 + 5, W: 50, H: 50})
-		visu.Renderer.FillRect(&sdl.Rect{X: ctx.Size - ctx.Size/4, Y: ctx.Size - ctx.Size/4 + 5, W: 50, H: 50})
-		visu.Renderer.Copy(timer, nil, &sdl.Rect{X: ctx.Size - ctx.Size/4 + 5, Y: ctx.Size - ctx.Size/4 + 5, W: 40, H: 50})
-	}
-	visu.Renderer.Present()
-	return time_limit
-}
-
-func Menu(visu *s.SVisu, ctx s.SContext) (int, bool, bool, bool, int, bool, int) {
-	versus, double_threes, capture, help, time_limit, difficulty := 0, true, true, true, 0, 1
+func Menu(visu *s.SVisu, ctx s.SContext) (int, bool, bool, bool, bool, int) {
+	versus, double_threes, capture, help, difficulty := 0, true, true, true, 1
 	// Window
 	visu.Renderer.SetDrawColor(226, 196, 115, 255)
 	visu.Renderer.DrawRect(&sdl.Rect{X: 0, Y: 0, W: ctx.Size + ctx.Size/2, H: ctx.Size + ((ctx.SizeCase) / 2)})
@@ -171,13 +141,9 @@ func Menu(visu *s.SVisu, ctx s.SContext) (int, bool, bool, bool, int, bool, int)
 	bmp12, err11 := visu.FontPlayer.RenderUTF8Solid("Medium", color)
 	bmp13, err12 := visu.FontPlayer.RenderUTF8Solid("Hard", color)
 	bmp14, err13 := visu.FontPlayer.RenderUTF8Solid("Double Threes ?", color)
-	bmp15, err14 := visu.FontPlayer.RenderUTF8Solid("-", color)
-	bmp16, err15 := visu.FontPlayer.RenderUTF8Solid("+", color)
-	bmp17, err16 := visu.FontPlayer.RenderUTF8Solid("Time Limit ? (minutes)", color)
 
 	if err != nil || err1 != nil || err2 != nil || err3 != nil || err4 != nil || err5 != nil || err6 != nil ||
-		err7 != nil || err8 != nil || err9 != nil || err10 != nil || err11 != nil || err12 != nil || err13 != nil ||
-		err14 != nil || err15 != nil || err16 != nil {
+		err7 != nil || err8 != nil || err9 != nil || err10 != nil || err11 != nil || err12 != nil || err13 != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create texture font\n")
 		panic(err)
 	}
@@ -195,12 +161,9 @@ func Menu(visu *s.SVisu, ctx s.SContext) (int, bool, bool, bool, int, bool, int)
 	med, err9 := visu.Renderer.CreateTextureFromSurface(bmp12)
 	hard, err9 := visu.Renderer.CreateTextureFromSurface(bmp13)
 	dt, err10 := visu.Renderer.CreateTextureFromSurface(bmp14)
-	timerm, err11 := visu.Renderer.CreateTextureFromSurface(bmp15)
-	timerp, err12 := visu.Renderer.CreateTextureFromSurface(bmp16)
-	timer, err13 := visu.Renderer.CreateTextureFromSurface(bmp17)
 	if err != nil || err1 != nil || err2 != nil || err3 != nil || err4 != nil ||
 		err5 != nil || err6 != nil || err7 != nil || err8 != nil || err9 != nil ||
-		err10 != nil || err11 != nil || err12 != nil || err13 != nil {
+		err10 != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create texture font\n")
 		panic(err)
 	}
@@ -214,8 +177,6 @@ func Menu(visu *s.SVisu, ctx s.SContext) (int, bool, bool, bool, int, bool, int)
 	defer cap.Destroy()
 	defer diff.Destroy()
 	defer dt.Destroy()
-	defer timerp.Destroy()
-	defer timerm.Destroy()
 	bmp.Free()
 	bmp2.Free()
 	bmp3.Free()
@@ -230,17 +191,12 @@ func Menu(visu *s.SVisu, ctx s.SContext) (int, bool, bool, bool, int, bool, int)
 	bmp12.Free()
 	bmp13.Free()
 	bmp14.Free()
-	bmp15.Free()
-	bmp16.Free()
 	visu.Renderer.Copy(button, nil, &sdl.Rect{X: ctx.Size + 4 + ctx.Size/4, Y: ctx.Size - 50, W: (ctx.Size / 4), H: 50})
 	visu.Renderer.Copy(text_player, nil, &sdl.Rect{X: 10, Y: 10, W: 130, H: 50})
 	visu.Renderer.Copy(help_text, nil, &sdl.Rect{X: ctx.Size/2 + ctx.Size/4 - 50, Y: ctx.Size/2 - ctx.Size/6, W: 130, H: 50})
 	visu.Renderer.Copy(cap, nil, &sdl.Rect{X: ctx.Size + ctx.Size/4 - 25, Y: ctx.Size/2 - ctx.Size/6, W: 190, H: 50})
 	visu.Renderer.Copy(diff, nil, &sdl.Rect{X: ctx.Size + 50, Y: 10, W: (ctx.Size / 4), H: 50})
 	visu.Renderer.Copy(dt, nil, &sdl.Rect{X: 10, Y: ctx.Size/2 - ctx.Size/6, W: 190, H: 50})
-	visu.Renderer.Copy(timerm, nil, &sdl.Rect{X: ctx.Size - ctx.Size/4 - 50, Y: ctx.Size - ctx.Size/4, W: 50, H: 50})
-	visu.Renderer.Copy(timerp, nil, &sdl.Rect{X: ctx.Size - ctx.Size/4 + 50, Y: ctx.Size - ctx.Size/4, W: 50, H: 50})
-	visu.Renderer.Copy(timer, nil, &sdl.Rect{X: ctx.Size - ctx.Size/4 - 50, Y: ctx.Size - ctx.Size/4 - 50, W: 250, H: 50})
 	visu.Renderer.Present()
 	running, end := true, false
 	changeBot(versus, hvb, hvh, bvb, visu)
@@ -248,7 +204,6 @@ func Menu(visu *s.SVisu, ctx s.SContext) (int, bool, bool, bool, int, bool, int)
 	changeCapture(capture, visu, ctx, yes, no)
 	changeDifficulty(difficulty, visu, ctx, ez, med, hard)
 	changeDoubleThrees(double_threes, visu, ctx, yes, no)
-	time_limit = changeTimeLimit(time_limit, visu, ctx, no)
 	for running {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch t := event.(type) {
@@ -313,18 +268,10 @@ func Menu(visu *s.SVisu, ctx s.SContext) (int, bool, bool, bool, int, bool, int)
 						double_threes = false
 						changeDoubleThrees(double_threes, visu, ctx, yes, no)
 					}
-					if (t.Y >= ctx.Size-ctx.Size/4 && t.Y <= ctx.Size-ctx.Size/4+50) && (t.X >= ctx.Size-ctx.Size/4-50 && t.X <= ctx.Size-ctx.Size/4) {
-						time_limit--
-						time_limit = changeTimeLimit(time_limit, visu, ctx, no)
-					}
-					if (t.Y >= ctx.Size-ctx.Size/4 && t.Y <= ctx.Size-ctx.Size/4+50) && (t.X >= ctx.Size-ctx.Size/4+50 && t.X <= ctx.Size-ctx.Size/4+100) {
-						time_limit++
-						time_limit = changeTimeLimit(time_limit, visu, ctx, no)
-					}
 				}
 			}
 
 		}
 	}
-	return versus, double_threes, capture, help, time_limit, end, difficulty
+	return versus, double_threes, capture, help, end, difficulty
 }

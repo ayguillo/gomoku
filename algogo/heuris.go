@@ -4,6 +4,22 @@ import (
 	s "gomoku/structures"
 )
 
+func max_four(nb_align_h uint8, nb_align_v uint8, nb_align_l uint8, nb_align_r uint8) uint8 {
+	if nb_align_h >= nb_align_v && nb_align_h >= nb_align_l && nb_align_h >= nb_align_r {
+		return 1
+	}
+	if nb_align_v >= nb_align_h && nb_align_v >= nb_align_l && nb_align_v > nb_align_r {
+		return 2
+	}
+	if nb_align_l >= nb_align_h && nb_align_l >= nb_align_v && nb_align_l >= nb_align_r {
+		return 3
+	}
+	if nb_align_r >= nb_align_h && nb_align_r >= nb_align_v && nb_align_r >= nb_align_l {
+		return 4
+	}
+	return 1
+}
+
 func heuristicAlign(ctx s.SContext, case_x int, case_y int, player s.Tnumber) (uint8, bool, bool, bool) {
 	nb_align_h, place_ok_h, block_h, middle_h := horizontalHeuristic(ctx, case_x, case_y, player)
 	if nb_align_h >= 5 && middle_h == false {
@@ -21,21 +37,21 @@ func heuristicAlign(ctx s.SContext, case_x int, case_y int, player s.Tnumber) (u
 	if nb_align_r >= 5 && middle_r == false {
 		return nb_align_r, place_ok_r, block_r, middle_r
 	}
-	if 3*nb_align_h > (nb_align_v+nb_align_l+nb_align_r) && place_ok_h == true {
+	if max_four(nb_align_h, nb_align_v, nb_align_l, nb_align_r) == 1 && place_ok_h == true {
 		return nb_align_h, place_ok_h, block_h, middle_h
-	} else if 3*nb_align_v > (nb_align_h+nb_align_r+nb_align_l) && place_ok_v == true {
+	} else if max_four(nb_align_h, nb_align_v, nb_align_l, nb_align_r) == 2 && place_ok_v == true {
 		return nb_align_v, place_ok_v, block_v, middle_v
-	} else if 3*nb_align_l > (nb_align_h+nb_align_l+nb_align_v) && place_ok_l == true {
+	} else if max_four(nb_align_h, nb_align_v, nb_align_l, nb_align_r) == 3 && place_ok_l == true {
 		return nb_align_l, place_ok_l, block_l, middle_l
-	} else if 3*nb_align_r > (nb_align_h+nb_align_l+nb_align_v) && place_ok_r == true {
+	} else if max_four(nb_align_h, nb_align_v, nb_align_l, nb_align_r) == 4 && place_ok_r == true {
 		return nb_align_r, place_ok_r, block_r, middle_r
-	} else if 3*nb_align_h > (nb_align_v+nb_align_l+nb_align_r) && place_ok_h == false && block_h == false {
+	} else if max_four(nb_align_h, nb_align_v, nb_align_l, nb_align_r) == 1 && place_ok_h == false && block_h == false {
 		return nb_align_h, place_ok_h, block_h, middle_h
-	} else if 3*nb_align_v > (nb_align_h+nb_align_r+nb_align_l) && place_ok_v == false && block_v == false {
+	} else if max_four(nb_align_h, nb_align_v, nb_align_l, nb_align_r) == 2 && place_ok_v == false && block_v == false {
 		return nb_align_v, place_ok_v, block_v, middle_v
-	} else if 3*nb_align_l > (nb_align_h+nb_align_l+nb_align_v) && place_ok_l == false && block_l == false {
+	} else if max_four(nb_align_h, nb_align_v, nb_align_l, nb_align_r) == 3 && place_ok_l == false && block_l == false {
 		return nb_align_l, place_ok_l, block_l, middle_l
-	} else if 3*nb_align_r > (nb_align_h+nb_align_l+nb_align_v) && place_ok_r == false && block_l == false {
+	} else if max_four(nb_align_h, nb_align_v, nb_align_l, nb_align_r) == 4 && place_ok_r == false && block_l == false {
 		return nb_align_r, place_ok_r, block_r, middle_r
 	}
 	nb_align, place_ok, block, middle := nb_align_h, place_ok_h, block_h, middle_h
@@ -211,7 +227,6 @@ func EvaluateGoban(ctx s.SContext) int32 {
 	gotFive, gotFiveOpp, gotFour, gotFourOpp, gotThree, gotThreeOpp, gotTwo, gotTwoOpp := 0, 0, 0, 0, 0, 0, 0, 0
 	gotFourMid, gotFourMidOpp, gotThreeMid, gotThreeMidOpp, gotTwoMid, gotTwoMidOpp := 0, 0, 0, 0, 0, 0
 	gotFourMidPlus, gotFourMidPlusOpp, gotThreeMidPlus, gotThreeMidPlusOpp, gotTwoMidPlus, gotTwoMidPlusOpp := 0, 0, 0, 0, 0, 0
-
 	for y := range ctx.Goban {
 		for x := range ctx.Goban[y] {
 			if ctx.Goban[y][x] != 0 {
@@ -247,61 +262,61 @@ func EvaluateGoban(ctx s.SContext) int32 {
 				} else if middle == true && block == false && place_ok == true {
 					if nb_align >= 4 {
 						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
-							gotFourMidPlus += 1
+							gotFourMidPlus++
 						} else {
-							gotFourMidPlusOpp += 1
+							gotFourMidPlusOpp++
 						}
 					} else if nb_align == 3 {
 						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
-							gotThreeMidPlus += 1
+							gotThreeMidPlus++
 						} else {
-							gotThreeMidPlusOpp += 1
+							gotThreeMidPlusOpp++
 						}
 					} else if nb_align == 2 {
 						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
-							gotTwoMidPlus += 1
+							gotTwoMidPlus++
 						} else {
-							gotTwoMidPlusOpp += 1
+							gotTwoMidPlusOpp++
 						}
 					}
 				} else if middle == true && block == true && place_ok == true {
 					if nb_align >= 4 {
 						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
-							gotFourMid += 1
+							gotFourMid++
 						} else {
-							gotFourMidOpp += 1
+							gotFourMidOpp++
 						}
 					} else if nb_align == 3 {
 						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
-							gotThreeMid += 1
+							gotThreeMid++
 						} else {
-							gotThreeMidOpp += 1
+							gotThreeMidOpp++
 						}
 					} else if nb_align == 2 {
 						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
-							gotTwoMid += 1
+							gotTwoMid++
 						} else {
-							gotTwoMidOpp += 1
+							gotTwoMidOpp++
 						}
 					}
 				} else if middle == false && block == true && place_ok == true { // bloquer + 1 cote libre si place_ok
 					if nb_align == 4 {
 						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
-							gotFourMid += 1
+							gotFourMid++
 						} else {
-							gotFourMidOpp += 1
+							gotFourMidOpp++
 						}
 					} else if nb_align == 3 {
 						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
-							gotThreeMid += 1
+							gotThreeMid++
 						} else {
-							gotThreeMidOpp += 1
+							gotThreeMidOpp++
 						}
 					} else if nb_align == 2 {
 						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
-							gotTwoMid += 1
+							gotTwoMid++
 						} else {
-							gotTwoMidOpp += 1
+							gotTwoMidOpp++
 						}
 					}
 				}
@@ -312,7 +327,6 @@ func EvaluateGoban(ctx s.SContext) int32 {
 	// value = 1000000*(gotFive-gotFiveOpp) + 100000*(gotFour-gotFourOpp) + 1000*(gotFourMid-gotFourMidOpp) + 1500*(gotThree-gotThreeOpp) + 200*(gotThreeMid-gotThreeMidOpp) + 50*(gotTwo-gotTwoOpp) + 10*(gotTwoMid-gotTwoMidOpp)
 	value = 60000*(gotFive-gotFiveOpp) + 4800*(gotFour-gotFourOpp) + 1000*(gotFourMid-gotFourMidOpp) + 1000*(gotThree-gotThreeOpp) + 300*(gotThreeMid-gotThreeMidOpp) + 50*(gotTwo-gotTwoOpp) + 10*(gotTwoMid-gotTwoMidOpp)
 	value += 1500*(gotFourMidPlus-gotFourMidPlusOpp) + 750*(gotThreeMidPlus-gotThreeMidPlusOpp) + 30*(gotTwoMidPlus-gotTwoMidPlusOpp)
-
 	if ctx.ActiveCapture {
 		nbCapture := ctx.NbCaptureP1
 		nbCaptureOpp := ctx.NbCaptureP2

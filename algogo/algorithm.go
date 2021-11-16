@@ -38,11 +38,14 @@ func buildContext(node node) s.SContext {
 }
 
 func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPlayer bool) int {
-	check, _ := victoryCondition(node.goban, int(node.captures.Capture0), int(node.captures.Capture1))
+	fmt.Println(node.goban)
+	check, player := victoryCondition(node.goban, int(node.captures.Capture0), int(node.captures.Capture1))
 	if depth <= 0 || (check && depth != initDepth) {
-		if check {
-			return int(EvaluateGoban(buildContext(*node))) * int(depth+1)
+		if check == true && player == 2 {
+			fmt.Println("End", depth, node.value, node.coord, check)
+			fmt.Println(node.goban)
 		}
+		return node.value
 	}
 
 	generateTree(node, node.neighbors)
@@ -104,8 +107,6 @@ func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
 		// }
 	}
 
-	println(ctx.CurrentPlayer)
-
 	opp := uint8(2)
 	if ctx.CurrentPlayer == 2 {
 		opp = 1
@@ -114,9 +115,9 @@ func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
 	root := createNode(0, 0, copyGoban(ctx.Goban), emptyVertex, neighbors, opp, false, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), nil, 1)
 	minimaxRecursive(root, depth, alpha, beta, true)
 
-	for _, children := range root.children {
-		fmt.Printf("%v %v\n", children.coord, children.value)
-	}
+	// for _, children := range root.children {
+	// 	fmt.Printf("%v %v\n", children.coord, children.value)
+	// }
 
 	if root.bestMove != nil {
 		return root.bestMove.coord, root.bestMove.value

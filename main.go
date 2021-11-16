@@ -168,7 +168,9 @@ func human(err error, startgame bool, endgame bool, ctx *s.SContext, visu *s.SVi
 		placement := g.Placement(ctx, int(case_x), int(case_y))
 		if placement == 0 {
 			ctx.Goban[int(case_y)][int(case_x)] = s.Tnumber(ctx.CurrentPlayer)
+			println("Evaluate", int(e.EvaluateGoban(*ctx)), ctx.CurrentPlayer)
 			startgame, endgame = displayPlay(startgame, endgame, ctx, visu, s.SVertex{X: int(case_x), Y: int(case_y)})
+			println()
 		} else if placement < 0 {
 			d.DisplayMessage(visu, ctx.Size, "Il y a déjà", "une pierre", *ctx)
 			sdl.Log("Il y a déjà une pierre")
@@ -211,10 +213,9 @@ func main() {
 	defer visu.FontCounter.Close()
 	defer visu.Renderer.Destroy()
 
-	versus, double_threes, capture, help, time_limit, end, difficulty := m.Menu(&visu, ctx)
+	versus, double_threes, capture, help, end, difficulty := m.Menu(&visu, ctx)
 	visu.Renderer.Clear()
 	visu.Renderer.Present()
-	fmt.Println(versus, double_threes, capture, help, time_limit, difficulty)
 	if !end {
 		d.TraceGoban(&visu, ctx)
 		d.DisplayPlayer(&ctx, &visu, true)
