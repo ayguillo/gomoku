@@ -128,8 +128,8 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 	} else {
 		now := time.Now()
 		vertex_next, heuris := e.MinimaxTree(*ctx, ctx.Depth)
-		fmt.Println(vertex_next, heuris)
 		delta := time.Since(now)
+		fmt.Println(vertex_next, heuris)
 		fmt.Println(delta)
 		ctx.Goban[int(vertex_next.Y)][int(vertex_next.X)] = s.Tnumber(ctx.CurrentPlayer)
 		startgame, endgame = displayPlay(startgame, endgame, ctx, visu, vertex_next)
@@ -168,7 +168,6 @@ func human(err error, startgame bool, endgame bool, ctx *s.SContext, visu *s.SVi
 		placement := g.Placement(ctx, int(case_x), int(case_y))
 		if placement == 0 {
 			ctx.Goban[int(case_y)][int(case_x)] = s.Tnumber(ctx.CurrentPlayer)
-			println("Evaluate", int(e.EvaluateGoban(*ctx)), ctx.CurrentPlayer)
 			startgame, endgame = displayPlay(startgame, endgame, ctx, visu, s.SVertex{X: int(case_x), Y: int(case_y)})
 			println()
 		} else if placement < 0 {
@@ -240,11 +239,11 @@ func main() {
 			ctx.VertexHelp = s.SVertex{X: -1, Y: -1}
 		}
 		if difficulty == 0 {
-			ctx.Depth = 2
+			ctx.Depth = 3
 		} else if difficulty == 1 {
 			ctx.Depth = 5
 		} else {
-			ctx.Depth = 8
+			ctx.Depth = 7
 		}
 	}
 	running := true

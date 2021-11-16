@@ -24,6 +24,11 @@ var isCapture bool
 var isDoubleThree bool
 var initPlayer uint8
 
+type playData struct {
+	Vertex s.SVertex
+	Heur   int32
+}
+
 type Captures struct {
 	Capture0 uint8
 	Capture1 uint8
@@ -106,8 +111,9 @@ func inNeighbors2(goban s.Tgoban, vertex s.SVertex, ret_list []s.SVertex) []s.SV
 	return ret_list
 }
 
-func getNeighbors(goban s.Tgoban, vertex s.SVertex) []s.SVertex {
-	ret_list := make([]s.SVertex, 0)
+func getNeighbors(goban s.Tgoban, oldNeighbors []s.SVertex, vertex s.SVertex) []s.SVertex {
+	ret_list := make([]s.SVertex, len(oldNeighbors))
+	copy(ret_list, oldNeighbors)
 	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X + 1, Y: vertex.Y + 1}, ret_list)
 	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X - 1, Y: vertex.Y - 1}, ret_list)
 	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X + 1, Y: vertex.Y - 1}, ret_list)
@@ -118,20 +124,4 @@ func getNeighbors(goban s.Tgoban, vertex s.SVertex) []s.SVertex {
 	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X - 1, Y: vertex.Y}, ret_list)
 	ret_list = removeDuplicate2(ret_list, s.SVertex{X: vertex.X, Y: vertex.Y})
 	return ret_list
-}
-
-func generateNewNeighobrs(goban s.Tgoban) []s.SVertex {
-	var ret []s.SVertex
-	y := 0
-
-	for y < 19 {
-		x := 0
-		for x < 19 {
-			ret = append(ret, getNeighbors(goban, s.SVertex{Y: y, X: x})...)
-			x++
-		}
-		y++
-	}
-
-	return ret
 }

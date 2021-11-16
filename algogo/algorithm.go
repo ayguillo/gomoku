@@ -1,14 +1,18 @@
 package algogo
 
 import (
-	"fmt"
 	s "gomoku/structures"
+	"time"
 )
 
 const maxInt = int(^uint(0) >> 1)
 const minInt = -maxInt - 1
 
+var ALLITERATION int
 var initDepth = uint8(0)
+
+var startTime time.Time
+var endTime time.Time
 
 func max(a, b int) int {
 	if a > b {
@@ -38,13 +42,8 @@ func buildContext(node node) s.SContext {
 }
 
 func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPlayer bool) int {
-	fmt.Println(node.goban)
-	check, player := victoryCondition(node.goban, int(node.captures.Capture0), int(node.captures.Capture1))
+	check, _ := victoryCondition(node.goban, int(node.captures.Capture0), int(node.captures.Capture1))
 	if depth <= 0 || (check && depth != initDepth) {
-		if check == true && player == 2 {
-			fmt.Println("End", depth, node.value, node.coord, check)
-			fmt.Println(node.goban)
-		}
 		return node.value
 	}
 
@@ -58,10 +57,11 @@ func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPl
 				node.bestMove = child
 				maxValue = value
 			}
-			alpha = max(alpha, maxValue)
-			if alpha >= beta {
+			alpha = max(alpha, value)
+			if beta <= alpha {
 				break
 			}
+
 		}
 		return maxValue
 	} else {
@@ -72,7 +72,7 @@ func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPl
 				node.bestMove = child
 				minValue = value
 			}
-			beta = min(beta, minValue)
+			beta = min(beta, value)
 			if beta <= alpha {
 				break
 			}
@@ -81,9 +81,43 @@ func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPl
 	}
 }
 
-func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
+func getMinimaxValue(node *node, depth uint8, alpha int, beta int, ch chan playData) {
+	value := minimaxRecursive(node, depth-1, alpha, beta, false)
+	ch <- playData{Heur: int32(value), Vertex: node.coord}
+}
+
+func startRoutine(node *node, depth uint8) (s.SVertex, int) {
+	var ch = make(chan playData)
+
+	generateTree(node, node.neighbors)
+
+	stockPlays := make([]playData, len(node.children))
+
 	alpha := minInt
 	beta := maxInt
+
+	for _, child := range node.children {
+		go getMinimaxValue(child, depth, alpha, beta, ch)
+	}
+	for i := range stockPlays {
+		stockPlays[i] = <-ch
+	}
+
+	maxValue := minInt
+	stockMove := s.SVertex{X: -1, Y: -1}
+	for _, play := range stockPlays {
+		if int(play.Heur) >= minInt {
+			stockMove = play.Vertex
+			maxValue = int(play.Heur)
+		}
+	}
+
+	return stockMove, maxValue
+}
+
+func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
+	ALLITERATION = 0
+
 	initDepth = depth
 
 	isCapture = ctx.ActiveCapture
@@ -112,21 +146,38 @@ func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
 		opp = 1
 	}
 
-	root := createNode(0, 0, copyGoban(ctx.Goban), emptyVertex, neighbors, opp, false, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), nil, 1)
-	minimaxRecursive(root, depth, alpha, beta, true)
+	startTime = time.Now()
+	endTime = startTime.Add(time.Millisecond * 500)
+	root := createNode(0, 0, copyGoban(ctx.Goban), emptyVertex, sortNeighbors(ctx, neighbors), opp, false, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), nil, 1)
+	return startRoutine(root, depth)
+	// minimaxRecursive(root, depth, alpha, beta, true)
 
 	// for _, children := range root.children {
 	// 	fmt.Printf("%v %v\n", children.coord, children.value)
 	// }
 
-	if root.bestMove != nil {
-		return root.bestMove.coord, root.bestMove.value
-	} else {
-		println("INFO: Reprunning minimax")
-		return reMinimaxTree(ctx)
-	}
+	// if true {
+	// 	return plays.Vertex, int(plays.Heur)
+	// }
+
+	// if root.bestMove != nil {
+	// 	return root.bestMove.coord, root.bestMove.value
+	// } else {
+	// 	println("INFO: Reprunning minimax")
+	// 	return reMinimaxTree(ctx)
+	// }
 }
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
+///
 func reMinimaxTree(ctx s.SContext) (s.SVertex, int) {
 	alpha := minInt
 	beta := maxInt

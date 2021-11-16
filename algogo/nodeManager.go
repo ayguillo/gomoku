@@ -35,7 +35,7 @@ func generateBoard(current *node, coord s.SVertex, neighbors []s.SVertex) {
 	identity++
 	newGoban := copyGoban(current.goban)
 	newGoban[coord.Y][coord.X] = s.Tnumber(opp)
-	newNeighbors := getNeighbors(current.goban, coord)
+	newNeighbors := getNeighbors(current.goban, neighbors, coord)
 
 	var ctx s.SContext
 
@@ -56,12 +56,15 @@ func generateBoard(current *node, coord s.SVertex, neighbors []s.SVertex) {
 		}
 	}
 
+	if current.depth < 3 {
+		newNeighbors = sortNeighbors(ctx, newNeighbors)
+	}
+
 	if current.maximizingPlayer {
-		value = int(EvaluateGoban(ctx)) / int(current.depth)
+		value = -int(EvaluateGoban(ctx)) / int(current.depth)
 	} else {
 		value = int(EvaluateGoban(ctx)) / int(current.depth)
 	}
-	// value = int(EvaluateGoban(ctx)) / int(current.depth)
 
 	child := createNode(identity, value, ctx.Goban, coord, newNeighbors, opp, !current.maximizingPlayer, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), current, current.depth+1)
 	current.children = append(current.children, child)
