@@ -55,29 +55,57 @@ func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPl
 	if maximizingPlayer {
 		maxValue := minInt
 		for _, child := range node.children {
+			child.goban[child.coord.Y][child.coord.X] = s.Tnumber(child.player)
+
+			if isCapture {
+				for _, capture := range child.capturesVertex {
+					child.goban[capture.Y][capture.X] = 0
+				}
+			}
+
 			value := minimaxRecursive(child, depth-1, alpha, beta, false)
 			if value > maxValue {
 				node.bestMove = child
 				maxValue = value
 			}
+
+			child.goban[child.coord.Y][child.coord.X] = 0
+			if isCapture {
+				opp := s.Tnumber(2)
+				if child.player == 2 {
+					opp = 1
+				}
+
+				for _, capture := range child.capturesVertex {
+					child.goban[capture.Y][capture.X] = opp
+				}
+			}
+
 			alpha = max(alpha, maxValue)
 			if alpha >= beta {
 				break
 			}
+
 		}
 		return maxValue
 	} else {
 		minValue := maxInt
 		for _, child := range node.children {
+			child.goban[child.coord.Y][child.coord.X] = s.Tnumber(child.player)
+
 			value := minimaxRecursive(child, depth-1, alpha, beta, true)
 			if value < minValue {
 				node.bestMove = child
 				minValue = value
 			}
+
+			child.goban[child.coord.Y][child.coord.X] = 0
+
 			beta = min(beta, minValue)
 			if beta <= alpha {
 				break
 			}
+
 		}
 		return minValue
 	}
@@ -100,13 +128,8 @@ func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
 		neighbors = make([]s.SVertex, len(ctx.Capture))
 		copy(neighbors, ctx.Capture)
 	} else {
-		// imp := CheckImpMove(ctx, ctx.CasesNonNull)
-		// if imp != nil {
-		// 	neighbors = imp
-		// } else {
 		neighbors = make([]s.SVertex, len(ctx.CasesNonNull))
 		copy(neighbors, ctx.CasesNonNull)
-		// }
 	}
 
 	opp := uint8(2)
@@ -117,10 +140,6 @@ func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
 	root := createNode(0, 0, copyGoban(ctx.Goban), emptyVertex, sortNeighbors(ctx, neighbors), opp, false, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), nil, 1)
 	minimaxRecursive(root, depth, alpha, beta, true)
 
-	// for _, children := range root.children {
-	// 	fmt.Printf("%v %v\n", children.coord, children.value)
-	// }
-
 	if root.bestMove != nil {
 		return root.bestMove.coord, root.bestMove.value
 	} else {
@@ -128,6 +147,38 @@ func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
 		return reMinimaxTree(ctx)
 	}
 }
+
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
 
 func reMinimaxTree(ctx s.SContext) (s.SVertex, int) {
 	alpha := minInt

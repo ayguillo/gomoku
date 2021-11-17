@@ -33,7 +33,7 @@ func generateBoard(current *node, coord s.SVertex, neighbors []s.SVertex) {
 	}
 
 	identity++
-	newGoban := copyGoban(current.goban)
+	newGoban := current.goban
 	newGoban[coord.Y][coord.X] = s.Tnumber(opp)
 	newNeighbors := getNeighbors(current.goban, neighbors, coord)
 
@@ -46,14 +46,16 @@ func generateBoard(current *node, coord s.SVertex, neighbors []s.SVertex) {
 	// ctx.NbCaptureP2 = int(current.captures.Capture1)
 	// ctx.ActiveDoubleThrees = isDoubleThree
 	// ctx.ActiveCapture = isCapture
-	if isCapture {
-		capturesVertex := CaptureAlgoNode(current, coord.X, coord.Y)
+	var capturesVertex []s.SVertex
 
+	if isCapture {
+		capturesVertex = CaptureAlgoNode(current, coord.X, coord.Y)
 		for _, capture := range capturesVertex {
-			current.goban[capture.Y][capture.X] = 0
 			newNeighbors = append(newNeighbors, s.SVertex{Y: capture.Y, X: capture.X})
 		}
 	}
+
+	newGoban[coord.Y][coord.X] = 0
 
 	// if current.maximizingPlayer {
 	// 	value = -int(EvaluateGoban(ctx)) / int(current.depth)
@@ -63,6 +65,11 @@ func generateBoard(current *node, coord s.SVertex, neighbors []s.SVertex) {
 
 	child := createNode(identity, value, newGoban, coord, newNeighbors, opp, !current.maximizingPlayer, current.captures.Capture0, current.captures.Capture1, current, current.depth+1)
 	current.children = append(current.children, child)
+
+	if isCapture && capturesVertex != nil {
+		child.capturesVertex = capturesVertex
+	}
+
 }
 
 func generateTree(current *node, neighbors []s.SVertex) {

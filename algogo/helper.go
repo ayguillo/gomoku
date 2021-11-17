@@ -32,6 +32,7 @@ type node struct {
 	children         []*node
 	bestMove         *node
 	depth            uint8
+	capturesVertex   []s.SVertex
 }
 
 func copyGoban(goban s.Tgoban) s.Tgoban {
