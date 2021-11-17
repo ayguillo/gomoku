@@ -35,11 +35,11 @@ func generateBoard(current *node, coord s.SVertex, neighbors []s.SVertex) {
 	}
 
 	identity++
-	newGoban := current.goban
+	newGoban := copyGoban(current.goban)
 	newGoban[coord.Y][coord.X] = s.Tnumber(opp)
 
 	tmp_last := current.lastMoves[0]
-	current.lastMoves = [2]s.SVertex{{X: coord.X, Y: coord.Y}, tmp_last}
+	current.lastMoves = [2]s.SVertex{coord, tmp_last}
 
 	newNeighbors := getNeighbors(current.goban, neighbors, coord)
 
@@ -60,9 +60,6 @@ func generateBoard(current *node, coord s.SVertex, neighbors []s.SVertex) {
 			newNeighbors = append(newNeighbors, s.SVertex{Y: capture.Y, X: capture.X})
 		}
 	}
-
-	newGoban[coord.Y][coord.X] = 0
-
 	// if current.maximizingPlayer {
 	// 	value = -int(EvaluateGoban(ctx)) / int(current.depth)
 	// } else {
@@ -90,18 +87,46 @@ func generateTree(current *node, neighbors []s.SVertex) {
 			}
 		}
 	} else {
-		for _, neighbor := range current.lastMoves {
-			for y := -1; y <= 1; y++ {
-				for x := -1; x <= 1; x++ {
-					if y == 0 && x == 0 {
-						continue
-					}
-					placement := PlacementHeuristic(current.goban, neighbor.X, neighbor.Y, current.player)
-					if placement >= 1 {
-						generateBoard(current, neighbor, neighbors)
-					}
+		lastMoves := current.lastMoves[0]
+		lastlastMoves := current.lastMoves[1]
+
+		var y int
+		var x int
+		var threatSpace int = 1
+
+		for y = lastMoves.Y - threatSpace; y <= lastMoves.Y+threatSpace; y++ {
+			for x = lastMoves.X - threatSpace; x <= lastMoves.X+threatSpace; x++ {
+
+				placement := PlacementHeuristic(current.goban, x, y, current.player)
+				if placement >= 1 {
+					generateBoard(current, s.SVertex{X: x, Y: y}, neighbors)
 				}
 			}
 		}
+
+		for y = lastlastMoves.Y - threatSpace; y <= lastlastMoves.Y+threatSpace; y++ {
+			for x = lastlastMoves.X - threatSpace; x <= lastlastMoves.X+threatSpace; x++ {
+				placement := PlacementHeuristic(current.goban, x, y, current.player)
+				if placement >= 1 {
+					generateBoard(current, s.SVertex{X: x, Y: y}, neighbors)
+				}
+			}
+		}
+
+		// for _, neighbor := range current.lastMoves {
+
+		// 	for y := -1; y <= 1; y++ {
+		// 		for x := -1; x <= 1; x++ {
+		// 			if y == 0 && x == 0 {
+		// 				continue
+		// 			}
+		// 			newNeighbor := s.SVertex{X: neighbor.X + x, Y: neighbor.Y + y}
+		// 			placement := PlacementHeuristic(current.goban, newNeighbor.X, newNeighbor.Y, current.player)
+		// 			if placement >= 1 {
+		// 				generateBoard(current, newNeighbor, neighbors)
+		// 			}
+		// 		}
+		// 	}
+		// }
 	}
 }

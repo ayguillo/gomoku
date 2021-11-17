@@ -1,6 +1,7 @@
 package algogo
 
 import (
+	"fmt"
 	s "gomoku/structures"
 )
 
@@ -120,8 +121,6 @@ func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
 	isDoubleThree = ctx.ActiveDoubleThrees
 	initPlayer = ctx.CurrentPlayer
 
-	var emptyVertex s.SVertex = s.SVertex{X: -1, Y: -1}
-
 	var neighbors []s.SVertex
 
 	if isCapture && len(ctx.Capture) > 0 {
@@ -136,13 +135,12 @@ func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
 	if ctx.CurrentPlayer == 2 {
 		opp = 1
 	}
-	root := createNode(0, 0, copyGoban(ctx.Goban), emptyVertex, sortNeighbors(ctx, neighbors, true), opp, false, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), nil, 1, ctx.LastMove, ctx.LastLastMove)
-
+	fmt.Printf("%v %v\n", ctx.LastMove, ctx.LastLastMove)
+	root := createNode(0, 0, copyGoban(ctx.Goban), ctx.LastMove, sortNeighbors(ctx, neighbors, true), opp, false, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), nil, 1, ctx.LastMove, ctx.LastLastMove)
 	minimaxRecursive(root, depth, alpha, beta, true)
 	if root.bestMove != nil {
 		return root.bestMove.coord, root.bestMove.value
 	} else {
-		println("INFO: Reprunning minimax")
 		return s.SVertex{X: -1, Y: -1}, 0
 	}
 }

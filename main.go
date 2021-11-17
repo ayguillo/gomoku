@@ -96,8 +96,6 @@ func displayPlay(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu, v
 	} else {
 		ctx.LastMove = vertex_next
 	}
-	fmt.Println(ctx.LastLastMove)
-	fmt.Println(ctx.LastMove)
 	d.DisplayMessage(visu, ctx.Size, "", "", *ctx)
 	d.TraceStone(float64(vertex_next.X), float64(vertex_next.Y), ctx, visu, color, false)
 	if ctx.ActiveCapture {
