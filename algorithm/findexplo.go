@@ -44,3 +44,17 @@ func FindNeighbors(ctx *s.SContext, case_x int, case_y int) {
 	inNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y})
 	removeDuplicate(ctx, s.SVertex{X: case_x, Y: case_y})
 }
+
+func FindLastNeighbors(ctx *s.SContext, vertex s.SVertex) {
+	if ctx.LastMove.X != -1 {
+		tmp_last := ctx.LastMove
+		ctx.LastMove = vertex
+		ctx.LastLastMove = tmp_last
+		ctx.CasesNonNull = nil
+		FindNeighbors(ctx, ctx.LastMove.X, ctx.LastMove.Y)
+		FindNeighbors(ctx, ctx.LastLastMove.X, ctx.LastLastMove.Y)
+	} else {
+		FindNeighbors(ctx, vertex.X, vertex.Y)
+		ctx.LastMove = vertex
+	}
+}

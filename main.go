@@ -33,6 +33,8 @@ func initialize() (s.SVisu, s.SContext, error) {
 		c++
 	}
 	ctx.CurrentPlayer = 1
+	ctx.LastMove = s.SVertex{X: -1, Y: -1}
+	ctx.LastLastMove = s.SVertex{X: -1, Y: -1}
 	ctx.NbVictoryP1, ctx.NbVictoryP2, ctx.NbCaptureP1, ctx.NbCaptureP2 = 0, 0, 0, 0
 	index := 0
 	for index < int(ctx.NSize) {
@@ -85,7 +87,17 @@ func displayPlay(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu, v
 	} else {
 		color = [4]uint8{35, 33, 33, 255}
 	}
-	a.FindNeighbors(ctx, int(vertex_next.X), int(vertex_next.Y))
+	// a.FindNeighbors(ctx, int(vertex_next.X), int(vertex_next.Y))
+	a.FindNeighbors(ctx, vertex_next.X, vertex_next.Y)
+	if ctx.LastMove.X != -1 {
+		tmp_last := ctx.LastMove
+		ctx.LastMove = vertex_next
+		ctx.LastLastMove = tmp_last
+	} else {
+		ctx.LastMove = vertex_next
+	}
+	fmt.Println(ctx.LastLastMove)
+	fmt.Println(ctx.LastMove)
 	d.DisplayMessage(visu, ctx.Size, "", "", *ctx)
 	d.TraceStone(float64(vertex_next.X), float64(vertex_next.Y), ctx, visu, color, false)
 	if ctx.ActiveCapture {
@@ -168,9 +180,7 @@ func human(err error, startgame bool, endgame bool, ctx *s.SContext, visu *s.SVi
 		placement := g.Placement(ctx, int(case_x), int(case_y))
 		if placement == 0 {
 			ctx.Goban[int(case_y)][int(case_x)] = s.Tnumber(ctx.CurrentPlayer)
-			println("Evaluate", int(e.EvaluateGoban(*ctx)), ctx.CurrentPlayer)
 			startgame, endgame = displayPlay(startgame, endgame, ctx, visu, s.SVertex{X: int(case_x), Y: int(case_y)})
-			println()
 		} else if placement < 0 {
 			d.DisplayMessage(visu, ctx.Size, "Il y a déjà", "une pierre", *ctx)
 			sdl.Log("Il y a déjà une pierre")
@@ -244,7 +254,7 @@ func main() {
 		} else if difficulty == 1 {
 			ctx.Depth = 5
 		} else {
-			ctx.Depth = 8
+			ctx.Depth = 10
 		}
 	}
 	running := true

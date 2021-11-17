@@ -24,6 +24,8 @@ type SContext struct {
 	ActiveHelp         bool
 	Depth              uint8
 	VertexHelp         SVertex
+	LastMove           SVertex
+	LastLastMove       SVertex
 }
 
 func (goban Tgoban) String() string {

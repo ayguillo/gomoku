@@ -33,6 +33,7 @@ type node struct {
 	bestMove         *node
 	depth            uint8
 	capturesVertex   []s.SVertex
+	lastMoves        [2]s.SVertex
 }
 
 func copyGoban(goban s.Tgoban) s.Tgoban {
@@ -47,17 +48,6 @@ func copyGoban(goban s.Tgoban) s.Tgoban {
 }
 
 func PlacementHeuristic(goban s.Tgoban, case_x int, case_y int, player uint8) uint8 {
-	// if ActiveCapture && len(ctx.Capture) > 0 {
-	// 	for _, cap := range ctx.Capture {
-	// 		if case_x == cap.X && case_y == cap.Y {
-	// 			capture = true
-	// 			break
-	// 		}
-	// 	}
-	// 	if capture == false {
-	// 		return 2
-	// 	}
-	// }
 	if isDoubleThree && d.DoubleThree(s.SVertex{X: case_x, Y: case_y}, goban, player, isCapture) {
 		return 0
 	}

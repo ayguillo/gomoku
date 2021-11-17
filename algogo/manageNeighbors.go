@@ -1,6 +1,8 @@
 package algogo
 
-import s "gomoku/structures"
+import (
+	s "gomoku/structures"
+)
 
 func insert(a []playData, index int, value playData) []playData {
 	if len(a) == index { // nil or empty slice or after last element
@@ -11,7 +13,7 @@ func insert(a []playData, index int, value playData) []playData {
 	return a
 }
 
-func insertNeighbors(plays []playData, play playData) []playData {
+func insertNeighborsMax(plays []playData, play playData) []playData {
 
 	size := len(plays)
 
@@ -24,24 +26,48 @@ func insertNeighbors(plays []playData, play playData) []playData {
 	return append(plays, play)
 }
 
-func sortNeighbors(ctx s.SContext, neighbors []s.SVertex) []s.SVertex {
-	var ret []s.SVertex
-	var plays []playData
+func insertNeighborsMin(plays []playData, play playData) []playData {
 
-	for _, neighbor := range neighbors {
-		placement := PlacementHeuristic(ctx.Goban, neighbor.X, neighbor.Y, ctx.CurrentPlayer)
-		if placement >= 1 {
-			ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
-			heur := EvaluateGoban(ctx)
-			plays = insertNeighbors(plays, playData{Heur: heur, Vertex: neighbor})
+	size := len(plays)
 
-			ctx.Goban[neighbor.Y][neighbor.X] = 0
+	for i := 0; i < size; i++ {
+		if plays[i].Heur >= play.Heur {
+			return insert(plays, i, play)
 		}
 	}
 
+	return append(plays, play)
+}
+
+func sortNeighbors(ctx s.SContext, neighbors []s.SVertex, isMaximizing bool) []s.SVertex {
+	var ret []s.SVertex
+	var plays []playData
+
+	if isMaximizing {
+		for _, neighbor := range neighbors {
+			placement := PlacementHeuristic(ctx.Goban, neighbor.X, neighbor.Y, ctx.CurrentPlayer)
+			if placement >= 1 {
+				ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
+				heur := EvaluateGoban(ctx)
+				plays = insertNeighborsMax(plays, playData{Heur: heur, Vertex: neighbor})
+				ctx.Goban[neighbor.Y][neighbor.X] = 0
+
+			}
+		}
+	} else {
+		for _, neighbor := range neighbors {
+			placement := PlacementHeuristic(ctx.Goban, neighbor.X, neighbor.Y, ctx.CurrentPlayer)
+			if placement >= 1 {
+				ctx.Goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
+				heur := EvaluateGoban(ctx)
+				plays = insertNeighborsMin(plays, playData{Heur: heur, Vertex: neighbor})
+				ctx.Goban[neighbor.Y][neighbor.X] = 0
+
+			}
+		}
+	}
 	for _, play := range plays {
 		ret = append(ret, play.Vertex)
 	}
-
 	return ret
 }
