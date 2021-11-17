@@ -1,6 +1,7 @@
 package algogo
 
 import (
+	"fmt"
 	s "gomoku/structures"
 )
 
@@ -111,6 +112,50 @@ func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPl
 	}
 }
 
+func getMinimaxValue(node *node, depth uint8, ch chan playData) {
+	alpha := minInt
+	beta := maxInt
+
+	opp := s.Tnumber(2)
+	if node.player == 2 {
+		opp = 1
+	}
+
+	node.goban[node.coord.Y][node.coord.X] = opp
+	value := minimaxRecursive(node, depth-1, alpha, beta, true)
+	node.goban[node.coord.Y][node.coord.X] = 0
+	ch <- playData{Heur: int32(value), Vertex: node.coord}
+}
+
+func startRoutine(node *node, depth uint8) (s.SVertex, int) {
+	var ch = make(chan playData)
+
+	generateTree(node, node.neighbors)
+
+	stockPlays := make([]playData, len(node.children))
+	println(len(node.children))
+	for _, child := range node.children {
+		child.goban = copyGoban(child.goban)
+		go getMinimaxValue(child, depth, ch)
+	}
+	a := 0
+	for i := range stockPlays {
+		stockPlays[i] = <-ch
+		a++
+	}
+	maxValue := maxInt
+	stockMove := s.SVertex{X: -1, Y: -1}
+	fmt.Printf("data: %v\n", stockPlays)
+	for _, play := range stockPlays {
+		if int(play.Heur) < maxValue {
+			stockMove = play.Vertex
+			maxValue = int(play.Heur)
+		}
+	}
+
+	return stockMove, maxValue
+}
+
 func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
 	alpha := minInt
 	beta := maxInt
@@ -138,13 +183,21 @@ func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
 	}
 
 	root := createNode(0, 0, copyGoban(ctx.Goban), emptyVertex, sortNeighbors(ctx, neighbors), opp, false, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), nil, 1)
-	minimaxRecursive(root, depth, alpha, beta, true)
 
-	if root.bestMove != nil {
-		return root.bestMove.coord, root.bestMove.value
+	multiThreading := true
+
+	return s.SVertex{X: -1, Y: -1}, 0
+	if multiThreading {
+		return startRoutine(root, depth)
 	} else {
-		println("INFO: Reprunning minimax")
-		return reMinimaxTree(ctx)
+		minimaxRecursive(root, depth, alpha, beta, true)
+
+		if root.bestMove != nil {
+			return root.bestMove.coord, root.bestMove.value
+		} else {
+			println("INFO: Reprunning minimax")
+			return reMinimaxTree(ctx)
+		}
 	}
 }
 
