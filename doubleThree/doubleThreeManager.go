@@ -31,7 +31,21 @@ func checkSideDoubleThree(goban s.Tgoban, minusOne s.SVertex, minusTwo s.SVertex
 }
 
 func checkMidDoubleThree(goban s.Tgoban, plusOne s.SVertex, plusTwo s.SVertex, plusThree s.SVertex, minusOne s.SVertex, minusTwo s.SVertex, minusThree s.SVertex, player uint8) bool {
+	if PositionOccupiedByPlayer(minusOne, goban, player) && PositionUnoccupied(minusTwo, goban) {
+		if PositionOccupiedByPlayer(plusOne, goban, player) && PositionUnoccupied(plusTwo, goban) {
+			return true
+		}
+		if PositionUnoccupied(plusOne, goban) && PositionOccupiedByPlayer(plusTwo, goban, player) && PositionUnoccupied(plusThree, goban) {
+			return true
+		}
+	}
+	if PositionUnoccupied(minusOne, goban) && PositionOccupiedByPlayer(minusTwo, goban, player) && PositionUnoccupied(minusThree, goban) {
+		if PositionOccupiedByPlayer(plusOne, goban, player) && PositionUnoccupied(plusTwo, goban) {
+			return true
+		}
+	}
 
+	return false
 }
 
 func checkDoubleThree(goban s.Tgoban, case_x int, case_y int, x int, y int, player uint8) bool {
@@ -79,7 +93,14 @@ func DoubleThree(coordinate s.SVertex, goban s.Tgoban, player uint8, capture boo
 	// }
 
 	horizontal := checkDoubleThree(goban, coordinate.X, coordinate.Y, -1, 0, player)
-	if horizontal {
+	vertical := checkDoubleThree(goban, coordinate.X, coordinate.Y, 0, -1, player)
+	diagLeft := checkDoubleThree(goban, coordinate.X, coordinate.Y, -1, -1, player)
+	diagRight := checkDoubleThree(goban, coordinate.X, coordinate.Y, -1, 1, player)
+
+	if horizontal && (vertical || diagLeft || diagRight) || 
+		vertical && (horizontal || diagLeft || diagRight) ||
+		diagLeft && (vertical || horizontal || diagRight) ||
+		diagRight && (vertical || diagLeft || horizontal) {
 		return true
 	}
 	return false

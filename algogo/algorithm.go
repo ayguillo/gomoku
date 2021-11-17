@@ -8,7 +8,6 @@ import (
 const maxInt = int(^uint(0) >> 1)
 const minInt = -maxInt - 1
 
-var ALLITERATION int
 var initDepth = uint8(0)
 
 var startTime time.Time
@@ -81,7 +80,10 @@ func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPl
 	}
 }
 
-func getMinimaxValue(node *node, depth uint8, alpha int, beta int, ch chan playData) {
+func getMinimaxValue(node *node, depth uint8, ch chan playData) {
+	alpha := minInt
+	beta := maxInt
+
 	value := minimaxRecursive(node, depth-1, alpha, beta, false)
 	ch <- playData{Heur: int32(value), Vertex: node.coord}
 }
@@ -93,11 +95,8 @@ func startRoutine(node *node, depth uint8) (s.SVertex, int) {
 
 	stockPlays := make([]playData, len(node.children))
 
-	alpha := minInt
-	beta := maxInt
-
 	for _, child := range node.children {
-		go getMinimaxValue(child, depth, alpha, beta, ch)
+		go getMinimaxValue(child, depth, ch)
 	}
 	for i := range stockPlays {
 		stockPlays[i] = <-ch
@@ -116,8 +115,6 @@ func startRoutine(node *node, depth uint8) (s.SVertex, int) {
 }
 
 func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
-	ALLITERATION = 0
-
 	initDepth = depth
 
 	isCapture = ctx.ActiveCapture

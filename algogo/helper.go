@@ -1,24 +1,9 @@
 package algogo
 
 import (
-	g "gomoku/game"
+	d "gomoku/doubleThree"
 	s "gomoku/structures"
 )
-
-const capture10 = 100000
-const break5Align = 12000
-const willBeCaptured8 = -10000
-const align5Win = 10000
-const blockWin = 3000
-const willBeCaptured2 = -1500
-const align4Free = 1490
-const block3Free = 1300
-const capture2 = 1000
-const align3Free = 1000
-const align4FLanked = 500
-const align3Flanked = 400
-const block2 = 1
-const align2Free = 1
 
 var isCapture bool
 var isDoubleThree bool
@@ -72,7 +57,7 @@ func PlacementHeuristic(goban s.Tgoban, case_x int, case_y int, player uint8) ui
 	// 		return 2
 	// 	}
 	// }
-	if isDoubleThree && g.DoubleThree(s.SVertex{X: case_x, Y: case_y}, goban, player, isCapture) {
+	if isDoubleThree && d.DoubleThree(s.SVertex{X: case_x, Y: case_y}, goban, player, isCapture) {
 		return 0
 	}
 	if case_y < 0 || case_y >= 19 {
