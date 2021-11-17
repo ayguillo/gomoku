@@ -164,7 +164,7 @@ func checkImpCapture(ctx s.SContext, neighbors []s.SVertex) ([]s.SVertex, []s.SV
 		if placement >= 1 {
 			goban[neighbor.Y][neighbor.X] = s.Tnumber(ctx.CurrentPlayer)
 
-			capturesVertex := CaptureAlgo(&ctx, neighbor.X, neighbor.Y)
+			capturesVertex := CaptureAlgoCtx(&ctx, neighbor.X, neighbor.Y)
 
 			if capturesVertex != nil {
 				playerCap = append(playerCap, capturesVertex...)

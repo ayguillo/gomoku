@@ -23,12 +23,12 @@ func min(a, b int) int {
 	return b
 }
 
-func buildContext(node node) s.SContext {
+func buildContext(node node, player uint8) s.SContext {
 	var ctx s.SContext
 
 	ctx.Goban = node.goban
 	ctx.NSize = 19
-	ctx.CurrentPlayer = node.player
+	ctx.CurrentPlayer = player
 	ctx.NbCaptureP1 = int(node.captures.Capture0)
 	ctx.NbCaptureP2 = int(node.captures.Capture1)
 	ctx.ActiveCapture = isCapture
@@ -39,7 +39,15 @@ func buildContext(node node) s.SContext {
 func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPlayer bool) int {
 	check, _ := victoryCondition(node.goban, int(node.captures.Capture0), int(node.captures.Capture1))
 	if depth <= 0 || (check && depth != initDepth) {
-		return node.value
+		opp := uint8(2)
+		if node.player == 2 {
+			opp = 1
+		}
+		if node.maximizingPlayer {
+			return -int(EvaluateGoban(buildContext(*node, opp))) / int(node.depth)
+		} else {
+			return int(EvaluateGoban(buildContext(*node, opp))) / int(node.depth)
+		}
 	}
 
 	generateTree(node, node.neighbors)

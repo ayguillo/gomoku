@@ -327,6 +327,7 @@ func EvaluateGoban(ctx s.SContext) int32 {
 	// value = 1000000*(gotFive-gotFiveOpp) + 100000*(gotFour-gotFourOpp) + 1000*(gotFourMid-gotFourMidOpp) + 1500*(gotThree-gotThreeOpp) + 200*(gotThreeMid-gotThreeMidOpp) + 50*(gotTwo-gotTwoOpp) + 10*(gotTwoMid-gotTwoMidOpp)
 	value = 60000*(gotFive-gotFiveOpp) + 4800*(gotFour-gotFourOpp) + 1000*(gotFourMid-gotFourMidOpp) + 1000*(gotThree-gotThreeOpp) + 300*(gotThreeMid-gotThreeMidOpp) + 50*(gotTwo-gotTwoOpp) + 10*(gotTwoMid-gotTwoMidOpp)
 	value += 1500*(gotFourMidPlus-gotFourMidPlusOpp) + 750*(gotThreeMidPlus-gotThreeMidPlusOpp) + 30*(gotTwoMidPlus-gotTwoMidPlusOpp)
+
 	if ctx.ActiveCapture {
 		nbCapture := ctx.NbCaptureP1
 		nbCaptureOpp := ctx.NbCaptureP2
@@ -337,15 +338,15 @@ func EvaluateGoban(ctx s.SContext) int32 {
 		}
 
 		if nbCapture >= 5 {
-			value += 1 * 5
+			value += 70000 * 5
 		} else if nbCaptureOpp >= 5 {
-			value -= 1 * 5
+			value -= 70000 * 5
 		} else if nbCapture == 4 {
-			value += 1 * 4
+			value += 6000 * 4
 		} else if nbCaptureOpp == 4 {
-			value -= 1 * 4
+			value -= 6000 * 4
 		} else {
-			value += 1 * (nbCapture - nbCaptureOpp)
+			value += 1500 * (nbCapture - nbCaptureOpp)
 		}
 	}
 

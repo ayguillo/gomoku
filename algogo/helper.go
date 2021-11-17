@@ -9,12 +9,10 @@ var isCapture bool
 var isDoubleThree bool
 var initPlayer uint8
 
-
 type playData struct {
 	Vertex s.SVertex
 	Heur   int32
 }
-
 
 type Captures struct {
 	Capture0 uint8
@@ -99,16 +97,14 @@ func inNeighbors2(goban s.Tgoban, vertex s.SVertex, ret_list []s.SVertex) []s.SV
 }
 
 func getNeighbors(goban s.Tgoban, oldNeighbors []s.SVertex, vertex s.SVertex) []s.SVertex {
-	ret_list := make([]s.SVertex, len(oldNeighbors))
-	copy(ret_list, oldNeighbors)
-	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X + 1, Y: vertex.Y + 1}, ret_list)
-	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X - 1, Y: vertex.Y - 1}, ret_list)
-	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X + 1, Y: vertex.Y - 1}, ret_list)
-	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X - 1, Y: vertex.Y + 1}, ret_list)
-	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X, Y: vertex.Y + 1}, ret_list)
-	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X, Y: vertex.Y - 1}, ret_list)
-	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X + 1, Y: vertex.Y}, ret_list)
-	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X - 1, Y: vertex.Y}, ret_list)
-	ret_list = removeDuplicate2(ret_list, s.SVertex{X: vertex.X, Y: vertex.Y})
-	return ret_list
+	oldNeighbors = inNeighbors2(goban, s.SVertex{X: vertex.X + 1, Y: vertex.Y + 1}, oldNeighbors)
+	oldNeighbors = inNeighbors2(goban, s.SVertex{X: vertex.X - 1, Y: vertex.Y - 1}, oldNeighbors)
+	oldNeighbors = inNeighbors2(goban, s.SVertex{X: vertex.X + 1, Y: vertex.Y - 1}, oldNeighbors)
+	oldNeighbors = inNeighbors2(goban, s.SVertex{X: vertex.X - 1, Y: vertex.Y + 1}, oldNeighbors)
+	oldNeighbors = inNeighbors2(goban, s.SVertex{X: vertex.X, Y: vertex.Y + 1}, oldNeighbors)
+	oldNeighbors = inNeighbors2(goban, s.SVertex{X: vertex.X, Y: vertex.Y - 1}, oldNeighbors)
+	oldNeighbors = inNeighbors2(goban, s.SVertex{X: vertex.X + 1, Y: vertex.Y}, oldNeighbors)
+	oldNeighbors = inNeighbors2(goban, s.SVertex{X: vertex.X - 1, Y: vertex.Y}, oldNeighbors)
+	oldNeighbors = removeDuplicate2(oldNeighbors, s.SVertex{X: vertex.X, Y: vertex.Y})
+	return oldNeighbors
 }

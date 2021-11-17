@@ -37,32 +37,31 @@ func generateBoard(current *node, coord s.SVertex, neighbors []s.SVertex) {
 	newGoban[coord.Y][coord.X] = s.Tnumber(opp)
 	newNeighbors := getNeighbors(current.goban, neighbors, coord)
 
-	var ctx s.SContext
+	// var ctx s.SContext
 
-	ctx.Goban = newGoban
-	ctx.NSize = 19
-	ctx.CurrentPlayer = opp
-	ctx.NbCaptureP1 = int(current.captures.Capture0)
-	ctx.NbCaptureP2 = int(current.captures.Capture1)
-	ctx.ActiveDoubleThrees = isDoubleThree
-	ctx.ActiveCapture = isCapture
-
+	// ctx.Goban = newGoban
+	// ctx.NSize = 19
+	// ctx.CurrentPlayer = opp
+	// ctx.NbCaptureP1 = int(current.captures.Capture0)
+	// ctx.NbCaptureP2 = int(current.captures.Capture1)
+	// ctx.ActiveDoubleThrees = isDoubleThree
+	// ctx.ActiveCapture = isCapture
 	if isCapture {
-		capturesVertex := CaptureAlgo(&ctx, coord.X, coord.Y)
+		capturesVertex := CaptureAlgoNode(current, coord.X, coord.Y)
 
 		for _, capture := range capturesVertex {
-			ctx.Goban[capture.Y][capture.X] = 0
+			current.goban[capture.Y][capture.X] = 0
 			newNeighbors = append(newNeighbors, s.SVertex{Y: capture.Y, X: capture.X})
 		}
 	}
 
-	if current.maximizingPlayer {
-		value = -int(EvaluateGoban(ctx)) / int(current.depth)
-	} else {
-		value = int(EvaluateGoban(ctx)) / int(current.depth)
-	}
+	// if current.maximizingPlayer {
+	// 	value = -int(EvaluateGoban(ctx)) / int(current.depth)
+	// } else {
+	// 	value = int(EvaluateGoban(ctx)) / int(current.depth)
+	// }
 
-	child := createNode(identity, value, ctx.Goban, coord, newNeighbors, opp, !current.maximizingPlayer, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), current, current.depth+1)
+	child := createNode(identity, value, newGoban, coord, newNeighbors, opp, !current.maximizingPlayer, current.captures.Capture0, current.captures.Capture1, current, current.depth+1)
 	current.children = append(current.children, child)
 }
 
