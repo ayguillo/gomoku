@@ -9,6 +9,13 @@ var isCapture bool
 var isDoubleThree bool
 var initPlayer uint8
 
+
+type playData struct {
+	Vertex s.SVertex
+	Heur   int32
+}
+
+
 type Captures struct {
 	Capture0 uint8
 	Capture1 uint8

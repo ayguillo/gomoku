@@ -106,7 +106,7 @@ func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
 		opp = 1
 	}
 
-	root := createNode(0, 0, copyGoban(ctx.Goban), emptyVertex, neighbors, opp, false, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), nil, 1)
+	root := createNode(0, 0, copyGoban(ctx.Goban), emptyVertex, sortNeighbors(ctx, neighbors), opp, false, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), nil, 1)
 	minimaxRecursive(root, depth, alpha, beta, true)
 
 	// for _, children := range root.children {
