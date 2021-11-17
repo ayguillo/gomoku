@@ -100,7 +100,7 @@ func countPlays(ctx s.SContext) heurStock {
 							gotTwoMidOpp += 1
 						}
 					}
-				} else if middle == false && block == true && place_ok == true { // bloquer + 1 cote libre si place_ok
+				} else if middle == false && block == true && place_ok == true {
 					if nb_align == 4 {
 						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
 							gotFourMid += 1
