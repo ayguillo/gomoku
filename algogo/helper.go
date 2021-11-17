@@ -1,24 +1,9 @@
 package algogo
 
 import (
-	g "gomoku/game"
+	d "gomoku/doubleThree"
 	s "gomoku/structures"
 )
-
-const capture10 = 100000
-const break5Align = 12000
-const willBeCaptured8 = -10000
-const align5Win = 10000
-const blockWin = 3000
-const willBeCaptured2 = -1500
-const align4Free = 1490
-const block3Free = 1300
-const capture2 = 1000
-const align3Free = 1000
-const align4FLanked = 500
-const align3Flanked = 400
-const block2 = 1
-const align2Free = 1
 
 var isCapture bool
 var isDoubleThree bool
@@ -67,7 +52,7 @@ func PlacementHeuristic(goban s.Tgoban, case_x int, case_y int, player uint8) ui
 	// 		return 2
 	// 	}
 	// }
-	if isDoubleThree && g.DoubleThree(s.SVertex{X: case_x, Y: case_y}, goban, player, isCapture) {
+	if isDoubleThree && d.DoubleThree(s.SVertex{X: case_x, Y: case_y}, goban, player, isCapture) {
 		return 0
 	}
 	if case_y < 0 || case_y >= 19 {
@@ -106,8 +91,9 @@ func inNeighbors2(goban s.Tgoban, vertex s.SVertex, ret_list []s.SVertex) []s.SV
 	return ret_list
 }
 
-func getNeighbors(goban s.Tgoban, vertex s.SVertex) []s.SVertex {
-	ret_list := make([]s.SVertex, 0)
+func getNeighbors(goban s.Tgoban, oldNeighbors []s.SVertex, vertex s.SVertex) []s.SVertex {
+	ret_list := make([]s.SVertex, len(oldNeighbors))
+	copy(ret_list, oldNeighbors)
 	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X + 1, Y: vertex.Y + 1}, ret_list)
 	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X - 1, Y: vertex.Y - 1}, ret_list)
 	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X + 1, Y: vertex.Y - 1}, ret_list)
@@ -118,20 +104,4 @@ func getNeighbors(goban s.Tgoban, vertex s.SVertex) []s.SVertex {
 	ret_list = inNeighbors2(goban, s.SVertex{X: vertex.X - 1, Y: vertex.Y}, ret_list)
 	ret_list = removeDuplicate2(ret_list, s.SVertex{X: vertex.X, Y: vertex.Y})
 	return ret_list
-}
-
-func generateNewNeighobrs(goban s.Tgoban) []s.SVertex {
-	var ret []s.SVertex
-	y := 0
-
-	for y < 19 {
-		x := 0
-		for x < 19 {
-			ret = append(ret, getNeighbors(goban, s.SVertex{Y: y, X: x})...)
-			x++
-		}
-		y++
-	}
-
-	return ret
 }

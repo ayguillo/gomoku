@@ -1,7 +1,6 @@
 package algogo
 
 import (
-	"fmt"
 	s "gomoku/structures"
 )
 
@@ -38,13 +37,8 @@ func buildContext(node node) s.SContext {
 }
 
 func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPlayer bool) int {
-	fmt.Println(node.goban)
-	check, player := victoryCondition(node.goban, int(node.captures.Capture0), int(node.captures.Capture1))
+	check, _ := victoryCondition(node.goban, int(node.captures.Capture0), int(node.captures.Capture1))
 	if depth <= 0 || (check && depth != initDepth) {
-		if check == true && player == 2 {
-			fmt.Println("End", depth, node.value, node.coord, check)
-			fmt.Println(node.goban)
-		}
 		return node.value
 	}
 
