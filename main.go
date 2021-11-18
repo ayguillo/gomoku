@@ -137,8 +137,11 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 		d.DisplayPlayer(ctx, visu, false)
 	} else {
 		now := time.Now()
-		vertex_next, heuris := e.MinimaxTree(*ctx, ctx.Depth)
-		fmt.Println(vertex_next, heuris)
+		vertex_next, _ := e.MinimaxTree(*ctx, ctx.Depth)
+		// fmt.Println(vertex_next, heuris)
+		if vertex_next.X == -1 {
+			time.Sleep(30 * time.Second)
+		}
 		delta := time.Since(now)
 		fmt.Println(delta)
 		ctx.Goban[int(vertex_next.Y)][int(vertex_next.X)] = s.Tnumber(ctx.CurrentPlayer)
@@ -155,7 +158,7 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 			color = [4]uint8{226, 196, 115, 255}
 			d.TraceStone(float64(ctx.VertexHelp.X), float64(ctx.VertexHelp.Y), ctx, visu, color, true)
 		}
-		vertex_help, _ := e.MinimaxTree(*ctx, 1)
+		vertex_help, _ := e.MinimaxTree(*ctx, 2)
 		ctx.VertexHelp = vertex_help
 		color = [4]uint8{83, 51, 237, 1}
 		d.TraceStone(float64(vertex_help.X), float64(vertex_help.Y), ctx, visu, color, false)

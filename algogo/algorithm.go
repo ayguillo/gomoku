@@ -41,7 +41,7 @@ func buildContext(node node, player uint8) s.SContext {
 
 func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPlayer bool) int {
 	check, _ := victoryCondition(node.goban, int(node.captures.Capture0), int(node.captures.Capture1))
-	if depth <= 0 || (check && depth != initDepth) || (depth <= (initDepth - 3) && !time.Now().Before(endTime)) {
+	if depth <= 0 || (check && depth != initDepth) || (depth <= (initDepth-3) && !time.Now().Before(endTime)) {
 		opp := uint8(2)
 		if node.player == 2 {
 			opp = 1
@@ -89,7 +89,7 @@ func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPl
 }
 
 func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
-	endTime = time.Now().Add(time.Millisecond * 750)
+	endTime = time.Now().Add(time.Millisecond * 600)
 	alpha := minInt
 	beta := maxInt
 	initDepth = depth

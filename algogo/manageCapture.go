@@ -164,25 +164,25 @@ func checkDiagRightDownCapture(goban s.Tgoban, case_x int, case_y int, player s.
 	return ret
 }
 
-func CaptureAlgoNode(node *node, case_x int, case_y int) []s.SVertex {
+func CaptureAlgoNode(node *node, case_x int, case_y int, player uint8) []s.SVertex {
 	var ret []s.SVertex = nil
 	var opp uint8 = 1
 
-	if node.player == 1 {
+	if player == 1 {
 		opp = 2
 	}
 
-	leftUp := checkDiagLeftUpCapture(node.goban, case_x, case_y, s.Tnumber(node.player), s.Tnumber(opp))
-	rightUp := checkDiagRightUpCapture(node.goban, case_x, case_y, s.Tnumber(node.player), s.Tnumber(opp))
-	up := checkUpCapture(node.goban, case_x, case_y, s.Tnumber(node.player), s.Tnumber(opp))
-	down := checkDownCapture(node.goban, case_x, case_y, s.Tnumber(node.player), s.Tnumber(opp))
-	left := checkLeftCapture(node.goban, case_x, case_y, s.Tnumber(node.player), s.Tnumber(opp))
-	right := checkRightCapture(node.goban, case_x, case_y, s.Tnumber(node.player), s.Tnumber(opp))
-	leftDown := checkDiagLeftDownCapture(node.goban, case_x, case_y, s.Tnumber(node.player), s.Tnumber(opp))
-	rightDown := checkDiagRightDownCapture(node.goban, case_x, case_y, s.Tnumber(node.player), s.Tnumber(opp))
+	leftUp := checkDiagLeftUpCapture(node.goban, case_x, case_y, s.Tnumber(player), s.Tnumber(opp))
+	rightUp := checkDiagRightUpCapture(node.goban, case_x, case_y, s.Tnumber(player), s.Tnumber(opp))
+	up := checkUpCapture(node.goban, case_x, case_y, s.Tnumber(player), s.Tnumber(opp))
+	down := checkDownCapture(node.goban, case_x, case_y, s.Tnumber(player), s.Tnumber(opp))
+	left := checkLeftCapture(node.goban, case_x, case_y, s.Tnumber(player), s.Tnumber(opp))
+	right := checkRightCapture(node.goban, case_x, case_y, s.Tnumber(player), s.Tnumber(opp))
+	leftDown := checkDiagLeftDownCapture(node.goban, case_x, case_y, s.Tnumber(player), s.Tnumber(opp))
+	rightDown := checkDiagRightDownCapture(node.goban, case_x, case_y, s.Tnumber(player), s.Tnumber(opp))
 
 	if leftUp != nil {
-		if node.player == 1 {
+		if player == 1 {
 			node.captures.Capture0++
 		} else {
 			node.captures.Capture1++
@@ -192,7 +192,7 @@ func CaptureAlgoNode(node *node, case_x int, case_y int) []s.SVertex {
 	}
 
 	if rightUp != nil {
-		if node.player == 1 {
+		if player == 1 {
 			node.captures.Capture0++
 		} else {
 			node.captures.Capture1++
@@ -202,7 +202,7 @@ func CaptureAlgoNode(node *node, case_x int, case_y int) []s.SVertex {
 	}
 
 	if up != nil {
-		if node.player == 1 {
+		if player == 1 {
 			node.captures.Capture0++
 		} else {
 			node.captures.Capture1++
@@ -212,7 +212,7 @@ func CaptureAlgoNode(node *node, case_x int, case_y int) []s.SVertex {
 	}
 
 	if down != nil {
-		if node.player == 1 {
+		if player == 1 {
 			node.captures.Capture0++
 		} else {
 			node.captures.Capture1++
@@ -222,7 +222,7 @@ func CaptureAlgoNode(node *node, case_x int, case_y int) []s.SVertex {
 	}
 
 	if left != nil {
-		if node.player == 1 {
+		if player == 1 {
 			node.captures.Capture0++
 		} else {
 			node.captures.Capture1++
@@ -232,7 +232,7 @@ func CaptureAlgoNode(node *node, case_x int, case_y int) []s.SVertex {
 	}
 
 	if right != nil {
-		if node.player == 1 {
+		if player == 1 {
 			node.captures.Capture0++
 		} else {
 			node.captures.Capture1++
@@ -242,7 +242,7 @@ func CaptureAlgoNode(node *node, case_x int, case_y int) []s.SVertex {
 	}
 
 	if leftDown != nil {
-		if node.player == 1 {
+		if player == 1 {
 			node.captures.Capture0++
 		} else {
 			node.captures.Capture1++
@@ -252,7 +252,7 @@ func CaptureAlgoNode(node *node, case_x int, case_y int) []s.SVertex {
 	}
 
 	if rightDown != nil {
-		if node.player == 1 {
+		if player == 1 {
 			node.captures.Capture0++
 		} else {
 			node.captures.Capture1++

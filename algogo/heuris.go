@@ -63,6 +63,7 @@ func EvaluateGoban(ctx s.SContext) int32 {
 	gotFive, gotFiveOpp, gotFour, gotFourOpp, gotThree, gotThreeOpp, gotTwo, gotTwoOpp := 0, 0, 0, 0, 0, 0, 0, 0
 	gotFourMid, gotFourMidOpp, gotThreeMid, gotThreeMidOpp, gotTwoMid, gotTwoMidOpp := 0, 0, 0, 0, 0, 0
 	gotFourMidPlus, gotFourMidPlusOpp, gotThreeMidPlus, gotThreeMidPlusOpp, gotTwoMidPlus, gotTwoMidPlusOpp := 0, 0, 0, 0, 0, 0
+	possibleCapture, possibleCaptureOpp := 0, 0
 	for y := range ctx.Goban {
 		for x := range ctx.Goban[y] {
 			if ctx.Goban[y][x] != 0 {
@@ -150,9 +151,9 @@ func EvaluateGoban(ctx s.SContext) int32 {
 						}
 					} else if nb_align == 2 {
 						if ctx.Goban[y][x] == s.Tnumber(ctx.CurrentPlayer) {
-							gotTwoMid++
+							possibleCaptureOpp++
 						} else {
-							gotTwoMidOpp++
+							possibleCapture++
 						}
 					}
 				}
@@ -161,13 +162,13 @@ func EvaluateGoban(ctx s.SContext) int32 {
 	}
 
 	// value = 1000000*(gotFive-gotFiveOpp) + 100000*(gotFour-gotFourOpp) + 1000*(gotFourMid-gotFourMidOpp) + 1500*(gotThree-gotThreeOpp) + 200*(gotThreeMid-gotThreeMidOpp) + 50*(gotTwo-gotTwoOpp) + 10*(gotTwoMid-gotTwoMidOpp)
-	value = 60000*(gotFive-gotFiveOpp) + 5000*(gotFour-gotFourOpp) + 1000*(gotFourMid-gotFourMidOpp) + 1000*(gotThree-gotThreeOpp) + 300*(gotThreeMid-gotThreeMidOpp) + 50*(gotTwo-gotTwoOpp) + 10*(gotTwoMid-gotTwoMidOpp)
+	value = 60000*(gotFive-gotFiveOpp) + 5000*(gotFour-gotFourOpp) + 1000*(gotFourMid-gotFourMidOpp) + 1000*(gotThree-gotThreeOpp) + 300*(gotThreeMid-gotThreeMidOpp) + 50*(gotTwo-gotTwoOpp)
 	value += 1500*(gotFourMidPlus-gotFourMidPlusOpp) + 750*(gotThreeMidPlus-gotThreeMidPlusOpp) + 70*(gotTwoMidPlus-gotTwoMidPlusOpp)
 
 	if ctx.ActiveCapture {
 		nbCapture := ctx.NbCaptureP1
 		nbCaptureOpp := ctx.NbCaptureP2
-
+		value += 1500 * (-possibleCaptureOpp*nbCaptureOpp + possibleCapture*nbCapture)
 		if ctx.CurrentPlayer == 2 {
 			nbCapture = ctx.NbCaptureP2
 			nbCaptureOpp = ctx.NbCaptureP1
@@ -182,8 +183,10 @@ func EvaluateGoban(ctx s.SContext) int32 {
 		} else if nbCaptureOpp == 4 {
 			value -= 6000 * 4
 		} else {
-			value += 1500 * (nbCapture - nbCaptureOpp)
+			value += 2000 * (nbCapture - nbCaptureOpp)
 		}
+	} else {
+		value += 10 * (gotTwoMid - gotTwoMidOpp)
 	}
 
 	return int32(value)
