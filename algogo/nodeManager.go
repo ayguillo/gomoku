@@ -90,9 +90,9 @@ func generateTree(current *node, neighbors []s.SVertex) {
 
 		for y = lastlastMoves.Y - threatSpace; y <= lastlastMoves.Y+threatSpace; y++ {
 			for x = lastlastMoves.X - threatSpace; x <= lastlastMoves.X+threatSpace; x++ {
-				placement := PlacementHeuristic(current.goban, x, y, current.player)
-				if placement >= 1 {
-					generateBoard(current, s.SVertex{X: x, Y: y}, neighbors)
+					placement := PlacementHeuristic(current.goban, x, y, current.player)
+					if placement >= 1 {
+						generateBoard(current, s.SVertex{X: x, Y: y}, neighbors)
 				}
 			}
 		}
