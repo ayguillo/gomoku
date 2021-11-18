@@ -63,7 +63,7 @@ func generateBoard(current *node, coord s.SVertex, neighbors []s.SVertex) {
 }
 
 func generateTree(current *node, neighbors []s.SVertex) {
-	if current.depth <= 5 {
+	if current.depth <= 3 {
 		for _, neighbor := range neighbors {
 			placement := PlacementHeuristic(current.goban, neighbor.X, neighbor.Y, current.player)
 			if placement >= 1 {
