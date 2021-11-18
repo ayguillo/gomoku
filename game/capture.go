@@ -138,7 +138,7 @@ func diagRightCapture(ctx *s.SContext, visu *s.SVisu, case_x int, case_y int, ca
 			break
 		}
 	}
-	if count_stone == 2 && current_case_x < int(ctx.NSize) && current_case_y >= 0 {
+	if count_stone == 2 && current_case_x < int(ctx.NSize) && current_case_y >= 0 && current_case_x >= 0 && current_case_y < int(ctx.NSize) {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(ctx.CurrentPlayer) {
 			if viz == true {
 				d.TraceStone(float64(current_case_x+1), float64(current_case_y-1), ctx, visu, color, true)
