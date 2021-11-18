@@ -322,6 +322,7 @@ func main() {
 					ctx.NbCaptureP2 = 0
 					ctx.CasesNonNull = nil
 					endgame = false
+					startgame = true
 					d.DisplayPlayer(&ctx, &visu, false)
 				}
 			}

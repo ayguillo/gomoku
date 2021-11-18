@@ -213,7 +213,7 @@ func CounterDiagLeft(ctx *s.SContext, case_x int, case_y int, capturePlayer int)
 		}
 	}
 	if count_stone == 2 && case_capture == true && current_case_x >= 3 && current_case_y < int(ctx.NSize-3) {
-		ctx.Capture = append(ctx.Capture, s.SVertex{X: current_case_x - 3, Y: current_case_y + 3})
+		ctx.Capture = append(ctx.Capture, s.SVertex{X: current_case_x, Y: current_case_y})
 		return true
 	}
 	if case_capture == false && count_stone == 2 {
