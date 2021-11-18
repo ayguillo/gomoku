@@ -10,6 +10,37 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
+func DisplayTime(visu *s.SVisu, time string, size int32, player uint8) {
+	if visu.TextureMessageTime != nil {
+		visu.TextureMessageTime.Destroy()
+	}
+	color := sdl.Color{R: 255, G: 255, B: 255, A: 255}
+	bmp, err := visu.FontMsg.RenderUTF8Solid(time, color)
+	if err == nil {
+		visu.TextureMessageTime, err = visu.Renderer.CreateTextureFromSurface(bmp)
+	}
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to renderer font: %s\n", err)
+		panic(err)
+	}
+	bmp.Free()
+	if player == 1 {
+		visu.Renderer.SetDrawColor(226, 196, 115, 255)
+		visu.Renderer.DrawRect(&sdl.Rect{X: 4, Y: size/4 + 50, W: (size / 4) - 10, H: 30})
+		visu.Renderer.FillRect(&sdl.Rect{X: 4, Y: size/4 + 50, W: (size / 4) - 10, H: 30})
+		visu.Renderer.Present()
+		visu.Renderer.Copy(visu.TextureMessageTime, nil, &sdl.Rect{X: 4, Y: size/4 + 50, W: (size / 4) - 10, H: 30})
+	} else {
+		visu.Renderer.SetDrawColor(226, 196, 115, 255)
+		visu.Renderer.DrawRect(&sdl.Rect{X: size + 4 + size/4 + 50, Y: size / 4, W: (size / 4) - 10, H: 30})
+		visu.Renderer.FillRect(&sdl.Rect{X: size + 4 + size/4 + 50, Y: size / 4, W: (size / 4) - 10, H: 30})
+		visu.Renderer.Present()
+		visu.Renderer.Copy(visu.TextureMessageTime, nil, &sdl.Rect{X: size + 4 + size/4, Y: size/4 + 50, W: (size / 4) - 10, H: 30})
+		visu.Renderer.Present()
+	}
+	visu.Renderer.Present()
+}
+
 func DisplayMessage(visu *s.SVisu, size int32, line1 string, line2 string, ctx s.SContext) {
 	if visu.TextureMessage1 != nil {
 		visu.TextureMessage1.Destroy()

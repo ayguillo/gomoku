@@ -143,11 +143,12 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 		startgame = false
 		d.DisplayPlayer(ctx, visu, false)
 	} else {
+		player := ctx.CurrentPlayer
 		now := time.Now()
 		vertex_next, _ := e.MinimaxTree(*ctx, ctx.Depth)
-		// fmt.Println(vertex_next, heuris)
 		delta := time.Since(now)
-		fmt.Println(delta)
+		d.DisplayTime(visu, delta.String(), ctx.Size, player)
+		sdl.Log(delta.String())
 		if vertex_next.X != -1 && vertex_next.Y != -1 {
 			ctx.Goban[int(vertex_next.Y)][int(vertex_next.X)] = s.Tnumber(ctx.CurrentPlayer)
 		}
@@ -227,7 +228,7 @@ func main() {
 	defer visu.FontCounter.Close()
 	defer visu.Renderer.Destroy()
 
-	versus, double_threes, capture, help, end, difficulty := m.Menu(&visu, ctx)
+	versus, double_threes, capture, help, end, difficulty, thinking := m.Menu(&visu, ctx)
 	visu.Renderer.Clear()
 	visu.Renderer.Present()
 	if !end {
@@ -249,6 +250,7 @@ func main() {
 		ctx.ActiveCapture = capture
 		ctx.ActiveHelp = help
 		ctx.ActiveDoubleThrees = double_threes
+		ctx.TimeToThink = thinking
 		if help {
 			ctx.VertexHelp = s.SVertex{X: -1, Y: -1}
 		}

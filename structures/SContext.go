@@ -26,6 +26,7 @@ type SContext struct {
 	VertexHelp         SVertex
 	LastMove           SVertex
 	LastLastMove       SVertex
+	TimeToThink        int
 }
 
 func (goban Tgoban) String() string {

@@ -52,6 +52,35 @@ func changeBot(versus int, hvb *sdl.Texture, hvh *sdl.Texture, bvb *sdl.Texture,
 	visu.Renderer.Present()
 }
 
+func changeThink(thinking int, visu *s.SVisu, thinkt1 *sdl.Texture, thinkt2 *sdl.Texture, thinkt3 *sdl.Texture, ctx s.SContext) {
+	if thinking == 0 {
+		visu.Renderer.SetDrawColor(226, 196, 115, 255)
+		visu.Renderer.DrawRect(&sdl.Rect{X: ctx.Size/2 + ctx.Size/4 - 50 + 200, Y: ctx.Size/2 + 100, W: 50, H: 50})
+		visu.Renderer.FillRect(&sdl.Rect{X: ctx.Size/2 + ctx.Size/4 - 50 + 200, Y: ctx.Size/2 + 100, W: 50, H: 50})
+		visu.Renderer.Copy(thinkt1, nil, &sdl.Rect{X: ctx.Size/2 + ctx.Size/4 - 50 + 200, Y: ctx.Size/2 + 100, W: 50, H: 50})
+		createCircle(float64(ctx.Size/2+ctx.Size/4-25), float64(ctx.Size/2+100)+95, visu, 25, 83, 51, 237, 1)
+		createCircle(float64(ctx.Size/2+ctx.Size/4+35), float64(ctx.Size/2+100)+95, visu, 25, 0, 0, 0, 0)
+		createCircle(float64(ctx.Size/2+ctx.Size/4+95), float64(ctx.Size/2+100)+95, visu, 25, 0, 0, 0, 0)
+	} else if thinking == 1 {
+		visu.Renderer.SetDrawColor(226, 196, 115, 255)
+		visu.Renderer.DrawRect(&sdl.Rect{X: ctx.Size/2 + ctx.Size/4 - 50 + 200, Y: ctx.Size/2 + 100, W: 50, H: 50})
+		visu.Renderer.FillRect(&sdl.Rect{X: ctx.Size/2 + ctx.Size/4 - 50 + 200, Y: ctx.Size/2 + 100, W: 50, H: 50})
+		visu.Renderer.Copy(thinkt2, nil, &sdl.Rect{X: ctx.Size/2 + ctx.Size/4 - 50 + 200, Y: ctx.Size/2 + 100, W: 50, H: 50})
+		createCircle(float64(ctx.Size/2+ctx.Size/4-25), float64(ctx.Size/2+100)+95, visu, 25, 0, 0, 0, 0)
+		createCircle(float64(ctx.Size/2+ctx.Size/4+35), float64(ctx.Size/2+100)+95, visu, 25, 83, 51, 237, 1)
+		createCircle(float64(ctx.Size/2+ctx.Size/4+95), float64(ctx.Size/2+100)+95, visu, 25, 0, 0, 0, 0)
+	} else {
+		visu.Renderer.SetDrawColor(226, 196, 115, 255)
+		visu.Renderer.DrawRect(&sdl.Rect{X: ctx.Size/2 + ctx.Size/4 - 50 + 200, Y: ctx.Size/2 + 100, W: 50, H: 50})
+		visu.Renderer.FillRect(&sdl.Rect{X: ctx.Size/2 + ctx.Size/4 - 50 + 200, Y: ctx.Size/2 + 100, W: 50, H: 50})
+		visu.Renderer.Copy(thinkt3, nil, &sdl.Rect{X: ctx.Size/2 + ctx.Size/4 - 50 + 200, Y: ctx.Size/2 + 100, W: 50, H: 50})
+		createCircle(float64(ctx.Size/2+ctx.Size/4-25), float64(ctx.Size/2+100)+95, visu, 25, 0, 0, 0, 0)
+		createCircle(float64(ctx.Size/2+ctx.Size/4+35), float64(ctx.Size/2+100)+95, visu, 25, 0, 0, 0, 0)
+		createCircle(float64(ctx.Size/2+ctx.Size/4+95), float64(ctx.Size/2+100)+95, visu, 25, 83, 51, 237, 1)
+	}
+	visu.Renderer.Present()
+}
+
 func changeHelp(help bool, visu *s.SVisu, ctx s.SContext, yes *sdl.Texture, no *sdl.Texture) {
 	createCircle(float64(ctx.Size/2+ctx.Size/4-30), float64(ctx.Size/2-ctx.Size/6)+90, visu, 25, 50, 205, 50, 255)
 	createCircle(float64(ctx.Size/2+ctx.Size/4+30), float64(ctx.Size/2-ctx.Size/6)+90, visu, 25, 178, 34, 34, 255)
@@ -115,8 +144,8 @@ func changeDoubleThrees(double_threes bool, visu *s.SVisu, ctx s.SContext, yes *
 	visu.Renderer.Present()
 }
 
-func Menu(visu *s.SVisu, ctx s.SContext) (int, bool, bool, bool, bool, int) {
-	versus, double_threes, capture, help, difficulty := 0, true, true, true, 1
+func Menu(visu *s.SVisu, ctx s.SContext) (int, bool, bool, bool, bool, int, int) {
+	versus, double_threes, capture, help, difficulty, thinking := 0, true, true, true, 1, 0
 	// Window
 	visu.Renderer.SetDrawColor(226, 196, 115, 255)
 	visu.Renderer.DrawRect(&sdl.Rect{X: 0, Y: 0, W: ctx.Size + ctx.Size/2, H: ctx.Size + ((ctx.SizeCase) / 2)})
@@ -141,9 +170,13 @@ func Menu(visu *s.SVisu, ctx s.SContext) (int, bool, bool, bool, bool, int) {
 	bmp12, err11 := visu.FontPlayer.RenderUTF8Solid("Medium", color)
 	bmp13, err12 := visu.FontPlayer.RenderUTF8Solid("Hard", color)
 	bmp14, err13 := visu.FontPlayer.RenderUTF8Solid("Double Threes ?", color)
-
+	bmp15, err14 := visu.FontPlayer.RenderUTF8Solid("Thinking time", color)
+	bmp16, err15 := visu.FontPlayer.RenderUTF8Solid("0.5s", color)
+	bmp17, err16 := visu.FontPlayer.RenderUTF8Solid("1s", color)
+	bmp18, err17 := visu.FontPlayer.RenderUTF8Solid("2s", color)
 	if err != nil || err1 != nil || err2 != nil || err3 != nil || err4 != nil || err5 != nil || err6 != nil ||
-		err7 != nil || err8 != nil || err9 != nil || err10 != nil || err11 != nil || err12 != nil || err13 != nil {
+		err7 != nil || err8 != nil || err9 != nil || err10 != nil || err11 != nil || err12 != nil || err13 != nil ||
+		err14 != nil || err15 != nil || err16 != nil || err17 != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create texture font\n")
 		panic(err)
 	}
@@ -161,9 +194,13 @@ func Menu(visu *s.SVisu, ctx s.SContext) (int, bool, bool, bool, bool, int) {
 	med, err9 := visu.Renderer.CreateTextureFromSurface(bmp12)
 	hard, err9 := visu.Renderer.CreateTextureFromSurface(bmp13)
 	dt, err10 := visu.Renderer.CreateTextureFromSurface(bmp14)
+	thinkt, err11 := visu.Renderer.CreateTextureFromSurface(bmp15)
+	thinkt1, err12 := visu.Renderer.CreateTextureFromSurface(bmp16)
+	thinkt2, err13 := visu.Renderer.CreateTextureFromSurface(bmp17)
+	thinkt3, err14 := visu.Renderer.CreateTextureFromSurface(bmp18)
 	if err != nil || err1 != nil || err2 != nil || err3 != nil || err4 != nil ||
 		err5 != nil || err6 != nil || err7 != nil || err8 != nil || err9 != nil ||
-		err10 != nil {
+		err10 != nil || err11 != nil || err12 != nil || err13 != nil || err14 != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create texture font\n")
 		panic(err)
 	}
@@ -177,6 +214,10 @@ func Menu(visu *s.SVisu, ctx s.SContext) (int, bool, bool, bool, bool, int) {
 	defer cap.Destroy()
 	defer diff.Destroy()
 	defer dt.Destroy()
+	defer thinkt.Destroy()
+	defer thinkt1.Destroy()
+	defer thinkt2.Destroy()
+	defer thinkt3.Destroy()
 	bmp.Free()
 	bmp2.Free()
 	bmp3.Free()
@@ -191,12 +232,17 @@ func Menu(visu *s.SVisu, ctx s.SContext) (int, bool, bool, bool, bool, int) {
 	bmp12.Free()
 	bmp13.Free()
 	bmp14.Free()
+	bmp15.Free()
+	bmp16.Free()
+	bmp17.Free()
+	bmp18.Free()
 	visu.Renderer.Copy(button, nil, &sdl.Rect{X: ctx.Size + 4 + ctx.Size/4, Y: ctx.Size - 50, W: (ctx.Size / 4), H: 50})
 	visu.Renderer.Copy(text_player, nil, &sdl.Rect{X: 10, Y: 10, W: 130, H: 50})
 	visu.Renderer.Copy(help_text, nil, &sdl.Rect{X: ctx.Size/2 + ctx.Size/4 - 50, Y: ctx.Size/2 - ctx.Size/6, W: 130, H: 50})
 	visu.Renderer.Copy(cap, nil, &sdl.Rect{X: ctx.Size + ctx.Size/4 - 25, Y: ctx.Size/2 - ctx.Size/6, W: 190, H: 50})
 	visu.Renderer.Copy(diff, nil, &sdl.Rect{X: ctx.Size + 50, Y: 10, W: (ctx.Size / 4), H: 50})
 	visu.Renderer.Copy(dt, nil, &sdl.Rect{X: 10, Y: ctx.Size/2 - ctx.Size/6, W: 190, H: 50})
+	visu.Renderer.Copy(thinkt, nil, &sdl.Rect{X: ctx.Size/2 + ctx.Size/4 - 50, Y: ctx.Size/2 + 100, W: 190, H: 50})
 	visu.Renderer.Present()
 	running, end := true, false
 	changeBot(versus, hvb, hvh, bvb, visu)
@@ -204,6 +250,7 @@ func Menu(visu *s.SVisu, ctx s.SContext) (int, bool, bool, bool, bool, int) {
 	changeCapture(capture, visu, ctx, yes, no)
 	changeDifficulty(difficulty, visu, ctx, ez, med, hard)
 	changeDoubleThrees(double_threes, visu, ctx, yes, no)
+	changeThink(thinking, visu, thinkt1, thinkt2, thinkt3, ctx)
 	for running {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch t := event.(type) {
@@ -231,6 +278,18 @@ func Menu(visu *s.SVisu, ctx s.SContext) (int, bool, bool, bool, bool, int) {
 					if (t.Y >= 80 && t.Y <= 80+50) && (t.X >= 130 && t.X <= 180) {
 						versus = 2
 						changeBot(versus, hvb, hvh, bvb, visu)
+					}
+					if (t.Y >= ctx.Size/2+ctx.Size/4-50 && t.Y <= ctx.Size/2+ctx.Size/4) && (t.X >= ctx.Size/2+170 && t.X <= ctx.Size/2+220) {
+						thinking = 0
+						changeThink(thinking, visu, thinkt1, thinkt2, thinkt3, ctx)
+					}
+					if (t.Y >= ctx.Size/2+ctx.Size/4-50 && t.Y <= ctx.Size/2+ctx.Size/4) && (t.X >= ctx.Size/2+ctx.Size/4+15 && t.X <= ctx.Size/2+ctx.Size/4+65) {
+						thinking = 1
+						changeThink(thinking, visu, thinkt1, thinkt2, thinkt3, ctx)
+					}
+					if (t.Y >= ctx.Size/2+ctx.Size/4-50 && t.Y <= ctx.Size/2+ctx.Size/4) && (t.X >= ctx.Size/2+ctx.Size/4+70 && t.X <= ctx.Size/2+ctx.Size/4+120) {
+						thinking = 2
+						changeThink(thinking, visu, thinkt1, thinkt2, thinkt3, ctx)
 					}
 					if (t.Y >= ctx.Size/2-ctx.Size/6+65 && t.Y <= ctx.Size/2-ctx.Size/6+115) && (t.X >= ctx.Size/2+ctx.Size/4-55 && t.X <= ctx.Size/2+ctx.Size/4-5) {
 						help = true
@@ -273,5 +332,5 @@ func Menu(visu *s.SVisu, ctx s.SContext) (int, bool, bool, bool, bool, int) {
 
 		}
 	}
-	return versus, double_threes, capture, help, end, difficulty
+	return versus, double_threes, capture, help, end, difficulty, thinking
 }
