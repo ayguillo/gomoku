@@ -82,7 +82,7 @@ func initialize() (s.SVisu, s.SContext, error) {
 func displayPlay(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu, vertex_next s.SVertex) (bool, bool) {
 	var color [4]uint8
 
-	if (vertex_next.X == -1 || vertex_next.Y == - 1) {
+	if vertex_next.X == -1 || vertex_next.Y == -1 {
 		d.DisplayEquality(visu, *ctx)
 		sdl.Log("Equality")
 		d.DisplayMessage(visu, ctx.Size, "Cliquez pour", "relancer", *ctx)
@@ -148,7 +148,7 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 		// fmt.Println(vertex_next, heuris)
 		delta := time.Since(now)
 		fmt.Println(delta)
-		if (vertex_next.X != -1 && vertex_next.Y != - 1) {
+		if vertex_next.X != -1 && vertex_next.Y != -1 {
 			ctx.Goban[int(vertex_next.Y)][int(vertex_next.X)] = s.Tnumber(ctx.CurrentPlayer)
 		}
 		startgame, endgame = displayPlay(startgame, endgame, ctx, visu, vertex_next)
@@ -164,10 +164,7 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 			color = [4]uint8{226, 196, 115, 255}
 			d.TraceStone(float64(ctx.VertexHelp.X), float64(ctx.VertexHelp.Y), ctx, visu, color, true)
 		}
-		vertex_help, _ := e.MinimaxTree(*ctx, 2)
-		ctx.VertexHelp = vertex_help
-		color = [4]uint8{83, 51, 237, 1}
-		d.TraceStone(float64(vertex_help.X), float64(vertex_help.Y), ctx, visu, color, false)
+
 		ctx.CurrentPlayer = current
 	}
 	return startgame, endgame
@@ -199,7 +196,7 @@ func human(err error, startgame bool, endgame bool, ctx *s.SContext, visu *s.SVi
 		d.DisplayMessage(visu, ctx.Size, "En dehors", "du terrain", *ctx)
 		sdl.Log("En dehors du terrain")
 	}
-
+	startgame = false
 	return startgame, endgame
 }
 
@@ -252,7 +249,6 @@ func main() {
 		ctx.ActiveCapture = capture
 		ctx.ActiveHelp = help
 		ctx.ActiveDoubleThrees = double_threes
-
 		if help {
 			ctx.VertexHelp = s.SVertex{X: -1, Y: -1}
 		}
@@ -267,10 +263,24 @@ func main() {
 	running := true
 	endgame := false
 	startgame := true
+	displayHelp := true
 	// Loop de jeu
 	for running && !end {
 		if ctx.Players[ctx.CurrentPlayer] == true && endgame != true {
 			startgame, endgame = bot(startgame, endgame, &ctx, &visu)
+			displayHelp = true
+		}
+		if ctx.Players[ctx.CurrentPlayer] == false && ctx.ActiveHelp == true && endgame != true && displayHelp == true {
+			color := [4]uint8{83, 51, 237, 1}
+			if startgame == true {
+				middle := math.Round(float64(ctx.NSize)/2) - 2
+				d.TraceStone(middle, middle, &ctx, &visu, color, false)
+			} else {
+				vertex_help, _ := e.MinimaxTree(ctx, 2)
+				ctx.VertexHelp = vertex_help
+				d.TraceStone(float64(vertex_help.X), float64(vertex_help.Y), &ctx, &visu, color, false)
+			}
+			displayHelp = false
 		}
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch t := event.(type) {
@@ -285,11 +295,13 @@ func main() {
 			case *sdl.MouseButtonEvent:
 				if t.State == sdl.PRESSED && endgame == false && ctx.Players[ctx.CurrentPlayer] == false {
 					startgame, endgame = human(err, startgame, endgame, &ctx, &visu, t)
+					displayHelp = true
 					if endgame == true {
 						t.State = 0
 					}
 				}
 				if t.State == sdl.PRESSED && endgame == true {
+					displayHelp = true
 					visu.Renderer.Clear()
 					visu.Renderer.Present()
 					index := 0
