@@ -70,27 +70,9 @@ func checkDoubleThree(goban s.Tgoban, case_x int, case_y int, x int, y int, play
 }
 
 func DoubleThree(coordinate s.SVertex, goban s.Tgoban, player uint8, capture bool) bool {
-	// if capture && isCapture(coordinate, goban, player) == true {
-	// 	return false
-	// }
-	// var freeThree bool
-	// var y int
-	// var x int
-	// for y = -1; y <= 1; y++ {
-	// 	for x = -1; x <= 1; x++ {
-	// 		if !(x == 0 && y == 0) {
-	// 			foundThree := checkDoubleThree(goban, coordinate.X, coordinate.Y, x, y, player)
-	// 			if foundThree == true {
-	// 				return true
-	// 				if freeThree == true {
-	// 					return true
-	// 				} else {
-	// 					freeThree = true
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
+	if capture && isCapture(goban, coordinate.X, coordinate.Y, player) == true {
+		return false
+	}
 
 	horizontal := checkDoubleThree(goban, coordinate.X, coordinate.Y, -1, 0, player)
 	vertical := checkDoubleThree(goban, coordinate.X, coordinate.Y, 0, -1, player)

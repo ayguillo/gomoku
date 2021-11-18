@@ -91,7 +91,7 @@ func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPl
 func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
 	timeToThink := 1
 	if timeToThink == 1 {
-		endTime = time.Now().Add(time.Millisecond * 500)
+		endTime = time.Now().Add(time.Millisecond * 485)
 	} else if timeToThink == 2 {
 		endTime = time.Now().Add(time.Millisecond * 1000)
 	} else {
