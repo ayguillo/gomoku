@@ -48,10 +48,10 @@ func generateBoard(current *node, coord s.SVertex, neighbors []s.SVertex) {
 	if isCapture {
 		capturesVertex = CaptureAlgoNode(current, coord.X, coord.Y)
 		for _, capture := range capturesVertex {
+			newGoban[capture.Y][capture.X] = 0
 			newNeighbors = append(newNeighbors, s.SVertex{Y: capture.Y, X: capture.X})
 		}
 	}
-
 
 	child := createNode(identity, value, newGoban, coord, newNeighbors, opp, !current.maximizingPlayer, current.captures.Capture0, current.captures.Capture1, current, current.depth+1, current.lastMoves[0], current.lastMoves[1])
 	current.children = append(current.children, child)

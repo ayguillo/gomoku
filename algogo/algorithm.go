@@ -1,7 +1,6 @@
 package algogo
 
 import (
-	"fmt"
 	s "gomoku/structures"
 )
 
@@ -56,33 +55,12 @@ func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPl
 	if maximizingPlayer {
 		maxValue := minInt
 		for _, child := range node.children {
-			child.goban[child.coord.Y][child.coord.X] = s.Tnumber(child.player)
-
-			if isCapture {
-				for _, capture := range child.capturesVertex {
-					child.goban[capture.Y][capture.X] = 0
-				}
-			}
-
 			value := minimaxRecursive(child, depth-1, alpha, beta, false)
 			if value > maxValue {
 				node.bestMove = child
 				maxValue = value
 				child.value = maxValue
 			}
-
-			child.goban[child.coord.Y][child.coord.X] = 0
-			if isCapture {
-				opp := s.Tnumber(2)
-				if child.player == 2 {
-					opp = 1
-				}
-
-				for _, capture := range child.capturesVertex {
-					child.goban[capture.Y][capture.X] = opp
-				}
-			}
-
 			alpha = max(alpha, maxValue)
 			if alpha >= beta {
 				break
@@ -92,17 +70,12 @@ func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPl
 	} else {
 		minValue := maxInt
 		for _, child := range node.children {
-			child.goban[child.coord.Y][child.coord.X] = s.Tnumber(child.player)
-
 			value := minimaxRecursive(child, depth-1, alpha, beta, true)
 			if value < minValue {
 				node.bestMove = child
 				minValue = value
 				child.value = minValue
 			}
-
-			child.goban[child.coord.Y][child.coord.X] = 0
-
 			beta = min(beta, minValue)
 			if beta <= alpha {
 				break
@@ -135,9 +108,10 @@ func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
 	if ctx.CurrentPlayer == 2 {
 		opp = 1
 	}
-	fmt.Printf("%v %v\n", ctx.LastMove, ctx.LastLastMove)
+
 	root := createNode(0, 0, copyGoban(ctx.Goban), ctx.LastMove, sortNeighbors(ctx, neighbors, true), opp, false, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), nil, 1, ctx.LastMove, ctx.LastLastMove)
 	minimaxRecursive(root, depth, alpha, beta, true)
+
 	if root.bestMove != nil {
 		return root.bestMove.coord, root.bestMove.value
 	} else {
