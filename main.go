@@ -277,7 +277,7 @@ func main() {
 					running = false
 				}
 			case *sdl.MouseButtonEvent:
-				if t.State == sdl.PRESSED && endgame == false {
+				if t.State == sdl.PRESSED && endgame == false && ctx.Players[ctx.CurrentPlayer] == false {
 					startgame, endgame = human(err, startgame, endgame, &ctx, &visu, t)
 					if endgame == true {
 						t.State = 0
