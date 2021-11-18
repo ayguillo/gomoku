@@ -274,6 +274,7 @@ func main() {
 			color := [4]uint8{83, 51, 237, 1}
 			if startgame == true {
 				middle := math.Round(float64(ctx.NSize)/2) - 2
+				ctx.VertexHelp = s.SVertex{X: int(middle), Y: int(middle)}
 				d.TraceStone(middle, middle, &ctx, &visu, color, false)
 			} else {
 				vertex_help, _ := e.MinimaxTree(ctx, 2)
@@ -294,6 +295,10 @@ func main() {
 				}
 			case *sdl.MouseButtonEvent:
 				if t.State == sdl.PRESSED && endgame == false && ctx.Players[ctx.CurrentPlayer] == false {
+					if ctx.VertexHelp.X != -1 {
+						color := [4]uint8{226, 196, 115, 255}
+						d.TraceStone(float64(ctx.VertexHelp.X), float64(ctx.VertexHelp.Y), &ctx, &visu, color, true)
+					}
 					startgame, endgame = human(err, startgame, endgame, &ctx, &visu, t)
 					displayHelp = true
 					if endgame == true {
