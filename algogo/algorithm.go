@@ -2,10 +2,13 @@ package algogo
 
 import (
 	s "gomoku/structures"
+	"time"
 )
 
 const maxInt = int(^uint(0) >> 1)
 const minInt = -maxInt - 1
+
+var endTime time.Time
 
 var initDepth = uint8(0)
 
@@ -38,7 +41,7 @@ func buildContext(node node, player uint8) s.SContext {
 
 func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPlayer bool) int {
 	check, _ := victoryCondition(node.goban, int(node.captures.Capture0), int(node.captures.Capture1))
-	if depth <= 0 || (check && depth != initDepth) {
+	if depth <= 0 || (check && depth != initDepth) || (depth <= (initDepth - 3) && !time.Now().Before(endTime)) {
 		opp := uint8(2)
 		if node.player == 2 {
 			opp = 1
@@ -86,6 +89,7 @@ func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPl
 }
 
 func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
+	endTime = time.Now().Add(time.Millisecond * 750)
 	alpha := minInt
 	beta := maxInt
 	initDepth = depth
