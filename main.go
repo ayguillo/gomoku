@@ -82,6 +82,13 @@ func initialize() (s.SVisu, s.SContext, error) {
 func displayPlay(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu, vertex_next s.SVertex) (bool, bool) {
 	var color [4]uint8
 
+	if (vertex_next.X == -1 || vertex_next.Y == - 1) {
+		d.DisplayEquality(visu, *ctx)
+		sdl.Log("Equality")
+		d.DisplayMessage(visu, ctx.Size, "Cliquez pour", "relancer", *ctx)
+		return true, true
+	}
+
 	if ctx.CurrentPlayer == 1 {
 		color = [4]uint8{240, 228, 229, 255}
 	} else {
@@ -139,12 +146,11 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 		now := time.Now()
 		vertex_next, _ := e.MinimaxTree(*ctx, ctx.Depth)
 		// fmt.Println(vertex_next, heuris)
-		if vertex_next.X == -1 {
-			time.Sleep(30 * time.Second)
-		}
 		delta := time.Since(now)
 		fmt.Println(delta)
-		ctx.Goban[int(vertex_next.Y)][int(vertex_next.X)] = s.Tnumber(ctx.CurrentPlayer)
+		if (vertex_next.X != -1 && vertex_next.Y != - 1) {
+			ctx.Goban[int(vertex_next.Y)][int(vertex_next.X)] = s.Tnumber(ctx.CurrentPlayer)
+		}
 		startgame, endgame = displayPlay(startgame, endgame, ctx, visu, vertex_next)
 	}
 	if ctx.ActiveHelp {
