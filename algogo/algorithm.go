@@ -56,9 +56,6 @@ func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPl
 		maxValue := minInt
 		for _, child := range node.children {
 			value := minimaxRecursive(child, depth-1, alpha, beta, false)
-			if (depth == initDepth) {
-				value += int(EvaluateGoban(buildContext(*child, child.player)))
-			}
 			if value > maxValue {
 				node.bestMove = child
 				maxValue = value
