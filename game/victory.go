@@ -205,6 +205,22 @@ func diagonalAlign(ctx *s.SContext, case_x int, case_y int, capturePlayer int, n
 	return 0
 }
 
+func removeDuplicateCaptures(ctx *s.SContext) {
+	keys := make(map[s.SVertex]bool)
+	list := []s.SVertex{}
+
+	// If the key(values of the slice) is not equal
+	// to the already present value in new slice (list)
+	// then we append it. else we jump on another element.
+	for _, entry := range ctx.Capture {
+		if _, value := keys[entry]; !value {
+			keys[entry] = true
+			list = append(list, entry)
+		}
+	}
+	ctx.Capture = list
+}
+
 func VictoryConditionAlign(ctx *s.SContext, case_x int, case_y int, visu *s.SVisu) bool {
 	tmp_ret, ret_value := uint8(0), false
 	capturePlayer, nbCapture := 0, 0
@@ -218,6 +234,7 @@ func VictoryConditionAlign(ctx *s.SContext, case_x int, case_y int, visu *s.SVis
 	horiz := horizontalAlign(ctx, case_x, case_y, capturePlayer, nbCapture, visu)
 	vert := verticalAlign(ctx, case_x, case_y, capturePlayer, nbCapture, visu)
 	diag := diagonalAlign(ctx, case_x, case_y, capturePlayer, nbCapture, visu)
+	removeDuplicateCaptures(ctx)
 	if horiz >= tmp_ret {
 		tmp_ret = horiz
 	}
