@@ -7,7 +7,6 @@ import (
 
 var isCapture bool
 var isDoubleThree bool
-var initPlayer uint8
 
 type playData struct {
 	Vertex s.SVertex
@@ -33,7 +32,7 @@ type node struct {
 	bestMove         *node
 	depth            uint8
 	capturesVertex   []s.SVertex
-	lastMoves        [2]s.SVertex
+	lastMove        s.SVertex
 }
 
 func copyGoban(goban s.Tgoban) s.Tgoban {

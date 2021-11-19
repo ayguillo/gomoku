@@ -6,7 +6,7 @@ import (
 
 var identity int
 
-func createNode(id int, value int, newGoban s.Tgoban, coord s.SVertex, neighbors []s.SVertex, player uint8, maximizingPlayer bool, NbCaptureP1 uint8, NbCaptureP2 uint8, parent *node, depth uint8, lastMove s.SVertex, lastlastMove s.SVertex) *node {
+func createNode(id int, value int, newGoban s.Tgoban, coord s.SVertex, neighbors []s.SVertex, player uint8, maximizingPlayer bool, NbCaptureP1 uint8, NbCaptureP2 uint8, parent *node, depth uint8, lastMove s.SVertex) *node {
 
 	return &node{
 		id:               id,
@@ -22,11 +22,11 @@ func createNode(id int, value int, newGoban s.Tgoban, coord s.SVertex, neighbors
 		},
 		parent:    parent,
 		depth:     depth,
-		lastMoves: [2]s.SVertex{lastMove, lastlastMove},
+		lastMove: lastMove,
 	}
 }
 
-func generateBoard(current *node, coord s.SVertex, neighbors []s.SVertex) {
+func generateBoard(current *node, coord s.SVertex, lastMove s.SVertex, neighbors []s.SVertex) {
 	var value int
 
 	opp := uint8(2)
@@ -37,12 +37,7 @@ func generateBoard(current *node, coord s.SVertex, neighbors []s.SVertex) {
 	identity++
 	newGoban := copyGoban(current.goban)
 	newGoban[coord.Y][coord.X] = s.Tnumber(opp)
-
-	tmp_last := current.lastMoves[0]
-	current.lastMoves = [2]s.SVertex{coord, tmp_last}
-
 	newNeighbors := getNeighbors(current.goban, neighbors, coord)
-
 	var capturesVertex []s.SVertex
 
 	if isCapture {
@@ -53,7 +48,7 @@ func generateBoard(current *node, coord s.SVertex, neighbors []s.SVertex) {
 		}
 	}
 
-	child := createNode(identity, value, newGoban, coord, newNeighbors, opp, !current.maximizingPlayer, current.captures.Capture0, current.captures.Capture1, current, current.depth+1, current.lastMoves[0], current.lastMoves[1])
+	child := createNode(identity, value, newGoban, coord, newNeighbors, opp, !current.maximizingPlayer, current.captures.Capture0, current.captures.Capture1, current, current.depth+1, lastMove)
 	current.children = append(current.children, child)
 
 	if isCapture && capturesVertex != nil {
@@ -67,32 +62,32 @@ func generateTree(current *node, neighbors []s.SVertex) {
 		for _, neighbor := range neighbors {
 			placement := PlacementHeuristic(current.goban, neighbor.X, neighbor.Y, current.player)
 			if placement >= 1 {
-				generateBoard(current, neighbor, neighbors)
+				generateBoard(current, neighbor, current.lastMove, neighbors)
 			}
 		}
 	} else {
-		lastMoves := current.lastMoves[0]
-		lastlastMoves := current.lastMoves[1]
+		lastMove := current.coord
+		lastlastMove := current.lastMove
 
 		var y int
 		var x int
 		var threatSpace int = 1
 
-		for y = lastMoves.Y - threatSpace; y <= lastMoves.Y+threatSpace; y++ {
-			for x = lastMoves.X - threatSpace; x <= lastMoves.X+threatSpace; x++ {
+		for y = lastMove.Y - threatSpace; y <= lastMove.Y+threatSpace; y++ {
+			for x = lastMove.X - threatSpace; x <= lastMove.X+threatSpace; x++ {
 
 				placement := PlacementHeuristic(current.goban, x, y, current.player)
 				if placement >= 1 {
-					generateBoard(current, s.SVertex{X: x, Y: y}, neighbors)
+					generateBoard(current, s.SVertex{X: x, Y: y}, lastMove, neighbors)
 				}
 			}
 		}
 
-		for y = lastlastMoves.Y - threatSpace; y <= lastlastMoves.Y+threatSpace; y++ {
-			for x = lastlastMoves.X - threatSpace; x <= lastlastMoves.X+threatSpace; x++ {
+		for y = lastlastMove.Y - threatSpace; y <= lastlastMove.Y+threatSpace; y++ {
+			for x = lastlastMove.X - threatSpace; x <= lastlastMove.X+threatSpace; x++ {
 					placement := PlacementHeuristic(current.goban, x, y, current.player)
 					if placement >= 1 {
-						generateBoard(current, s.SVertex{X: x, Y: y}, neighbors)
+						generateBoard(current, s.SVertex{X: x, Y: y}, lastlastMove, neighbors)
 				}
 			}
 		}
