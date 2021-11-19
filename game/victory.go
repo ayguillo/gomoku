@@ -191,15 +191,15 @@ func diagRight(ctx *s.SContext, case_x int, case_y int, capturePlayer int, nbCap
 }
 
 func diagonalAlign(ctx *s.SContext, case_x int, case_y int, capturePlayer int, nbCapture int) (uint8, []s.SVertex, string) {
-	left, stonesleft, message := diagLeft(ctx, case_x, case_y, capturePlayer, nbCapture)
-	right, stonesright, message := diagRight(ctx, case_x, case_y, capturePlayer, nbCapture)
+	left, stonesleft, messageL := diagLeft(ctx, case_x, case_y, capturePlayer, nbCapture)
+	right, stonesright, messageD := diagRight(ctx, case_x, case_y, capturePlayer, nbCapture)
 	if left != 0 {
-		return left, stonesleft, message
+		return left, stonesleft, messageL
 	}
 	if right != 0 {
-		return right, stonesright, message
+		return right, stonesright, messageD
 	}
-	return 0, nil, message
+	return 0, nil, ""
 }
 
 func removeDuplicateCaptures(ctx *s.SContext) {
@@ -286,13 +286,15 @@ func verifyCaptures(tmp_ctx *s.SContext, ctx *s.SContext, visu *s.SVisu) bool {
 	counterVictory := 0
 	cap := make([]s.SVertex, 0)
 	stones := make([]s.SVertex, 0)
-	for i := range tmp_ctx.Capture {
+	capture := make([]s.SVertex, len(tmp_ctx.Capture))
+	copy(capture, tmp_ctx.Capture)
+	for i := range capture {
 		opp := 1
 		tmp := tmp_ctx.CurrentPlayer
 		if tmp_ctx.CurrentPlayer == 1 {
 			opp = 2
 		}
-		vertex_cap := tmp_ctx.Capture[i]
+		vertex_cap := capture[i]
 		tmp_ctx.CurrentPlayer = uint8(opp)
 		tmp_ctx.Goban[vertex_cap.Y][vertex_cap.X] = s.Tnumber(opp)
 		save_cap := tmp_ctx.Goban[vertex_cap.Y][vertex_cap.X]
@@ -362,13 +364,13 @@ func VictoryGoban(ctx *s.SContext, visu *s.SVisu) bool {
 				}
 				if tmp_message != "" {
 					message = tmp_message
-					tmp_cap = make([]s.SVertex, len(ctx.Capture))
-					copy(tmp_cap, ctx.Capture)
+					tmp_cap = append(tmp_cap, ctx.Capture...)
 				}
 			}
 		}
 	}
 	if (victory && counterVictory > 1) || (victory && counterVictory == 1 && message == "") {
+		println("Victory 1", message)
 		if visu != nil {
 			if ctx.CurrentPlayer == 1 {
 				ctx.NbVictoryP1++
@@ -424,6 +426,7 @@ func VictoryGoban(ctx *s.SContext, visu *s.SVisu) bool {
 				ctx.NbVictoryP2++
 			}
 		}
+		ctx.CurrentPlayer = tmp_player
 		return true
 	}
 	// else if counterVictory == 1 && message != "" {

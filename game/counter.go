@@ -79,7 +79,7 @@ func CounterHorizontal(ctx *s.SContext, case_x int, case_y int, capturePlayer in
 		}
 	}
 	if case_capture == true && count_stone == 2 && current_case > 0 {
-		ctx.Capture = append(ctx.Capture, s.SVertex{X: current_case, Y: case_y})
+		ctx.Capture = append(ctx.Capture, s.SVertex{X: current_case - 3, Y: case_y})
 		return true
 	}
 	if count_stone < 2 {
@@ -94,7 +94,7 @@ func CounterHorizontal(ctx *s.SContext, case_x int, case_y int, capturePlayer in
 		}
 	}
 	if count_stone == 2 && case_capture == true && current_case >= 3 && current_case < int(ctx.NSize-2) {
-		ctx.Capture = append(ctx.Capture, s.SVertex{X: current_case - 3, Y: case_y})
+		ctx.Capture = append(ctx.Capture, s.SVertex{X: current_case, Y: case_y})
 		return true
 	}
 	if case_capture == false && count_stone == 2 {
@@ -153,7 +153,7 @@ func CounterDiagRight(ctx *s.SContext, case_x int, case_y int, capturePlayer int
 		}
 	}
 	if count_stone == 2 && case_capture == true && current_case_x >= 3 && current_case_y >= 3 {
-		ctx.Capture = append(ctx.Capture, s.SVertex{X: current_case_x - 3, Y: current_case_y - 3})
+		ctx.Capture = append(ctx.Capture, s.SVertex{X: current_case_x, Y: current_case_y})
 		return true
 	}
 	if case_capture == false && count_stone == 2 {
