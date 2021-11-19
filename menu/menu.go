@@ -279,15 +279,15 @@ func Menu(visu *s.SVisu, ctx s.SContext) (int, bool, bool, bool, bool, int, int)
 						versus = 2
 						changeBot(versus, hvb, hvh, bvb, visu)
 					}
-					if (t.Y >= ctx.Size/2+ctx.Size/4-50 && t.Y <= ctx.Size/2+ctx.Size/4) && (t.X >= ctx.Size/2+170 && t.X <= ctx.Size/2+220) {
+					if (t.Y >= ctx.Size/2+100+70 && t.Y <= ctx.Size/2+100+120) && (t.X >= ctx.Size/2+170 && t.X <= ctx.Size/2+220) {
 						thinking = 0
 						changeThink(thinking, visu, thinkt1, thinkt2, thinkt3, ctx)
 					}
-					if (t.Y >= ctx.Size/2+ctx.Size/4-50 && t.Y <= ctx.Size/2+ctx.Size/4) && (t.X >= ctx.Size/2+ctx.Size/4+15 && t.X <= ctx.Size/2+ctx.Size/4+65) {
+					if (t.Y >= ctx.Size/2+100+70 && t.Y <= ctx.Size/2+100+120) && (t.X >= ctx.Size/2+ctx.Size/4+15 && t.X <= ctx.Size/2+ctx.Size/4+65) {
 						thinking = 1
 						changeThink(thinking, visu, thinkt1, thinkt2, thinkt3, ctx)
 					}
-					if (t.Y >= ctx.Size/2+ctx.Size/4-50 && t.Y <= ctx.Size/2+ctx.Size/4) && (t.X >= ctx.Size/2+ctx.Size/4+70 && t.X <= ctx.Size/2+ctx.Size/4+120) {
+					if (t.Y >= ctx.Size/2+100+70 && t.Y <= ctx.Size/2+100+120) && (t.X >= ctx.Size/2+ctx.Size/4+70 && t.X <= ctx.Size/2+ctx.Size/4+120) {
 						thinking = 2
 						changeThink(thinking, visu, thinkt1, thinkt2, thinkt3, ctx)
 					}
