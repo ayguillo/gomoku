@@ -82,7 +82,7 @@ func initialize() (s.SVisu, s.SContext, error) {
 func displayPlay(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu, vertex_next s.SVertex) (bool, bool) {
 	var color [4]uint8
 
-	if vertex_next.X < 0 || vertex_next.X > int(ctx.NSize) || vertex_next.Y < 0 || vertex_next.Y > int(ctx.NSize) {
+	if vertex_next.X < 0 || vertex_next.X >= int(ctx.NSize) || vertex_next.Y < 0 || vertex_next.Y >= int(ctx.NSize) {
 		d.DisplayEquality(visu, *ctx)
 		sdl.Log("Equality")
 		d.DisplayMessage(visu, ctx.Size, "Cliquez pour", "relancer", *ctx)
