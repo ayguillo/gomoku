@@ -31,7 +31,6 @@ type node struct {
 	children         []*node
 	bestMove         *node
 	depth            uint8
-	capturesVertex   []s.SVertex
 	lastMove        s.SVertex
 }
 
@@ -97,4 +96,45 @@ func getNeighbors(goban s.Tgoban, oldNeighbors []s.SVertex, vertex s.SVertex) []
 	oldNeighbors = inNeighbors2(goban, s.SVertex{X: vertex.X - 1, Y: vertex.Y}, oldNeighbors)
 	oldNeighbors = removeDuplicate2(oldNeighbors, s.SVertex{X: vertex.X, Y: vertex.Y})
 	return oldNeighbors
+}
+
+func removeDuplicate(ctx *s.SContext, vertex s.SVertex) {
+	keys := make(map[s.SVertex]bool)
+	list := []s.SVertex{}
+	for _, entry := range ctx.CasesNonNull {
+		if _, value := keys[entry]; !value && entry != vertex {
+			keys[entry] = true
+			list = append(list, entry)
+		}
+	}
+	ctx.CasesNonNull = list
+}
+
+func inNeighbors(ctx *s.SContext, vertex s.SVertex) {
+	if (vertex.Y < 0 || vertex.Y >= int(ctx.NSize)) || (vertex.X < 0 || vertex.X >= int(ctx.NSize)) {
+		return
+	}
+	if ctx.Goban[vertex.Y][vertex.X] != 0 {
+		return
+	}
+	ctx.CasesNonNull = append(ctx.CasesNonNull, vertex)
+}
+
+func FindNeighbors(ctx *s.SContext, case_x int, case_y int) {
+	if ctx.CasesNonNull == nil {
+		ctx.CasesNonNull = make([]s.SVertex, 0)
+	}
+	inNeighbors(ctx, s.SVertex{X: case_x + 1, Y: case_y + 1})
+	inNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y - 1})
+	inNeighbors(ctx, s.SVertex{X: case_x + 1, Y: case_y - 1})
+	inNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y + 1})
+	inNeighbors(ctx, s.SVertex{X: case_x, Y: case_y + 1})
+	inNeighbors(ctx, s.SVertex{X: case_x, Y: case_y - 1})
+	inNeighbors(ctx, s.SVertex{X: case_x + 1, Y: case_y})
+	inNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y})
+	inNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y})
+	inNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y})
+	inNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y})
+	inNeighbors(ctx, s.SVertex{X: case_x - 1, Y: case_y})
+	removeDuplicate(ctx, s.SVertex{X: case_x, Y: case_y})
 }

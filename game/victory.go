@@ -209,9 +209,6 @@ func removeDuplicateCaptures(ctx *s.SContext) {
 	keys := make(map[s.SVertex]bool)
 	list := []s.SVertex{}
 
-	// If the key(values of the slice) is not equal
-	// to the already present value in new slice (list)
-	// then we append it. else we jump on another element.
 	for _, entry := range ctx.Capture {
 		if _, value := keys[entry]; !value {
 			keys[entry] = true

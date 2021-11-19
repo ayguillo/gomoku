@@ -50,15 +50,10 @@ func generateBoard(current *node, coord s.SVertex, lastMove s.SVertex, neighbors
 
 	child := createNode(identity, value, newGoban, coord, newNeighbors, opp, !current.maximizingPlayer, current.captures.Capture0, current.captures.Capture1, current, current.depth+1, lastMove)
 	current.children = append(current.children, child)
-
-	if isCapture && capturesVertex != nil {
-		child.capturesVertex = capturesVertex
-	}
-
 }
 
 func generateTree(current *node, neighbors []s.SVertex) {
-	if current.depth <= 3 {
+	if current.depth <= 2 {
 		for _, neighbor := range neighbors {
 			placement := PlacementHeuristic(current.goban, neighbor.X, neighbor.Y, current.player)
 			if placement >= 1 {

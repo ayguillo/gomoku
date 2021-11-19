@@ -5,10 +5,10 @@ import (
 )
 
 func insert(a []playData, index int, value playData) []playData {
-	if len(a) == index { // nil or empty slice or after last element
+	if len(a) == index {
 		return append(a, value)
 	}
-	a = append(a[:index+1], a[index:]...) // index < len(a)
+	a = append(a[:index+1], a[index:]...)
 	a[index] = value
 	return a
 }

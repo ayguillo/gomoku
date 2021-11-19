@@ -7,8 +7,7 @@ import (
 	"os"
 	"time"
 
-	e "gomoku/algogo"
-	a "gomoku/algorithm"
+	a "gomoku/algogo"
 	d "gomoku/display"
 	g "gomoku/game"
 	m "gomoku/menu"
@@ -94,7 +93,6 @@ func displayPlay(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu, v
 	} else {
 		color = [4]uint8{35, 33, 33, 255}
 	}
-	// a.FindNeighbors(ctx, int(vertex_next.X), int(vertex_next.Y))
 	a.FindNeighbors(ctx, vertex_next.X, vertex_next.Y)
 	if ctx.LastMove.X != -1 {
 		tmp_last := ctx.LastMove
@@ -145,7 +143,7 @@ func bot(startgame bool, endgame bool, ctx *s.SContext, visu *s.SVisu) (bool, bo
 	} else {
 		player := ctx.CurrentPlayer
 		now := time.Now()
-		vertex_next, _ := e.MinimaxTree(*ctx, ctx.Depth)
+		vertex_next, _ := a.MinimaxTree(*ctx, ctx.Depth)
 		delta := time.Since(now)
 		d.DisplayTime(visu, delta.String(), ctx.Size, player)
 		sdl.Log(delta.String())
@@ -257,9 +255,9 @@ func main() {
 		if difficulty == 0 {
 			ctx.Depth = 2
 		} else if difficulty == 1 {
-			ctx.Depth = 4
+			ctx.Depth = 5
 		} else {
-			ctx.Depth = 6
+			ctx.Depth = 7
 		}
 	}
 	running := true
@@ -279,7 +277,7 @@ func main() {
 				ctx.VertexHelp = s.SVertex{X: int(middle), Y: int(middle)}
 				d.TraceStone(middle, middle, &ctx, &visu, color, false)
 			} else {
-				vertex_help, _ := e.MinimaxTree(ctx, 2)
+				vertex_help, _ := a.MinimaxTree(ctx, 2)
 				ctx.VertexHelp = vertex_help
 				d.TraceStone(float64(vertex_help.X), float64(vertex_help.Y), &ctx, &visu, color, false)
 			}

@@ -42,7 +42,7 @@ func buildContext(node node, player uint8) s.SContext {
 
 func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPlayer bool) int {
 	check, _ := victoryCondition(node.goban, int(node.captures.Capture0), int(node.captures.Capture1))
-	if depth <= 0 || (check) || (depth <= (initDepth-2) && !time.Now().Before(endTime)) {
+	if depth <= 0 || (check) || (depth == (initDepth-2) && !time.Now().Before(endTime)) {
 		if node.maximizingPlayer {
 			return int(EvaluateGoban(buildContext(*node, node.player))) / int(node.depth)
 		} else {
@@ -56,6 +56,9 @@ func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPl
 		maxValue := minInt
 		for _, child := range node.children {
 			value := minimaxRecursive(child, depth-1, alpha, beta, false)
+			if (depth == initDepth) {
+				value += int(EvaluateGoban(buildContext(*child, child.player)))
+			}
 			if value > maxValue {
 				node.bestMove = child
 				maxValue = value

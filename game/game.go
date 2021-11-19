@@ -6,8 +6,8 @@ import (
 )
 
 func Placement(ctx *s.SContext, case_x int, case_y int) int {
-	capture := false
 	if ctx.ActiveCapture && len(ctx.Capture) > 0 {
+		capture := false
 		for _, cap := range ctx.Capture {
 			if case_x == cap.X && case_y == cap.Y {
 				capture = true
