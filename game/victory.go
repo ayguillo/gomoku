@@ -152,7 +152,7 @@ func diagRight(ctx *s.SContext, case_x int, case_y int, capturePlayer int, nbCap
 	var message string
 	if CounterVertical(ctx, case_x, case_y, capturePlayer) == true || CounterHorizontal(ctx, case_x, case_y, capturePlayer) ||
 		CounterDiag(ctx, case_x, case_y, capturePlayer) {
-		message = "Capture in " + ctx.MapX[case_x] + " " + strconv.Itoa(int(ctx.NSize)-case_y+1)
+		message = "Capture in " + ctx.MapX[ctx.Capture[0].X+1] + " " + strconv.Itoa(int(ctx.NSize)-ctx.Capture[0].Y)
 	}
 	for current_case_x, current_case_y := case_x+1, case_y-1; current_case_x < int(ctx.NSize) && current_case_y >= 0; {
 		if ctx.Goban[current_case_y][current_case_x] == s.Tnumber(ctx.CurrentPlayer) {
