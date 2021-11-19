@@ -3,7 +3,6 @@ package algogo
 import (
 	s "gomoku/structures"
 	"time"
-	"fmt"
 )
 
 const maxInt = int(^uint(0) >> 1)
@@ -42,7 +41,7 @@ func buildContext(node node, player uint8) s.SContext {
 
 func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPlayer bool) int {
 	check, _ := victoryCondition(node.goban, int(node.captures.Capture0), int(node.captures.Capture1))
-	if depth <= 0 || (check) || (depth == (initDepth-2) && !time.Now().Before(endTime)) {
+	if depth <= 0 || (check && depth != initDepth) || (depth == (initDepth-2) && !time.Now().Before(endTime)) {
 		if node.maximizingPlayer {
 			return int(EvaluateGoban(buildContext(*node, node.player))) / int(node.depth)
 		} else {
@@ -104,7 +103,6 @@ func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
 	var neighbors []s.SVertex
 
 	if isCapture && len(ctx.Capture) > 0 {
-		fmt.Println(ctx.Capture)
 		if len(ctx.Capture) == 1 {
 			return ctx.Capture[0], 0
 		}

@@ -370,7 +370,6 @@ func VictoryGoban(ctx *s.SContext, visu *s.SVisu) bool {
 		}
 	}
 	if (victory && counterVictory > 1) || (victory && counterVictory == 1 && message == "") {
-		println("Victory 1", message)
 		if visu != nil {
 			if ctx.CurrentPlayer == 1 {
 				ctx.NbVictoryP1++
@@ -392,6 +391,7 @@ func VictoryGoban(ctx *s.SContext, visu *s.SVisu) bool {
 		if victory {
 			return true
 		}
+		ctx.Capture = tmp_cap
 	}
 	if ctx.CurrentPlayer == 2 {
 		ctx.CurrentPlayer = 1
@@ -414,6 +414,7 @@ func VictoryGoban(ctx *s.SContext, visu *s.SVisu) bool {
 				}
 				if tmp_message != "" {
 					message = tmp_message
+					tmp_cap = append(tmp_cap, ctx.Capture...)
 				}
 			}
 		}
@@ -429,20 +430,8 @@ func VictoryGoban(ctx *s.SContext, visu *s.SVisu) bool {
 		ctx.CurrentPlayer = tmp_player
 		return true
 	}
-	// else if counterVictory == 1 && message != "" {
-	// 	tmp_captures := make([]s.SVertex, len(ctx.Capture))
-	// copy(tmp_captures, ctx.Capture)
-	// 	tmp_ctx := s.SContext{
-	// 		CurrentPlayer: ctx.CurrentPlayer,
-	// 		Goban:         copyGoban(ctx.Goban),
-	// 		Capture:       tmp_captures,
-	// 		MapX:          ctx.MapX,
-	// 		NSize:         ctx.NSize,
-	// 		ActiveCapture: ctx.ActiveCapture,
-	// 	}
-	// 	victory = verifyCaptures(&tmp_ctx, ctx, visu)
-	// }
 	ctx.CurrentPlayer = tmp_player
+	ctx.Capture = tmp_cap
 	return victory
 }
 
