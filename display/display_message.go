@@ -32,8 +32,8 @@ func DisplayTime(visu *s.SVisu, time string, size int32, player uint8) {
 		visu.Renderer.Copy(visu.TextureMessageTime, nil, &sdl.Rect{X: 4, Y: size/4 + 50, W: (size / 4) - 10, H: 30})
 	} else {
 		visu.Renderer.SetDrawColor(226, 196, 115, 255)
-		visu.Renderer.DrawRect(&sdl.Rect{X: size + 4 + size/4 + 50, Y: size / 4, W: (size / 4) - 10, H: 30})
-		visu.Renderer.FillRect(&sdl.Rect{X: size + 4 + size/4 + 50, Y: size / 4, W: (size / 4) - 10, H: 30})
+		visu.Renderer.DrawRect(&sdl.Rect{X: size + 4 + size/4, Y: size/4 + 50, W: (size / 4) - 10, H: 30})
+		visu.Renderer.FillRect(&sdl.Rect{X: size + 4 + size/4, Y: size/4 + 50, W: (size / 4) - 10, H: 30})
 		visu.Renderer.Present()
 		visu.Renderer.Copy(visu.TextureMessageTime, nil, &sdl.Rect{X: size + 4 + size/4, Y: size/4 + 50, W: (size / 4) - 10, H: 30})
 		visu.Renderer.Present()
