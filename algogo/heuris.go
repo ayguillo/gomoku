@@ -175,9 +175,9 @@ func EvaluateGoban(ctx s.SContext) int32 {
 		}
 
 		if nbCapture >= 5 {
-			value += 10000 * 5
+			value += 100000 * 5
 		} else if nbCaptureOpp >= 5 {
-			value -= 10000 * 5
+			value -= 100000 * 5
 		} else if nbCapture == 4 {
 			value += 6000 * 4
 		} else if nbCaptureOpp == 4 {

@@ -3,6 +3,7 @@ package algogo
 import (
 	s "gomoku/structures"
 	"time"
+	"fmt"
 )
 
 const maxInt = int(^uint(0) >> 1)
@@ -42,18 +43,14 @@ func buildContext(node node, player uint8) s.SContext {
 func minimaxRecursive(node *node, depth uint8, alpha int, beta int, maximizingPlayer bool) int {
 	check, _ := victoryCondition(node.goban, int(node.captures.Capture0), int(node.captures.Capture1))
 	if depth <= 0 || (check && depth != initDepth) || (depth <= (initDepth-2) && !time.Now().Before(endTime)) {
-		opp := uint8(2)
-		if node.player == 2 {
-			opp = 1
-		}
 		if node.maximizingPlayer {
-			return -int(EvaluateGoban(buildContext(*node, opp))) / int(node.depth)
+			return int(EvaluateGoban(buildContext(*node, node.player))) / int(node.depth)
 		} else {
-			return int(EvaluateGoban(buildContext(*node, opp))) / int(node.depth)
+			return -int(EvaluateGoban(buildContext(*node, node.player))) / int(node.depth)
 		}
 	}
 
-	generateTree(node, node.neighbors)
+	generateTree(node, node.neighbors, node.coord, node.lastMove)
 
 	if maximizingPlayer {
 		maxValue := minInt
@@ -120,7 +117,8 @@ func MinimaxTree(ctx s.SContext, depth uint8) (s.SVertex, int) {
 		opp = 1
 	}
 
-	root := createNode(0, 0, copyGoban(ctx.Goban), ctx.LastMove, sortNeighbors(ctx, neighbors, true), opp, false, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), nil, 1, ctx.LastMove, ctx.LastLastMove)
+	fmt.Println(ctx.LastMove)
+	root := createNode(0, 0, copyGoban(ctx.Goban), ctx.LastMove, sortNeighbors(ctx, neighbors, true), opp, false, uint8(ctx.NbCaptureP1), uint8(ctx.NbCaptureP2), nil, 1, ctx.LastLastMove)
 	minimaxRecursive(root, depth, alpha, beta, true)
 
 	if root.bestMove != nil {

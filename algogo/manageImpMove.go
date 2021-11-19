@@ -214,19 +214,6 @@ func CheckImpMove(ctx s.SContext, neighbors []s.SVertex) []s.SVertex {
 }
 
 func placementHeuristicCopy(ctx s.SContext, case_x int, case_y int) uint8 {
-	// Retour 2 pour une obligation de capture, 1 pour un coup ok, 0 sinon
-	capture := false
-	if ctx.ActiveCapture && len(ctx.Capture) > 0 {
-		for _, cap := range ctx.Capture {
-			if case_x == cap.X && case_y == cap.Y {
-				capture = true
-				break
-			}
-		}
-		if capture == false {
-			return 2
-		}
-	}
 	if ctx.ActiveDoubleThrees && ctx.Goban[case_y][case_x] != 0 && g.DoubleThree(s.SVertex{X: case_x, Y: case_y}, ctx.Goban, uint8(ctx.Goban[case_y][case_x]), isCapture) {
 		return 0
 	}

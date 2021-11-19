@@ -34,6 +34,8 @@ type node struct {
 	depth            uint8
 	capturesVertex   []s.SVertex
 	lastMoves        [2]s.SVertex
+	lastMove s.SVertex
+	lastMove2 s.SVertex
 }
 
 func copyGoban(goban s.Tgoban) s.Tgoban {
